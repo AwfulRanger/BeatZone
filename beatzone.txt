@@ -1,0 +1,9 @@
+"beatzone"
+{
+	
+	"base" "base"
+	"title" "BeatZone"
+	"maps" "^bz_"
+	"menusystem" "1"
+	
+}
