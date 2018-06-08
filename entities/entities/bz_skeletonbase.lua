@@ -76,8 +76,12 @@ if SERVER then
 			
 			self:HandleTarget()
 			
-			if path:GetAge() > ( options.repath or 0.1 ) and IsValid( ent ) == true then path:Compute( self, ent:GetPos() ) end
-			path:Chase( self, ent )
+			if IsValid( ent ) == true then
+				
+				if path:GetAge() > ( options.repath or 0.1 ) then path:Compute( self, ent:GetPos() ) end
+				path:Chase( self, ent )
+				
+			end
 			
 			if options.draw == true then path:Draw() end
 			if self.loco:IsStuck() == true then self:HandleStuck() return "stuck" end
