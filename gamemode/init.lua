@@ -36,3 +36,11 @@ function GM:Initialize()
 	self:StartIntermission()
 	
 end
+
+function GM:OnNPCKilled( npc, attacker, inflictor )
+	
+	BaseClass.OnNPCKilled( self, npc, attacker, inflictor )
+	
+	if npc.IsBZEnemy == true and IsValid( attacker ) == true and attacker:IsPlayer() == true then attacker:AddFrags( 1 ) end
+	
+end
