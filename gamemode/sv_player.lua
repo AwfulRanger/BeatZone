@@ -42,3 +42,9 @@ function GM:PlayerInitialSpawn( ply )
 	self:PlayerSendInfo( ply )
 	
 end
+
+function GM:GetFallDamage( ply, speed )
+	
+	return 0
+	
+end
