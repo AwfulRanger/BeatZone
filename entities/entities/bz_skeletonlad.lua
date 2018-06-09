@@ -60,7 +60,7 @@ if SERVER then
 			
 			self.loco:SetDesiredSpeed( self.MoveSpeed )
 			
-			self:ChaseEntity( target, { maxage = 0.1, think = function()
+			self:FollowEntity( target, { maxage = 0.1, think = function()
 				
 				local hit, ent = self:SwingTrace( target )
 				

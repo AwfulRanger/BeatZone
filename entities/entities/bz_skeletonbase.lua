@@ -37,6 +37,8 @@ function ENT:Initialize()
 		
 	end
 	
+	self:SetCollisionBounds( Vector( -16, -16, 0 ), Vector( 16, 16, 72 ) )
+	
 end
 
 function ENT:GetShootPos()
@@ -52,13 +54,13 @@ end
 
 if SERVER then
 	
-	function ENT:ChaseEntity( ent, options )
+	function ENT:FollowEntity( ent, options )
 		
 		options = options or {}
 		
 		local pathtime = CurTime()
 		
-		local path = Path( "Chase" )
+		local path = Path( "Follow" )
 		path:SetMinLookAheadDistance( options.lookahead or 300 )
 		path:SetGoalTolerance( options.tolerance or 20 )
 		path:Compute( self, ent:GetPos() )
@@ -79,7 +81,8 @@ if SERVER then
 			if IsValid( ent ) == true then
 				
 				if path:GetAge() > ( options.repath or 0.1 ) then path:Compute( self, ent:GetPos() ) end
-				path:Chase( self, ent )
+				--path:Chase( self, ent )
+				path:Update( self )
 				
 			end
 			

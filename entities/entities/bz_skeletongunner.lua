@@ -115,9 +115,9 @@ if SERVER then
 				
 				self:StartActivity( ACT_MP_RUN_PRIMARY )
 				
-				self:ChaseEntity( target, { maxage = 0.1, think = function()
+				self:FollowEntity( target, { maxage = 0.1, think = function()
 					
-					if self:ShouldChase( target ) ~= true then return "ok" end
+					if self:ShouldChase( target ) ~= true then return "timeout" end
 					
 					self:HandleShoot( target )
 					
