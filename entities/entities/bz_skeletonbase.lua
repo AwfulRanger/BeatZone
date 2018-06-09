@@ -193,6 +193,27 @@ if SERVER then
 	function ENT:BodyUpdate()
 		
 		if self.MoveActivities[ self:GetActivity() ] == true then self:BodyMoveXY() end
+		
+		local yaw = 0
+		
+		local ang = self:EyeAngles()
+		local target = self:GetTarget()
+		if IsValid( target ) == true then
+			
+			local pos = self:GetShootPos()
+			local newang = ( ( target:BodyTarget( pos ) - Vector( 0, 0, 16 ) ) - pos ):Angle()
+			
+			yaw = math.Clamp( math.NormalizeAngle( ang.yaw - newang.yaw ), -45, 45 )
+			
+			ang = newang
+			
+		end
+		
+		local pitch = math.Clamp( math.NormalizeAngle( -ang.pitch ), -45, 90 )
+		
+		self:SetPoseParameter( "body_pitch", pitch )
+		self:SetPoseParameter( "body_yaw", yaw )
+		
 		self:FrameAdvance()
 		
 	end
