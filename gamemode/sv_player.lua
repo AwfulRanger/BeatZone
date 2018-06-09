@@ -1,6 +1,9 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
 AddCSLuaFile( "cl_player.lua" )
+AddCSLuaFile( "player_class/player_bz.lua" )
+
+include( "player_class/player_bz.lua" )
 
 
 
@@ -37,9 +40,9 @@ end
 
 function GM:PlayerInitialSpawn( ply )
 	
-	BaseClass.PlayerInitialSpawn( self, ply )
-	
 	self:PlayerSendInfo( ply )
+	
+	BaseClass.PlayerInitialSpawn( self, ply )
 	
 end
 
