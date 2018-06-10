@@ -51,3 +51,14 @@ function GM:GetFallDamage( ply, speed )
 	return 0
 	
 end
+
+function GM:PlayerCanJoinTeam( ply, teamid )
+	
+	local time = self.SecondsBetweenTeamSwitches or 1
+	if ply.LastTeamSwitch ~= nil and RealTime() < ply.LastTeamSwitch + time then return false end
+	
+	if ply:Team() == teamid then return false end
+	
+	return true
+	
+end
