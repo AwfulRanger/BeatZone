@@ -66,6 +66,8 @@ end
 
 function GM:EnemySpawnPos()
 	
+	if #self.EnemySpawns <= 0 then Msg( "[EnemySpawnPos] Error! No spawn points!\n" ) return end
+	
 	local tryspawns = {}
 	for i = 1, #self.EnemySpawns do tryspawns[ i ] = self.EnemySpawns[ i ] end
 	
@@ -98,8 +100,7 @@ local skeletonclass = {
 }
 function GM:SpawnSkeleton( class )
 	
-	local pos = self:EnemySpawnPos()
-	if pos == nil then return end
+	local pos = self:EnemySpawnPos() or Vector( 0, 0, 0 )
 	
 	class = class or skeletonclass[ math.random( #skeletonclass ) ]
 	
@@ -110,5 +111,13 @@ function GM:SpawnSkeleton( class )
 	table.insert( self.Skeletons, skel )
 	
 	return skel
+	
+end
+
+local isskeleton = {}
+for i = 1, #skeletonclass do isskeleton[ skeletonclass[ i ] ] = true end
+function GM:EntityRemoved( ent )
+	
+	if isskeleton[ ent:GetClass() ] == true then table.RemoveByValue( self.Skeletons, ent ) end
 	
 end
