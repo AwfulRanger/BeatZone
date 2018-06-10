@@ -63,6 +63,24 @@ function GM:PlayerCanJoinTeam( ply, teamid )
 	
 end
 
+function GM:OnPlayerChangedTeam( ply, old, new )
+	
+	PrintMessage( HUD_PRINTTALK, string.format( "%s joined '%s'", ply:Nick(), team.GetName( new ) ) )
+	
+	if new == TEAM_SPECTATOR then
+		
+		local pos = ply:EyePos()
+		ply:Spawn()
+		ply:SetPos( pos )
+		
+		return
+		
+	end
+	
+	if self:GetRoundState() ~= ROUND_INPROGRESS then ply:Spawn() end
+	
+end
+
 
 
 ----
@@ -146,5 +164,15 @@ function GM:PlayerSelectSpawn( ply )
 		table.remove( tryspawns, index )
 		
 	end
+	
+end
+
+local keys = { IN_ATTACK, IN_ATTACK2, IN_JUMP }
+function GM:PlayerDeathThink( ply )
+	
+	if self:GetRoundState() == ROUND_INPROGRESS then return end
+	
+	if ply:Team() == TEAM_SPECTATOR or ply:IsBot() == true then ply:Spawn() return end
+	for i = 1, #keys do if ply:KeyPressed( keys[ i ] ) == true then ply:Spawn() return end end
 	
 end
