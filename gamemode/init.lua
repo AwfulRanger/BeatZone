@@ -2,6 +2,7 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_hud.lua" )
+AddCSLuaFile( "cl_editplayer.lua" )
 
 include( "shared.lua" )
 include( "sv_round.lua" )
