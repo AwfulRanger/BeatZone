@@ -38,3 +38,17 @@ function GM:Initialize()
 	self:StartIntermission()
 	
 end
+
+function GM:OnEntityCreated( ent )
+	
+	hook.Run( "ShouldAddEnemySpawn", ent )
+	hook.Run( "ShouldAddPlayerSpawn", ent )
+	
+end
+
+function GM:EntityKeyValue( ent, key, value )
+	
+	hook.Run( "ShouldAddEnemySpawn", ent, key, value )
+	hook.Run( "ShouldAddPlayerSpawn", ent, key, value )
+	
+end

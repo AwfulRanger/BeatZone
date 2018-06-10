@@ -1,3 +1,7 @@
+DEFINE_BASECLASS( "gamemode_base" )
+
+
+
 function GM:OnNPCKilled( npc, attacker, inflictor )
 	
 	BaseClass.OnNPCKilled( self, npc, attacker, inflictor )
@@ -32,9 +36,15 @@ GM.EnemySpawns = GM.EnemySpawns or {}
 local bzenemyspawn = "bz_enemyspawn"
 GM.BZEnemySpawnFound = false --don't add other spawns if this map has our spawns
 local spawnclass = {}
-function GM:OnEntityCreated( ent )
+local spawnkeyvalue = {
 	
-	if ent:GetClass() == bzenemyspawn then
+	[ "info_player_teamspawn" ] = { key = "TeamNum", value = "3" }
+	
+}
+function GM:ShouldAddEnemySpawn( ent, key, value )
+	
+	local class = ent:GetClass()
+	if class == bzenemyspawn then
 		
 		if self.BZEnemySpawnFound ~= true then
 			
@@ -45,25 +55,10 @@ function GM:OnEntityCreated( ent )
 		
 		table.insert( self.EnemySpawns, ent )
 		
-	elseif self.BZEnemySpawnFound ~= true and spawnclass[ ent:GetClass() ] == true then
+	elseif self.BZEnemySpawnFound ~= true then
 		
-		table.insert( self.EnemySpawns, ent )
-		
-	end
-	
-end
-
-local spawnkeyvalue = {
-	
-	[ "info_player_teamspawn" ] = { key = "TeamNum", value = "3" }
-	
-}
-function GM:EntityKeyValue( ent, key, value )
-	
-	if self.BZEnemySpawnFound ~= true then
-		
-		local kv = spawnkeyvalue[ ent:GetClass() ]
-		if kv ~= nil and key == kv.key and value == kv.value then table.insert( self.EnemySpawns, ent ) end
+		local kv = spawnkeyvalue[ class ]
+		if ( kv ~= nil and key == kv.key and value == kv.value ) or spawnclass[ class ] == true then table.insert( self.EnemySpawns, ent ) end
 		
 	end
 	
@@ -74,32 +69,19 @@ function GM:EnemySpawnPos()
 	local tryspawns = {}
 	for i = 1, #self.EnemySpawns do tryspawns[ i ] = self.EnemySpawns[ i ] end
 	
-	local lastspawn
 	for i = 1, #tryspawns do
 		
 		local index = math.random( #tryspawns )
 		local spawn = tryspawns[ index ]
 		if IsValid( spawn ) == true then
 			
-			lastspawn = spawn
-			
 			local spawnpos = spawn:GetPos()
 			local tr = util.TraceHull( { start = spawnpos, endpos = spawnpos, mins = Vector( -16, -16, 0 ), maxs = Vector( 16, 16, 72 ), mask = MASK_NPCSOLID } )
-			if tr.Hit == true then
-				
-				table.remove( tryspawns, index )
-				
-			else
-				
-				return spawnpos
-				
-			end
-			
-		else
-			
-			table.remove( tryspawns, index )
+			if tr.Hit ~= true then return spawnpos end
 			
 		end
+		
+		table.remove( tryspawns, index )
 		
 	end
 	

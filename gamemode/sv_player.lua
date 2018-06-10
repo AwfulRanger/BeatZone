@@ -62,3 +62,89 @@ function GM:PlayerCanJoinTeam( ply, teamid )
 	return true
 	
 end
+
+
+
+----
+--Get player spawn points
+----
+GM.PlayerSpawns = GM.PlayerSpawns or {}
+
+local bzplayerspawn = "bz_playerspawn"
+GM.BZPlayerSpawnFound = false --don't add other spawns if this map has our spawns
+local spawnclass = {
+	
+	[ "info_player_spawn" ] = true,
+	[ "info_player_deathmatch" ] = true,
+	[ "info_player_combine" ] = true,
+	[ "info_player_rebel" ] = true,
+	[ "info_player_counterterrorist" ] = true,
+	[ "info_player_terrorist" ] = true,
+	[ "info_player_axis" ] = true,
+	[ "info_player_allies" ] = true,
+	[ "gmod_player_start" ] = true,
+	[ "ins_spawnpoint" ] = true,
+	[ "aoc_spawnpoint" ] = true,
+	[ "dys_spawn_point" ] = true,
+	[ "info_player_pirate" ] = true,
+	[ "info_player_viking" ] = true,
+	[ "info_player_knight" ] = true,
+	[ "diprip_start_team_blue" ] = true,
+	[ "diprip_start_team_red" ] = true,
+	[ "info_player_red" ] = true,
+	[ "info_player_blue" ] = true,
+	[ "info_player_coop" ] = true,
+	[ "info_player_human" ] = true,
+	[ "info_player_zombie" ] = true,
+	[ "info_player_zombiemaster" ] = true,
+	[ "info_survivor_position" ] = true,
+	
+}
+local spawnkeyvalue = {
+	
+	[ "info_player_teamspawn" ] = { key = "TeamNum", value = "2" }
+	
+}
+function GM:ShouldAddPlayerSpawn( ent, key, value )
+	
+	local class = ent:GetClass()
+	if class == bzplayerspawn then
+		
+		if self.BZPlayerSpawnFound ~= true then
+			
+			self.PlayerSpawns = {}
+			self.BZPlayerSpawnFound = true
+			
+		end
+		
+		table.insert( self.PlayerSpawns, ent )
+		
+	elseif self.BZPlayerSpawnFound ~= true then
+		
+		local kv = spawnkeyvalue[ class ]
+		if ( kv ~= nil and key == kv.key and value == kv.value ) or spawnclass[ class ] == true then table.insert( self.PlayerSpawns, ent ) end
+		
+	end
+	
+end
+
+function GM:PlayerSelectSpawn( ply )
+	
+	local count = #self.PlayerSpawns
+	if count <= 0 then Msg( "[PlayerSelectSpawn] Error! No spawn points!\n" ) return end
+	
+	local tryspawns = {}
+	for i = 1, #self.PlayerSpawns do tryspawns[ i ] = self.PlayerSpawns[ i ] end
+	
+	for i = 1, #tryspawns do
+		
+		local index = math.random( #tryspawns )
+		local spawn = tryspawns[ index ]
+		
+		if IsValid( spawn ) == true and hook.Run( "IsSpawnpointSuitable", ply, spawn, i == count ) == true then return spawn end
+		
+		table.remove( tryspawns, index )
+		
+	end
+	
+end
