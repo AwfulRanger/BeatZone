@@ -1,5 +1,7 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
+include( "player_class/player_bz.lua" )
+
 
 
 CreateConVar( "cl_playercolor", "0.24 0.34 0.41", { FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD }, "The value is a Vector - so between 0-1 - not between 0-255" )
