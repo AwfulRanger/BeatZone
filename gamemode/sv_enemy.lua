@@ -29,14 +29,27 @@ end
 ----
 GM.EnemySpawns = GM.EnemySpawns or {}
 
-local spawnclass = {
-	
-	[ "bz_enemyspawn" ] = true,
-	
-}
+local bzenemyspawn = "bz_enemyspawn"
+GM.BZEnemySpawnFound = false --don't add other spawns if this map has our spawns
+local spawnclass = {}
 function GM:OnEntityCreated( ent )
 	
-	if spawnclass[ ent:GetClass() ] == true then table.insert( self.EnemySpawns, ent ) end
+	if ent:GetClass() == bzenemyspawn then
+		
+		if self.BZEnemySpawnFound ~= true then
+			
+			self.EnemySpawns = {}
+			self.BZEnemySpawnFound = true
+			
+		end
+		
+		table.insert( self.EnemySpawns, ent )
+		
+	elseif self.BZEnemySpawnFound ~= true and spawnclass[ ent:GetClass() ] == true then
+		
+		table.insert( self.EnemySpawns, ent )
+		
+	end
 	
 end
 
@@ -47,8 +60,12 @@ local spawnkeyvalue = {
 }
 function GM:EntityKeyValue( ent, key, value )
 	
-	local kv = spawnkeyvalue[ ent:GetClass() ]
-	if kv ~= nil and key == kv.key and value == kv.value then table.insert( self.EnemySpawns, ent ) end
+	if self.BZEnemySpawnFound ~= true then
+		
+		local kv = spawnkeyvalue[ ent:GetClass() ]
+		if kv ~= nil and key == kv.key and value == kv.value then table.insert( self.EnemySpawns, ent ) end
+		
+	end
 	
 end
 
