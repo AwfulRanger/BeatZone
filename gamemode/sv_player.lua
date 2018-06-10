@@ -74,7 +74,7 @@ local bzplayerspawn = "bz_playerspawn"
 GM.BZPlayerSpawnFound = false --don't add other spawns if this map has our spawns
 local spawnclass = {
 	
-	[ "info_player_spawn" ] = true,
+	[ "info_player_start" ] = true,
 	[ "info_player_deathmatch" ] = true,
 	[ "info_player_combine" ] = true,
 	[ "info_player_rebel" ] = true,
