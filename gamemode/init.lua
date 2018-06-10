@@ -6,6 +6,7 @@ AddCSLuaFile( "cl_hud.lua" )
 include( "shared.lua" )
 include( "sv_round.lua" )
 include( "sv_player.lua" )
+include( "sv_enemy.lua" )
 
 
 
@@ -34,13 +35,5 @@ function GM:ShowSpare2( ply ) sendbutton( 3, ply ) end
 function GM:Initialize()
 	
 	self:StartIntermission()
-	
-end
-
-function GM:OnNPCKilled( npc, attacker, inflictor )
-	
-	BaseClass.OnNPCKilled( self, npc, attacker, inflictor )
-	
-	if npc.IsBZEnemy == true and IsValid( attacker ) == true and attacker:IsPlayer() == true then attacker:AddFrags( 1 ) end
 	
 end

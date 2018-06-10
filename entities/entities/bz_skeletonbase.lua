@@ -114,9 +114,10 @@ if SERVER then
 		local dist
 		local ply
 		
-		for i = 1, #player.GetAll() do
+		local targets, count = hook.Run( "GetEnemyTargets" )
+		for i = 1, count do
 			
-			local p = player.GetAll()[ i ]
+			local p = targets[ i ]
 			local d = self:GetPos():Distance( p:GetPos() )
 			if self:ValidTarget( p ) == true and ( dist == nil or d < dist ) then
 				
