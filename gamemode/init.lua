@@ -8,6 +8,7 @@ include( "shared.lua" )
 include( "sv_round.lua" )
 include( "sv_player.lua" )
 include( "sv_enemy.lua" )
+include( "sv_track.lua" )
 
 
 
@@ -50,5 +51,13 @@ function GM:EntityKeyValue( ent, key, value )
 	
 	hook.Run( "ShouldAddEnemySpawn", ent, key, value )
 	hook.Run( "ShouldAddPlayerSpawn", ent, key, value )
+	
+end
+
+
+
+function GM:Think()
+	
+	self:HandleTrack()
 	
 end
