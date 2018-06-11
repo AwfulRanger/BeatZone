@@ -7,9 +7,6 @@ include( "player_class/player_bz.lua" )
 
 
 
-util.AddNetworkString( "BZ_RoundInfo" )
-
-
 function GM:PlayerSetModel( ply )
 	
 	ply:SetModel( player_manager.TranslatePlayerModel( ply:GetInfo( "cl_playermodel" ) ) )
@@ -30,11 +27,23 @@ end
 --Send info about the round to the player
 function GM:PlayerSendInfo( ply )
 	
-	net.Start( "BZ_RoundInfo" )
+	net.Start( "BZ_RoundState" )
 		
 		net.WriteInt( self:GetRoundState(), 3 )
 		
 	net.Send( ply )
+	
+	local track = self.CurrentTrack
+	if track ~= nil and track.Track ~= nil then
+		
+		net.Start( "BZ_PlayTrack" )
+			
+			net.WriteUInt( track.Track.Index, 32 )
+			net.WriteFloat( track.Time or CurTime() )
+			
+		net.Send( ply )
+		
+	end
 	
 end
 
