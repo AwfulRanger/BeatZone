@@ -17,7 +17,7 @@ function GM:PlayTrack( track, time )
 	
 	sound.PlayFile( "sound/" .. track.Sound, "noplay noblock", function( channel )
 		
-		if IsValid( channel ) == true then
+		if IsValid( channel ) == true and self.CurrentTrack ~= nil and self.CurrentTrack.Sound == nil then
 			
 			channel:SetTime( CurTime() - time )
 			channel:Play()

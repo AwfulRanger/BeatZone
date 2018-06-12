@@ -46,7 +46,7 @@ end
 function GM:HandleTrack()
 	
 	local curtrack = self.CurrentTrack
-	if self:GetRoundState() == ROUND_INPROGRESS then
+	if self:GetRoundState() == ROUND_ONGOING then
 		
 		if curtrack == nil or CurTime() - curtrack.Time > curtrack.Track.Length then self:PlayTrack() end
 		

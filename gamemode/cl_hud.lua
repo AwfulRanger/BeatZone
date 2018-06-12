@@ -12,12 +12,45 @@ surface.CreateFont( "BZ_MenuButton", {
 	
 } )
 
+surface.CreateFont( "BZ_HUD", {
+	
+	font = "Roboto",
+	size = math.Round( math.min( ScrW(), ScrH() ) * 0.05 ),
+	weight = 300,
+	
+} )
+
+surface.CreateFont( "BZ_HUDSmall", {
+	
+	font = "Roboto",
+	size = math.Round( math.min( ScrW(), ScrH() ) * 0.035 ),
+	weight = 300,
+	
+} )
+
 local bgcolor = Color( 47, 4, 70, 250 )
 local detailcolor = Color( 53, 19, 161, 255 )
 local buttoncolor = Color( 121, 6, 71, 255 )
 local buttonactivecolor = Color( 188, 1, 107, 255 )
 local textcolor = Color( 255, 255, 255, 255 )
 local textshadowcolor = Color( 0, 0, 0, 255 )
+
+local function shadowtext( text, x, y, tcolor, scolor )
+	
+	tcolor = tcolor or textcolor
+	scolor = scolor or textshadowcolor
+	
+	local offset = math.Round( math.min( ScrW(), ScrH() ) * 0.002 )
+	
+	surface.SetTextPos( x + offset, y + offset )
+	surface.SetTextColor( scolor )
+	surface.DrawText( text )
+	
+	surface.SetTextPos( x, y )
+	surface.SetTextColor( tcolor )
+	surface.DrawText( text )
+	
+end
 
 local function paintbutton( self, w, h )
 	
@@ -26,22 +59,9 @@ local function paintbutton( self, w, h )
 	surface.DrawRect( 0, 0, w, h )
 	
 	surface.SetFont( self:GetFont() )
-	
 	local text = self:GetText()
-	
 	local tw, th = surface.GetTextSize( text )
-	local x = ( w - tw ) * 0.5
-	local y = ( h - th ) * 0.5
-	
-	local offset = math.min( ScrW(), ScrH() ) * 0.0025
-	
-	surface.SetTextPos( x + offset, y + offset )
-	surface.SetTextColor( textshadowcolor )
-	surface.DrawText( text )
-	
-	surface.SetTextPos( x, y )
-	surface.SetTextColor( textcolor )
-	surface.DrawText( text )
+	shadowtext( text, ( w - tw ) * 0.5, ( h - th ) * 0.5 )
 	
 	return true
 	
@@ -283,3 +303,96 @@ function GM:ShowHelp() createmenu( 1 ) end
 function GM:ShowTeam() createmenu( 2 ) end
 function GM:ShowSpare1() createmenu( 3 ) end
 function GM:ShowSpare2() createmenu( 4 ) end
+
+
+
+----
+--HUD
+----
+local statestr = {
+	
+	[ ROUND_INITIALIZING ] = "Initializing",
+	[ ROUND_INTERMISSION ] = "Intermission",
+	[ ROUND_STARTING ] = "Starting",
+	[ ROUND_ONGOING ] = "Ongoing",
+	[ ROUND_ENDING ] = "Ending",
+	
+}
+function GM:HUDPaint()
+	
+	local ply = LocalPlayer()
+	local state = self:GetRoundState()
+	
+	surface.SetFont( "BZ_HUDSmall" )
+	local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
+	local sw, sh = surface.GetTextSize( statetext )
+	shadowtext( statetext, ( ScrW() - sw ) * 0.5, ( ScrH() * 0.05 ) - sh )
+	
+	if ply:Team() == TEAM_BEAT and state == ROUND_INTERMISSION then
+		
+		local readycount = self.ReadyPlayers.Count
+		local plycount = #self:GetPlayers()
+		
+		local readytext = "Hold " .. string.upper( input.LookupBinding( "+menu_context", true ) or "(UNBOUND)" ) .. " to toggle ready"
+		local bind = input.LookupBinding( "bz_toggleready" )
+		if bind ~= nil then readytext = "Press " .. string.upper( bind ) .. " to toggle ready" end
+		readytext = readytext .. " (" .. readycount .. "/" .. plycount .. ")"
+		
+		surface.SetFont( "BZ_HUD" )
+		
+		local rw, rh = surface.GetTextSize( readytext )
+		
+		local readytime = self.FirstReadyTime
+		if readytime ~= nil then
+			
+			local basetime = 30 * ( plycount - readycount )
+			local time = math.Round( basetime - ( CurTime() - readytime ), 1 )
+			
+			if time > 0 then
+				
+				if #tostring( time ) > 3 then time = math.floor( time ) end
+				
+				local timestr = tostring( time )
+				if #timestr == 1 then timestr = timestr .. ".0" end
+				
+				local timetext = "Starting in " .. timestr .. " seconds"
+				local tw, th = surface.GetTextSize( timetext )
+				
+				shadowtext( timetext, ( ScrW() - tw ) * 0.5, ScrH() * 0.2 )
+				
+			end
+			
+		end
+		
+		shadowtext( readytext, ( ScrW() - rw ) * 0.5, ( ScrH() * 0.2 ) - rh )
+		
+	end
+	
+end
+
+local cmenu
+function GM:OnContextMenuOpen()
+	
+	if IsValid( cmenu ) == true then cmenu:Remove() end
+	
+	cmenu = vgui.Create( "DPanel" )
+	cmenu:SetSize( ScrW(), ScrH() )
+	cmenu:MakePopup()
+	cmenu:SetKeyboardInputEnabled( false )
+	function cmenu:Paint() end
+	
+	if self:GetRoundState() == ROUND_INTERMISSION then
+		
+		local ready = createbutton( cmenu, "Toggle ready", function() RunConsoleCommand( "bz_toggleready" ) end )
+		ready:SetPos( ScrW() * 0.2, ScrH() * 0.45 )
+		ready:SetSize( ScrW() * 0.1, ScrH() * 0.1 )
+		
+	end
+	
+end
+
+function GM:OnContextMenuClose()
+	
+	if IsValid( cmenu ) == true then cmenu:Remove() end
+	
+end

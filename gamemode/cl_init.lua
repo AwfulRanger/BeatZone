@@ -10,6 +10,7 @@ include( "cl_track.lua" )
 
 function GM:Think()
 	
+	if self:GetRoundState() == ROUND_INITIALIZING then self:SetRoundState( ROUND_INTERMISSION ) end
 	self:HandleTrack()
 	
 end

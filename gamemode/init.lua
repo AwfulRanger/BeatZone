@@ -58,6 +58,7 @@ end
 
 function GM:Think()
 	
+	self:HandleRound()
 	self:HandleTrack()
 	
 end

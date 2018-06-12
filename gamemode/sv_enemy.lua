@@ -6,7 +6,12 @@ function GM:OnNPCKilled( npc, attacker, inflictor )
 	
 	BaseClass.OnNPCKilled( self, npc, attacker, inflictor )
 	
-	if npc.IsBZEnemy == true and IsValid( attacker ) == true and attacker:IsPlayer() == true then attacker:AddFrags( 1 ) end
+	if npc.IsBZEnemy == true and IsValid( attacker ) == true and attacker:IsPlayer() == true then
+		
+		attacker:AddFrags( 1 )
+		self.EnemiesKilled = self.EnemiesKilled + 1
+		
+	end
 	
 end
 
@@ -14,7 +19,7 @@ function GM:GetEnemyTargets( enemy )
 	
 	local targets = {}
 	
-	local plys = player.GetAll()
+	local plys = self:GetPlayers()
 	for i = 1, #plys do
 		
 		local ply = plys[ i ]
@@ -100,7 +105,8 @@ local skeletonclass = {
 }
 function GM:SpawnSkeleton( class )
 	
-	local pos = self:EnemySpawnPos() or Vector( 0, 0, 0 )
+	local pos = self:EnemySpawnPos()
+	if pos == nil then return end
 	
 	class = class or skeletonclass[ math.random( #skeletonclass ) ]
 	

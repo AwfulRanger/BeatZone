@@ -33,6 +33,35 @@ function GM:PlayerSendInfo( ply )
 		
 	net.Send( ply )
 	
+	for i = 1, self.ReadyPlayers.Count do
+		
+		net.Start( "BZ_PlayerReady" )
+			
+			local ply = self.ReadyPlayers.Players[ i ]
+			net.WriteEntity( ply )
+			net.WriteBool( self:PlayerIsReady( ply ) )
+			
+		net.Send( ply )
+		
+	end
+	
+	if self.FirstReadyTime ~= nil then
+		
+		net.Start( "BZ_FirstReadyTime" )
+			
+			net.WriteBool( true )
+			net.WriteFloat( self.FirstReadyTime )
+			
+		net.Send( ply )
+		
+	end
+	
+	net.Start( "BZ_SetRound" )
+		
+		net.WriteUInt( self:GetRound(), 32 )
+		
+	net.Send( ply )
+	
 	local track = self.CurrentTrack
 	if track ~= nil and track.Track ~= nil then
 		
@@ -86,7 +115,7 @@ function GM:OnPlayerChangedTeam( ply, old, new )
 		
 	end
 	
-	if self:GetRoundState() ~= ROUND_INPROGRESS then ply:Spawn() end
+	if self:GetRoundState() ~= ROUND_ONGOING then ply:Spawn() end
 	
 end
 
@@ -179,9 +208,15 @@ end
 local keys = { IN_ATTACK, IN_ATTACK2, IN_JUMP }
 function GM:PlayerDeathThink( ply )
 	
-	if self:GetRoundState() == ROUND_INPROGRESS then return end
+	if self:GetRoundState() == ROUND_ONGOING then return end
 	
 	if ply:Team() == TEAM_SPECTATOR or ply:IsBot() == true then ply:Spawn() return end
 	for i = 1, #keys do if ply:KeyPressed( keys[ i ] ) == true then ply:Spawn() return end end
+	
+end
+
+function GM:GetPlayers()
+	
+	return team.GetPlayers( TEAM_BEAT )
 	
 end
