@@ -1,5 +1,6 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
+include( "sh_player.lua" )
 include( "player_class/player_bz.lua" )
 
 

@@ -1,8 +1,10 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
+AddCSLuaFile( "sh_player.lua" )
 AddCSLuaFile( "cl_player.lua" )
 AddCSLuaFile( "player_class/player_bz.lua" )
 
+include( "sh_player.lua" )
 include( "player_class/player_bz.lua" )
 
 
@@ -212,11 +214,5 @@ function GM:PlayerDeathThink( ply )
 	
 	if ply:Team() == TEAM_SPECTATOR or ply:IsBot() == true then ply:Spawn() return end
 	for i = 1, #keys do if ply:KeyPressed( keys[ i ] ) == true then ply:Spawn() return end end
-	
-end
-
-function GM:GetPlayers()
-	
-	return team.GetPlayers( TEAM_BEAT )
 	
 end
