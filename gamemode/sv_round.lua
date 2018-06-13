@@ -80,6 +80,13 @@ function GM:RoundEnded()
 	
 end
 
+function GM:LoseRound()
+	
+	self.IsRoundLost = true
+	self:SetRoundState( ROUND_ENDING )
+	
+end
+
 function GM:RoundLost()
 	
 	self:SetRound( 0 )
@@ -148,7 +155,7 @@ function GM:HandleRound()
 		local alive = false
 		local plys = self:GetPlayers()
 		for i = 1, #plys do if plys[ i ]:Alive() == true then alive = true break end end
-		if alive ~= true then self:RoundLost() return end
+		if alive ~= true then self:LoseRound() return end
 		
 		if self.EnemiesKilled >= self.EnemyCount then self:EndRound() return end
 		
@@ -165,13 +172,17 @@ function GM:HandleRound()
 		
 		if CurTime() > self.RoundEndTime + 5 then
 			
-			if self:GetRound() % 6 == 0 then
+			self.RoundEndTime = nil
+			if self.IsRoundLost == true then
+				
+				self:RoundLost()
+				
+			elseif self:GetRound() % 6 == 0 then
 				
 				self:StartIntermission()
 				
 			else
 				
-				self.RoundEndTime = nil
 				self:RoundEnded()
 				
 			end

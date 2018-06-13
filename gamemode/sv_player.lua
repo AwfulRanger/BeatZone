@@ -117,7 +117,8 @@ function GM:OnPlayerChangedTeam( ply, old, new )
 		
 	end
 	
-	if self:GetRoundState() ~= ROUND_ONGOING then ply:Spawn() end
+	local state = self:GetRoundState()
+	if state ~= ROUND_ONGOING and state ~= ROUND_ENDING then ply:Spawn() end
 	
 end
 
@@ -210,7 +211,8 @@ end
 local keys = { IN_ATTACK, IN_ATTACK2, IN_JUMP }
 function GM:PlayerDeathThink( ply )
 	
-	if self:GetRoundState() == ROUND_ONGOING then return end
+	local state = self:GetRoundState()
+	if state == ROUND_ONGOING or state == ROUND_ENDING then return end
 	
 	if ply:Team() == TEAM_SPECTATOR or ply:IsBot() == true then ply:Spawn() return end
 	for i = 1, #keys do if ply:KeyPressed( keys[ i ] ) == true then ply:Spawn() return end end
