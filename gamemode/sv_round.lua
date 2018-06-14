@@ -44,6 +44,8 @@ function GM:StartIntermission()
 	self:SetRoundState( ROUND_INTERMISSION )
 	
 	game.CleanUpMap()
+	
+	if self.GetPlayers == nil then return end
 	local plys = self:GetPlayers()
 	for i = 1, #plys do plys[ i ]:Spawn() end
 	
