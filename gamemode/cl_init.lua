@@ -8,6 +8,12 @@ include( "cl_track.lua" )
 
 
 
+function GM:InitPostEntity()
+	
+	self:ResetPlayerCharacter( LocalPlayer() )
+	
+end
+
 function GM:Think()
 	
 	if self:GetRoundState() == ROUND_INITIALIZING then self:SetRoundState( ROUND_INTERMISSION ) end

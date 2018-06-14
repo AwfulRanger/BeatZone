@@ -1,5 +1,6 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
+AddCSLuaFile( "sh_item.lua" )
 AddCSLuaFile( "sh_player.lua" )
 AddCSLuaFile( "cl_player.lua" )
 AddCSLuaFile( "player_class/player_bz.lua" )
@@ -8,6 +9,48 @@ include( "sh_player.lua" )
 include( "player_class/player_bz.lua" )
 
 
+
+util.AddNetworkString( "BZ_ResetPlayer" )
+util.AddNetworkString( "BZ_BuyItem" )
+util.AddNetworkString( "BZ_SellItem" )
+
+net.Receive( "BZ_BuyItem", function( len, ply )
+	
+	local gm = gmod.GetGamemode()
+	local item = gm:GetItem( net.ReadUInt( 32 ) )
+	if item == nil then return end
+	
+	if gm:PlayerCanBuyItem( ply, item ) == true then gm:PlayerBuyItem( ply, item ) end
+	
+end )
+
+net.Receive( "BZ_SellItem", function( len, ply )
+	
+	local gm = gmod.GetGamemode()
+	local item = gm:GetItem( net.ReadUInt( 32 ) )
+	if item == nil then return end
+	
+	if gm:PlayerCanSellItem( ply, item ) == true then gm:PlayerSellItem( ply, item ) end
+	
+end )
+
+
+
+function GM:PlayerLoadout( ply )
+	
+	ply:StripWeapons()
+	ply:StripAmmo()
+	ply:Give( "weapon_crowbar", true )
+	ply:Give( "weapon_pistol", true )
+	
+	for i = 1, self:PlayerGetItemCount( ply ) do
+		
+		local item = self:PlayerGetItem( ply, i )
+		if item ~= nil then item:OnBuy( ply ) end
+		
+	end
+	
+end
 
 function GM:PlayerSetModel( ply )
 	
@@ -29,12 +72,14 @@ end
 --Send info about the round to the player
 function GM:PlayerSendInfo( ply )
 	
+	--send round state
 	net.Start( "BZ_RoundState" )
 		
 		net.WriteInt( self:GetRoundState(), 3 )
 		
 	net.Send( ply )
 	
+	--send ready players
 	for i = 1, self.ReadyPlayers.Count do
 		
 		net.Start( "BZ_PlayerReady" )
@@ -47,6 +92,7 @@ function GM:PlayerSendInfo( ply )
 		
 	end
 	
+	--send ready time
 	if self.FirstReadyTime ~= nil then
 		
 		net.Start( "BZ_FirstReadyTime" )
@@ -58,12 +104,14 @@ function GM:PlayerSendInfo( ply )
 		
 	end
 	
+	--send round
 	net.Start( "BZ_SetRound" )
 		
 		net.WriteUInt( self:GetRound(), 32 )
 		
 	net.Send( ply )
 	
+	--send track
 	local track = self.CurrentTrack
 	if track ~= nil and track.Track ~= nil then
 		
@@ -76,10 +124,34 @@ function GM:PlayerSendInfo( ply )
 		
 	end
 	
+	--send player characters
+	local plys = player.GetAll()
+	for i = 1, #plys do
+		
+		net.Start( "BZ_ResetPlayer" )
+			
+			net.WriteEntity( plys[ i ] )
+			
+		net.Send( ply )
+		
+		for i_ = 1, self:GetPlayerItemCount( plys[ i ] )
+			
+			net.Start( "BZ_BuyItem" )
+				
+				net.WriteEntity( plys[ i ] )
+				net.WriteUInt( self:GetPlayerItem( plys[ i ], i_ ).Index, 32 )
+				
+			net.Send( ply )
+			
+		end
+		
+	end
+	
 end
 
 function GM:PlayerInitialSpawn( ply )
 	
+	self:ResetPlayerCharacter( ply )
 	self:PlayerSendInfo( ply )
 	
 	BaseClass.PlayerInitialSpawn( self, ply )

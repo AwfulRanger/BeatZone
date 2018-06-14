@@ -4,10 +4,11 @@ include( "cl_editplayer.lua" )
 
 
 
+local fontsize = math.min( ScrW(), ScrH() )
 surface.CreateFont( "BZ_MenuButton", {
 	
 	font = "Roboto",
-	size = math.Round( math.min( ScrW(), ScrH() ) * 0.025 ),
+	size = math.Round( fontsize * 0.025 ),
 	weight = 300,
 	
 } )
@@ -15,7 +16,7 @@ surface.CreateFont( "BZ_MenuButton", {
 surface.CreateFont( "BZ_HUD", {
 	
 	font = "Roboto",
-	size = math.Round( math.min( ScrW(), ScrH() ) * 0.05 ),
+	size = math.Round( fontsize * 0.05 ),
 	weight = 300,
 	
 } )
@@ -23,7 +24,23 @@ surface.CreateFont( "BZ_HUD", {
 surface.CreateFont( "BZ_HUDSmall", {
 	
 	font = "Roboto",
-	size = math.Round( math.min( ScrW(), ScrH() ) * 0.035 ),
+	size = math.Round( fontsize * 0.035 ),
+	weight = 300,
+	
+} )
+
+surface.CreateFont( "BZ_Label", {
+	
+	font = "Roboto",
+	size = math.Round( fontsize * 0.02 ),
+	weight = 200,
+	
+} )
+
+surface.CreateFont( "BZ_LabelLarge", {
+	
+	font = "Roboto",
+	size = math.Round( fontsize * 0.03 ),
 	weight = 300,
 	
 } )
@@ -32,6 +49,8 @@ local bgcolor = Color( 47, 4, 70, 250 )
 local detailcolor = Color( 53, 19, 161, 255 )
 local buttoncolor = Color( 121, 6, 71, 255 )
 local buttonactivecolor = Color( 188, 1, 107, 255 )
+local buttoninactivecolor = Color( 85, 0, 48, 255 )
+local buttonspecialcolor = Color( 149, 9, 88, 255 )
 local textcolor = Color( 255, 255, 255, 255 )
 local textshadowcolor = Color( 0, 0, 0, 255 )
 
@@ -55,7 +74,14 @@ end
 local function paintbutton( self, w, h )
 	
 	surface.SetDrawColor( buttoncolor )
-	if self:IsHovered() == true then surface.SetDrawColor( buttonactivecolor ) end
+	local override = false
+	if self.GetButtonBGColor ~= nil then
+		
+		local bgcolor, override = self:GetButtonBGColor()
+		if bgcolor ~= nil then surface.SetDrawColor( bgcolor ) end
+		
+	end
+	if override ~= true and self:IsHovered() == true then surface.SetDrawColor( buttonactivecolor ) end
 	surface.DrawRect( 0, 0, w, h )
 	
 	surface.SetFont( self:GetFont() )
@@ -75,6 +101,27 @@ local function paintpanel( self, w, h )
 	surface.DrawRect( 0, h - 1, w, 1 ) --bottom
 	surface.DrawRect( 0, 1, 1, h - 2 ) --left
 	surface.DrawRect( w - 1, 1, 1, h - 2 ) --right
+	
+end
+
+local function createlabel( parent, text, font )
+	
+	local label = vgui.Create( "DLabel" )
+	if parent ~= nil then label:SetParent( parent ) end
+	if text ~= nil then label:SetText( text ) end
+	function label:Paint( w, h )
+		
+		surface.SetFont( self:GetFont() )
+		local text = self:GetText()
+		local tw, th = surface.GetTextSize( text )
+		shadowtext( text, ( w - tw ) * 0.5, ( h - th ) * 0.5 )
+		
+		return true
+		
+	end
+	label:SetFont( font or "BZ_Label" )
+	
+	return label
 	
 end
 
@@ -121,7 +168,7 @@ local showbuttons = {
 	[ "gm_showspare2" ] = 4,
 	
 }
-local function createmenu( tab )
+local function createmenu( tab, gm )
 	
 	if IsValid( frame ) == true then frame:Remove() end
 	
@@ -172,7 +219,6 @@ local function createmenu( tab )
 			
 			surface.SetDrawColor( detailcolor )
 			surface.DrawRect( size * 0.5, 0, 1, h )
-			surface.DrawRect( ( size * 0.5 ) + 1, h - ( size * 0.15 ), w - ( size * 0.5 ), 1 )
 			
 		end
 		
@@ -217,6 +263,187 @@ local function createmenu( tab )
 		local joinbeat = createbutton( charmenu, "Beat", function() RunConsoleCommand( "changeteam", TEAM_BEAT ) end )
 		local joinspec = createbutton( charmenu, "Spectate", function() RunConsoleCommand( "changeteam", TEAM_SPECTATOR ) end )
 		
+		local charsheet = vgui.Create( "DPropertySheet" )
+		charsheet:SetParent( charmenu )
+		function charsheet:Paint( w, h ) end
+		
+		
+		--class menu
+		local classmenu = vgui.Create( "DPanel" )
+		function classmenu:Paint( w, h ) end
+		
+		charsheet:AddSheet( "Class", classmenu ).Tab.Paint = function( self, w, h )
+			
+			surface.SetDrawColor( buttoncolor )
+			if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
+			surface.DrawRect( 0, 0, w, 20 )
+			
+		end
+		
+		
+		--perk menu
+		local perkmenu = vgui.Create( "DPanel" )
+		function perkmenu:Paint( w, h ) end
+		
+		charsheet:AddSheet( "Perks", perkmenu ).Tab.Paint = function( self, w, h )
+			
+			surface.SetDrawColor( buttoncolor )
+			if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
+			surface.DrawRect( 0, 0, w, 20 )
+			
+		end
+		
+		
+		--loadout menu
+		local loadoutmenu = vgui.Create( "DPanel" )
+		function loadoutmenu:Paint( w, h ) end
+		
+		local loadoutscroll = vgui.Create( "DScrollPanel" )
+		loadoutscroll:SetParent( loadoutmenu )
+		loadoutscroll:Dock( LEFT )
+		loadoutscroll:DockMargin( 0, 0, charsheet:GetPadding(), 0 )
+		
+		local loadoutname = createlabel( loadoutmenu, "", "BZ_LabelLarge" )
+		loadoutname:Dock( TOP )
+		
+		local loadoutmodel = vgui.Create( "DModelPanel" )
+		loadoutmodel:SetParent( loadoutmenu )
+		loadoutmodel:Dock( TOP )
+		
+		local loadoutdesc = vgui.Create( "RichText" )
+		loadoutdesc:SetParent( loadoutmenu )
+		loadoutdesc:Dock( TOP )
+		function loadoutdesc:PerformLayout( w, h )
+			
+			self:SetFontInternal( "BZ_Label" )
+			self:SetFGColor( textcolor )
+			
+		end
+		
+		local loadouttoggle = createbutton( loadoutmenu )
+		loadouttoggle:Dock( BOTTOM )
+		
+		local curitem
+		
+		local loadoutsell
+		local function loadoutbuy( button )
+			
+			if curitem == nil or gm:PlayerCanBuyItem( ply, curitem ) ~= true then return end
+			
+			gm:BuyItem( curitem )
+			
+			local text = "Sell for " .. curitem.Cost .. " loadout point"
+			if curitem.Cost ~= 1 then text = text .. "s" end
+			text = text .. " (" .. ( ply.LoadoutPoints - curitem.Cost ) .. " remaining)"
+			button:SetText( text )
+			button.DoClick = loadoutsell
+			function button:GetButtonBGColor()
+				
+				if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor end
+				
+			end
+			
+		end
+		function loadoutsell( button )
+			
+			if curitem == nil or gm:PlayerCanSellItem( ply, curitem ) ~= true then return end
+			
+			gm:SellItem( curitem )
+			
+			local text = "Buy for " .. curitem.Cost .. " loadout point"
+			if curitem.Cost ~= 1 then text = text .. "s" end
+			text = text .. " (" .. ( ply.LoadoutPoints + curitem.Cost ) .. " remaining)"
+			button:SetText( text )
+			button.DoClick = loadoutbuy
+			function button:GetButtonBGColor()
+				
+				if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor end
+				
+			end
+			
+		end
+		
+		local itembuttontall = math.Round( ScrH() * 0.05 )
+		for i = 1, gm:GetItemCount() do
+			
+			local item = gm:GetItem( i )
+			
+			local itembutton = createbutton( loadoutscroll, item.Name, function()
+				
+				curitem = item
+				
+				loadoutname:SetText( item.Name or "" )
+				loadoutmodel:SetModel( item.Model or "" )
+				local ent = loadoutmodel.Entity
+				if IsValid( ent ) == true then
+					
+					loadoutmodel:SetLookAt( ent:GetPos() )
+					
+				end
+				loadoutdesc:SetText( item.Description or "" )
+				
+				if gm:PlayerHasItem( ply, item ) == true then
+					
+					local text = "Sell for " .. item.Cost .. " loadout point"
+					if item.Cost ~= 1 then text = text .. "s" end
+					text = text .. " (" .. ply.LoadoutPoints .. " remaining)"
+					loadouttoggle:SetText( text )
+					loadouttoggle.DoClick = loadoutsell
+					function loadouttoggle:GetButtonBGColor()
+						
+						if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor end
+						
+					end
+					
+				else
+					
+					local text = "Buy for " .. item.Cost .. " loadout point"
+					if item.Cost ~= 1 then text = text .. "s" end
+					text = text .. " (" .. ply.LoadoutPoints .. " remaining)"
+					loadouttoggle:SetText( text )
+					loadouttoggle.DoClick = loadoutbuy
+					function loadouttoggle:GetButtonBGColor()
+						
+						if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor end
+						
+					end
+					
+				end
+				
+			end )
+			itembutton:Dock( TOP )
+			itembutton:DockMargin( 0, 0, 0, charsheet:GetPadding() )
+			itembutton:SetTall( itembuttontall )
+			function itembutton:GetButtonBGColor()
+				
+				if gm:PlayerHasItem( ply, item ) == true then return buttonspecialcolor end
+				if gm:PlayerCanBuyItem( ply, item ) ~= true then return buttoninactivecolor end
+				
+			end
+			
+			if i == 1 then itembutton:DoClick() end
+			
+		end
+		
+		function loadoutmenu:PerformLayout( w, h )
+			
+			loadoutscroll:SetWide( w * 0.3 )
+			loadoutname:SetTall( h * 0.05 )
+			loadoutmodel:SetTall( h * 0.5 )
+			loadoutdesc:SetTall( h * 0.3 )
+			loadouttoggle:SetTall( h * 0.1 )
+			
+		end
+		
+		charsheet:AddSheet( "Loadout", loadoutmenu ).Tab.Paint = function( self, w, h )
+			
+			surface.SetDrawColor( buttoncolor )
+			if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
+			surface.DrawRect( 0, 0, w, 20 )
+			
+		end
+		
+		
 		function charmenu:PerformLayout( w, h )
 			
 			local size = math.min( w, h )
@@ -229,6 +456,9 @@ local function createmenu( tab )
 			
 			joinspec:SetPos( size * 0.275, h - ( size * 0.1 ) )
 			joinspec:SetSize( size * 0.175, size * 0.05 )
+			
+			charsheet:SetPos( ( size * 0.5 ) + 1, 1 )
+			charsheet:SetSize( w - ( size * 0.5 ) - 2, h - 2 )
 			
 		end
 		
@@ -299,10 +529,10 @@ local function createmenu( tab )
 	
 end
 
-function GM:ShowHelp() createmenu( 1 ) end
-function GM:ShowTeam() createmenu( 2 ) end
-function GM:ShowSpare1() createmenu( 3 ) end
-function GM:ShowSpare2() createmenu( 4 ) end
+function GM:ShowHelp() createmenu( 1, self ) end
+function GM:ShowTeam() createmenu( 2, self ) end
+function GM:ShowSpare1() createmenu( 3, self ) end
+function GM:ShowSpare2() createmenu( 4, self ) end
 
 
 

@@ -178,6 +178,8 @@ function GM:HandleRound()
 			if self.IsRoundLost == true then
 				
 				self:RoundLost()
+				local plys = player.GetAll()
+				for i = 1, #plys do self:ResetPlayerCharacter( plys[ i ] ) end
 				
 			elseif self:GetRound() % 6 == 0 then
 				
