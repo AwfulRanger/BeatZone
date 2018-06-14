@@ -383,7 +383,7 @@ function GM:OnContextMenuOpen()
 	
 	if self:GetRoundState() == ROUND_INTERMISSION then
 		
-		local ready = createbutton( cmenu, "Toggle ready", function() RunConsoleCommand( "bz_toggleready" ) end )
+		local ready = createbutton( cmenu, "Toggle ready", function() self:Ready() end )
 		ready:SetPos( ScrW() * 0.2, ScrH() * 0.45 )
 		ready:SetSize( ScrW() * 0.1, ScrH() * 0.1 )
 		

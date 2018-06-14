@@ -37,12 +37,20 @@ net.Receive( "BZ_SetRound", function()
 	
 end )
 
-concommand.Add( "bz_toggleready", function()
+
+
+function GM:Ready()
 	
 	net.Start( "BZ_PlayerReady" )
 		
 		net.WriteBool( gmod.GetGamemode():PlayerIsReady( LocalPlayer() ) ~= true )
 		
 	net.SendToServer()
+	
+end
+
+concommand.Add( "bz_toggleready", function()
+	
+	gmod.GetGamemode():Ready()
 	
 end )
