@@ -189,6 +189,8 @@ function GM:OnPlayerChangedTeam( ply, old, new )
 		
 	end
 	
+	self:ResetPlayerCharacter( ply )
+	
 	local state = self:GetRoundState()
 	if state ~= ROUND_ONGOING and state ~= ROUND_ENDING then ply:Spawn() end
 	
