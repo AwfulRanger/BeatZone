@@ -134,7 +134,7 @@ function GM:PlayerSendInfo( ply )
 			
 		net.Send( ply )
 		
-		for i_ = 1, self:GetPlayerItemCount( plys[ i ] )
+		for i_ = 1, self:GetPlayerItemCount( plys[ i ] ) do
 			
 			net.Start( "BZ_BuyItem" )
 				
