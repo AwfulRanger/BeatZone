@@ -380,7 +380,7 @@ local function createmenu( tab, gm )
 					loadoutmodel:SetLookAt( ent:GetPos() )
 					
 				end
-				loadoutdesc:SetText( item.Description or "" )
+				loadoutdesc:SetText( item:GetDescription() )
 				
 				if gm:PlayerHasItem( ply, item ) == true then
 					
