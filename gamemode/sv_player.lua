@@ -134,12 +134,12 @@ function GM:PlayerSendInfo( ply )
 			
 		net.Send( ply )
 		
-		for i_ = 1, self:GetPlayerItemCount( plys[ i ] ) do
+		for i_ = 1, self:PlayerGetItemCount( plys[ i ] ) do
 			
 			net.Start( "BZ_BuyItem" )
 				
 				net.WriteEntity( plys[ i ] )
-				net.WriteUInt( self:GetPlayerItem( plys[ i ], i_ ).Index, 32 )
+				net.WriteUInt( self:PlayerGetItem( plys[ i ], i_ ).Index, 32 )
 				
 			net.Send( ply )
 			
