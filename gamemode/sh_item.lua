@@ -25,7 +25,7 @@ function GM:AddItem( name, data )
 	data.Cost = data.Cost or 1
 	data.OnBuy = data.OnBuy or function( self, ply ) ply:Give( self.Class, true ) end
 	data.OnSell = data.OnSell or function( self, ply ) ply:StripWeapon( self.Class ) end
-	data.GetDescription = data.GetDescription or function( self ) return self.Description or "" end
+	data.GetDescription = data.GetDescription or function( self, ply ) return self.Description or "" end
 	
 	self.PlayerItems[ name ] = data
 	
@@ -51,7 +51,7 @@ function GM:PlayerBuyItem( ply, item )
 	
 	ply.LoadoutPoints = ply.LoadoutPoints - item.Cost
 	local id = item.Index
-	if ply.Loadout[ id ] == nil then ply.Loadout[ id ] = table.insert( ply.LoadoutNames, id ) end
+	ply.Loadout[ id ] = ply.Loadout[ id ] or table.insert( ply.LoadoutNames, id )
 	
 	if SERVER then
 		

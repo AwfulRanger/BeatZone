@@ -2,6 +2,7 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 include( "sh_player.lua" )
 include( "player_class/player_bz.lua" )
+include( "player_class/player_tuner.lua" )
 
 
 
@@ -11,6 +12,12 @@ CreateConVar( "cl_playerskin", "0", { FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTR
 CreateConVar( "cl_playerbodygroups", "0", { FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD }, "The bodygroups to use, if the model has any" )
 
 
+
+net.Receive( "BZ_SetClass", function()
+	
+	gmod.GetGamemode():SetPlayerClass( net.ReadEntity(), net.ReadString() )
+	
+end )
 
 net.Receive( "BZ_ResetPlayer", function()
 	
@@ -27,8 +34,26 @@ end )
 
 net.Receive( "BZ_SellItem", function()
 	
-	gm = gmod.GetGamemode()
+	local gm = gmod.GetGamemode()
 	gm:PlayerSellItem( net.ReadEntity(), gm:GetItem( net.ReadUInt( 32 ) ) )
+	
+end )
+
+net.Receive( "BZ_BuyPerk", function()
+	
+	local gm = gmod.GetGamemode()
+	local ply = net.ReadEntity()
+	local perk = gm:GetPerk( net.ReadUInt( 32 ) )
+	for i = 1, net.ReadUInt( 32 ) do gm:PlayerBuyPerk( ply, perk ) end
+	
+end )
+
+net.Receive( "BZ_SellPerk", function()
+	
+	local gm = gmod.GetGamemode()
+	local ply = net.ReadEntity()
+	local perk = gm:GetPerk( net.ReadUInt( 32 ) )
+	for i = 1, net.ReadUInt( 32 ) do gm:PlayerSellPerk( ply, perk ) end
 	
 end )
 
@@ -67,5 +92,41 @@ concommand.Add( "bz_sellitem", function( ply, cmd, args, arg )
 	local gm = gmod.GetGamemode()
 	local item = gm:GetItem( arg )
 	if item ~= nil then gm:SellItem( item ) end
+	
+end )
+
+function GM:BuyPerk( perk )
+	
+	net.Start( "BZ_BuyPerk" )
+		
+		net.WriteUInt( perk.Index, 32 )
+		
+	net.SendToServer()
+	
+end
+
+concommand.Add( "bz_buyperk", function( ply, cmd, args, arg )
+	
+	local gm = gmod.GetGamemode()
+	local perk = gm:GetPerk( arg )
+	if perk ~= nil then gm:BuyPerk( perk ) end
+	
+end )
+
+function GM:SellPerk( perk )
+	
+	net.Start( "BZ_SellPerk" )
+		
+		net.WriteUInt( perk.Index, 32 )
+		
+	net.SendToServer()
+	
+end
+
+concommand.Add( "bz_sellperk", function( ply, cmd, args, arg )
+	
+	local gm = gmod.GetGamemode()
+	local perk = gm:GetPerk( arg )
+	if perk ~= nil then gm:SellPerk( perk ) end
 	
 end )

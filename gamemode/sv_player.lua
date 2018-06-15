@@ -1,18 +1,24 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
 AddCSLuaFile( "sh_item.lua" )
+AddCSLuaFile( "sh_perk.lua" )
 AddCSLuaFile( "sh_player.lua" )
 AddCSLuaFile( "cl_player.lua" )
 AddCSLuaFile( "player_class/player_bz.lua" )
+AddCSLuaFile( "player_class/player_tuner.lua" )
 
 include( "sh_player.lua" )
 include( "player_class/player_bz.lua" )
+include( "player_class/player_tuner.lua" )
 
 
 
+util.AddNetworkString( "BZ_SetClass" )
 util.AddNetworkString( "BZ_ResetPlayer" )
 util.AddNetworkString( "BZ_BuyItem" )
 util.AddNetworkString( "BZ_SellItem" )
+util.AddNetworkString( "BZ_BuyPerk" )
+util.AddNetworkString( "BZ_SellPerk" )
 
 net.Receive( "BZ_BuyItem", function( len, ply )
 	
@@ -31,6 +37,26 @@ net.Receive( "BZ_SellItem", function( len, ply )
 	if item == nil then return end
 	
 	if gm:PlayerCanSellItem( ply, item ) == true then gm:PlayerSellItem( ply, item ) end
+	
+end )
+
+net.Receive( "BZ_BuyPerk", function( len, ply )
+	
+	local gm = gmod.GetGamemode()
+	local perk = gm:GetPerk( net.ReadUInt( 32 ) )
+	if perk == nil then return end
+	
+	if gm:PlayerCanBuyPerk( ply, perk ) == true then gm:PlayerBuyPerk( ply, perk ) end
+	
+end )
+
+net.Receive( "BZ_SellPerk", function( len, ply )
+	
+	local gm = gmod.GetGamemode()
+	local perk = gm:GetPerk( net.ReadUInt( 32 ) )
+	if perk == nil then return end
+	
+	if gm:PlayerCanSellPerk( ply, perk ) == true then gm:PlayerSellPerk( ply, perk ) end
 	
 end )
 
@@ -128,18 +154,34 @@ function GM:PlayerSendInfo( ply )
 	local plys = player.GetAll()
 	for i = 1, #plys do
 		
+		local ply_ = plys[ i ]
+		
 		net.Start( "BZ_ResetPlayer" )
 			
-			net.WriteEntity( plys[ i ] )
+			net.WriteEntity( ply_ )
 			
 		net.Send( ply )
 		
-		for i_ = 1, self:PlayerGetItemCount( plys[ i ] ) do
+		for i_ = 1, self:PlayerGetItemCount( ply_ ) do
 			
 			net.Start( "BZ_BuyItem" )
 				
-				net.WriteEntity( plys[ i ] )
-				net.WriteUInt( self:PlayerGetItem( plys[ i ], i_ ).Index, 32 )
+				net.WriteEntity( ply_ )
+				net.WriteUInt( self:PlayerGetItem( ply_, i_ ).Index, 32 )
+				
+			net.Send( ply )
+			
+		end
+		
+		for i_ = 1, self:PlayerGetPerkCount( ply_ ) do
+			
+			net.Start( "BZ_BuyPerk" )
+				
+				local perk = self:PlayerGetPerk( ply_, i_ )
+				
+				net.WriteEntity( ply_ )
+				net.WriteUInt( perk.Index, 32 )
+				net.WriteUInt( self:PlayerGetPerkNum( ply_, perk ), 32 )
 				
 			net.Send( ply )
 			
@@ -177,9 +219,13 @@ end
 
 function GM:OnPlayerChangedTeam( ply, old, new )
 	
+	self:ResetPlayerCharacter( ply )
+	
 	PrintMessage( HUD_PRINTTALK, string.format( "%s joined '%s'", ply:Nick(), team.GetName( new ) ) )
 	
 	if new == TEAM_SPECTATOR then
+		
+		player_manager.ClearPlayerClass( ply )
 		
 		local pos = ply:EyePos()
 		ply:Spawn()
@@ -189,7 +235,7 @@ function GM:OnPlayerChangedTeam( ply, old, new )
 		
 	end
 	
-	self:ResetPlayerCharacter( ply )
+	self:SetPlayerClass( ply, "player_tuner" )
 	
 	local state = self:GetRoundState()
 	if state ~= ROUND_ONGOING and state ~= ROUND_ENDING then ply:Spawn() end
