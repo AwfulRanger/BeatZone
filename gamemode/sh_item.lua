@@ -3,6 +3,8 @@ GM.PlayerItemNames = GM.PlayerItemNames or {}
 
 function GM:AddItem( name, data )
 	
+	data = data or {}
+	
 	name = tostring( name )
 	
 	local index
