@@ -211,7 +211,7 @@ local function createmenu( tab, gm )
 	
 	local tabs = {}
 	
-	local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.01 )
+	local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.0075 )
 	
 	--help
 	do
