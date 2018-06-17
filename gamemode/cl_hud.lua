@@ -220,15 +220,30 @@ local function createmenu( tab, gm )
 			local size = math.min( w, h )
 			
 			surface.SetDrawColor( detailcolor )
-			surface.DrawRect( size * 0.5, 0, 1, h )
+			surface.DrawRect( ( size * 0.5 ) - 1, 0, 1, h )
 			
 		end
+		
+		local charsheet = vgui.Create( "DPropertySheet" )
+		charsheet:SetParent( charmenu )
+		charsheet:Dock( FILL )
+		function charsheet:Paint( w, h ) end
+		
+		local spacing = charsheet:GetPadding()
+		
+		local charbg = vgui.Create( "DPanel" )
+		charbg:SetParent( charmenu )
+		charbg:Dock( LEFT )
+		charbg:DockPadding( spacing, spacing, spacing, spacing )
+		function charbg:Paint( w, h ) end
 		
 		local modelcvar = GetConVar( "cl_playermodel" )
 		local skincvar = GetConVar( "cl_playerskin" )
 		
 		local playermodel = vgui.Create( "DModelPanel" )
-		playermodel:SetParent( charmenu )
+		playermodel:SetParent( charbg )
+		playermodel:Dock( FILL )
+		playermodel:DockMargin( 0, 0, 0, spacing )
 		playermodel:SetModel( player_manager.TranslatePlayerModel( modelcvar:GetString() ) )
 		playermodel.Entity.GetPlayerColor = function() return ply:GetPlayerColor() end
 		playermodel:SetFOV( 36 )
@@ -262,14 +277,30 @@ local function createmenu( tab, gm )
 		end
 		function playermodel:DoClick() RunConsoleCommand( "bz_editplayer" ) end
 		
-		local joinbeat = createbutton( charmenu, "Beat", function() RunConsoleCommand( "changeteam", TEAM_BEAT ) end )
-		local joinspec = createbutton( charmenu, "Spectate", function() RunConsoleCommand( "changeteam", TEAM_SPECTATOR ) end )
+		local charbuttonbg = vgui.Create( "DPanel" )
+		charbuttonbg:SetParent( charbg )
+		charbuttonbg:Dock( BOTTOM )
+		function charbuttonbg:Paint( w, h ) end
 		
-		local charsheet = vgui.Create( "DPropertySheet" )
-		charsheet:SetParent( charmenu )
-		function charsheet:Paint( w, h ) end
+		local joinbeat = createbutton( charbuttonbg, "Beat", function() RunConsoleCommand( "changeteam", TEAM_BEAT ) end )
+		joinbeat:Dock( LEFT )
+		local joinspec = createbutton( charbuttonbg, "Spectate", function() RunConsoleCommand( "changeteam", TEAM_SPECTATOR ) end )
+		joinspec:Dock( RIGHT )
 		
-		local spacing = charsheet:GetPadding()
+		function charbg:PerformLayout( w, h )
+			
+			charbuttonbg:SetTall( h * 0.1 )
+			
+		end
+		
+		function charbuttonbg:PerformLayout( w, h )
+			
+			local buttonw = math.Round( ( w - spacing ) * 0.5 )
+			joinbeat:SetWide( buttonw )
+			joinspec:SetWide( buttonw )
+			
+		end
+		
 		
 		
 		--class menu
@@ -582,19 +613,7 @@ local function createmenu( tab, gm )
 		
 		function charmenu:PerformLayout( w, h )
 			
-			local size = math.min( w, h )
-			
-			playermodel:SetPos( size * 0.05, size * 0.05 )
-			playermodel:SetSize( size * 0.4, h - ( size * 0.2 ) )
-			
-			joinbeat:SetPos( size * 0.05, h - ( size * 0.1 ) )
-			joinbeat:SetSize( size * 0.175, size * 0.05 )
-			
-			joinspec:SetPos( size * 0.275, h - ( size * 0.1 ) )
-			joinspec:SetSize( size * 0.175, size * 0.05 )
-			
-			charsheet:SetPos( ( size * 0.5 ) + 1, 1 )
-			charsheet:SetSize( w - ( size * 0.5 ) - 2, h - 2 )
+			charbg:SetWide( math.min( w, h ) * 0.5 )
 			
 		end
 		
