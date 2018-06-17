@@ -133,6 +133,7 @@ local function createbutton( parent, text, func )
 	if func ~= nil then button.DoClick = func end
 	button.Paint = paintbutton
 	button:SetFont( "BZ_MenuButton" )
+	button:SetDoubleClickingEnabled( false )
 	
 	return button
 	
