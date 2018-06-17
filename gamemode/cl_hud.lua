@@ -77,7 +77,8 @@ local function paintbutton( self, w, h )
 	local override = false
 	if self.GetButtonBGColor ~= nil then
 		
-		local bgcolor, override = self:GetButtonBGColor()
+		local bgcolor
+		bgcolor, override = self:GetButtonBGColor()
 		if bgcolor ~= nil then surface.SetDrawColor( bgcolor ) end
 		
 	end
@@ -307,35 +308,40 @@ local function createmenu( tab, gm )
 		end
 		
 		local curperk
+		local curperkbutton
 		
 		local perkbuttonbg = vgui.Create( "DPanel" )
 		perkbuttonbg:SetParent( perkmenu )
 		perkbuttonbg:Dock( BOTTOM )
 		function perkbuttonbg:Paint( w, h ) end
 		
+		local perkpoints = createlabel( perkmenu, ply.PerkPoints .. " perk points", "BZ_LabelLarge" )
+		perkpoints:Dock( BOTTOM )
+		
 		local perkbuy
 		local perksell
-		local function updateperkmenu( perkpoints )
+		local function updateperkmenu( points, count )
 			
-			perkpoints = perkpoints or ply.PerkPoints
+			points = points or ply.PerkPoints
+			count = count or gm:PlayerGetPerkNum( ply, curperk )
 			
-			local buytext = "Buy for " .. curperk.Cost .. " perk point"
-			if curperk.Cost ~= 1 then buytext = buytext .. "s" end
-			buytext = buytext .. " (" .. perkpoints .. " remaining)"
-			perkbuy:SetText( buytext )
+			local cost = "(" .. curperk.Cost .. " point" .. ( ( curperk.Cost ~= 1 and "s" ) or "" ) .. ")"
+			perkbuy:SetText( "Buy " .. cost )
+			perksell:SetText( "Sell " .. cost )
+			perkpoints:SetText( points .. " perk points" )
 			
-			local selltext = "Sell for " .. curperk.Cost .. " perk point"
-			if curperk.Cost ~= 1 then selltext = selltext .. "s" end
-			selltext = selltext .. " (" .. perkpoints .. " remaining)"
-			perksell:SetText( selltext )
+			local name = curperk.Name or ""
+			if count ~= 0 then name = name .. " (" .. count .. ")" end
+			curperkbutton:SetText( name )
 			
 		end
 		perkbuy = createbutton( perkbuttonbg, "", function( self )
 			
 			if curperk == nil or gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return end
 			
-			updateperkmenu( ply.PerkPoints - curperk.Cost )
-			perkdesc:SetText( curperk:GetDescription( ply, gm:PlayerGetPerkNum( ply, curperk ) + 1 ) )
+			local count = gm:PlayerGetPerkNum( ply, curperk ) + 1
+			updateperkmenu( ply.PerkPoints - curperk.Cost, count )
+			perkdesc:SetText( curperk:GetDescription( ply, count ) )
 			
 			gm:BuyPerk( curperk )
 			
@@ -344,7 +350,7 @@ local function createmenu( tab, gm )
 		function perkbuy:GetButtonBGColor()
 			
 			if curperk == nil then return end
-			if gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return buttoninactivecolor end
+			if gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return buttoninactivecolor, true end
 			
 		end
 		
@@ -352,8 +358,9 @@ local function createmenu( tab, gm )
 			
 			if curperk == nil or gm:PlayerCanSellPerk( ply, curperk ) ~= true then return end
 			
-			updateperkmenu( ply.PerkPoints + curperk.Cost )
-			perkdesc:SetText( curperk:GetDescription( ply, gm:PlayerGetPerkNum( ply, curperk ) - 1 ) )
+			local count = gm:PlayerGetPerkNum( ply, curperk ) - 1
+			updateperkmenu( ply.PerkPoints + curperk.Cost, count )
+			perkdesc:SetText( curperk:GetDescription( ply, count ) )
 			
 			gm:SellPerk( curperk )
 			
@@ -362,7 +369,7 @@ local function createmenu( tab, gm )
 		function perksell:GetButtonBGColor()
 			
 			if curperk == nil then return end
-			if gm:PlayerCanSellPerk( ply, curperk ) ~= true then return buttoninactivecolor end
+			if gm:PlayerCanSellPerk( ply, curperk ) ~= true then return buttoninactivecolor, true end
 			
 		end
 		
@@ -380,9 +387,13 @@ local function createmenu( tab, gm )
 			
 			local perk = gm:GetClassPerk( ply, i )
 			
-			local perkbutton = createbutton( perkscroll, perk.Name, function()
+			local name = perk.Name or ""
+			if gm:PlayerHasPerk( ply, perk ) == true then name = name .. " (" .. gm:PlayerGetPerkNum( ply, perk ) .. ")" end
+			
+			local perkbutton = createbutton( perkscroll, name, function( self )
 				
 				curperk = perk
+				curperkbutton = self
 				
 				perkname:SetText( perk.Name or "" )
 				perkdesc:SetText( perk:GetDescription( ply ) )
@@ -410,6 +421,7 @@ local function createmenu( tab, gm )
 			perkname:SetTall( h * 0.05 )
 			perkdesc:SetTall( h * 0.8 )
 			perkbuttonbg:SetTall( h * 0.1 )
+			perkpoints:SetTall( h * 0.05 )
 			
 		end
 		
@@ -451,6 +463,9 @@ local function createmenu( tab, gm )
 		local loadouttoggle = createbutton( loadoutmenu )
 		loadouttoggle:Dock( BOTTOM )
 		
+		local loadoutpoints = createlabel( loadoutmenu, ply.LoadoutPoints .. " loadout points", "BZ_LabelLarge" )
+		loadoutpoints:Dock( BOTTOM )
+		
 		local curitem
 		
 		local loadoutsell
@@ -458,17 +473,15 @@ local function createmenu( tab, gm )
 			
 			if curitem == nil or gm:PlayerCanBuyItem( ply, curitem ) ~= true then return end
 			
-			local text = "Sell for " .. curitem.Cost .. " loadout point"
-			if curitem.Cost ~= 1 then text = text .. "s" end
-			text = text .. " (" .. ( ply.LoadoutPoints - curitem.Cost ) .. " remaining)"
-			button:SetText( text )
+			button:SetText( "Sell (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
+			loadoutpoints:SetText( ( ply.LoadoutPoints - curitem.Cost ) .. " loadout points" )
 			
 			gm:BuyItem( curitem )
 			
 			button.DoClick = loadoutsell
 			function button:GetButtonBGColor()
 				
-				if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor end
+				if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
 				
 			end
 			
@@ -477,17 +490,15 @@ local function createmenu( tab, gm )
 			
 			if curitem == nil or gm:PlayerCanSellItem( ply, curitem ) ~= true then return end
 			
-			local text = "Buy for " .. curitem.Cost .. " loadout point"
-			if curitem.Cost ~= 1 then text = text .. "s" end
-			text = text .. " (" .. ( ply.LoadoutPoints + curitem.Cost ) .. " remaining)"
-			button:SetText( text )
+			button:SetText( "Buy (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
+			loadoutpoints:SetText( ( ply.LoadoutPoints + curitem.Cost ) .. " loadout points" )
 			
 			gm:SellItem( curitem )
 			
 			button.DoClick = loadoutbuy
 			function button:GetButtonBGColor()
 				
-				if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor end
+				if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
 				
 			end
 			
@@ -514,27 +525,21 @@ local function createmenu( tab, gm )
 				
 				if gm:PlayerHasItem( ply, item ) == true then
 					
-					local text = "Sell for " .. item.Cost .. " loadout point"
-					if item.Cost ~= 1 then text = text .. "s" end
-					text = text .. " (" .. ply.LoadoutPoints .. " remaining)"
-					loadouttoggle:SetText( text )
+					loadouttoggle:SetText( "Sell (" .. item.Cost .. " point" .. ( ( item.Cost ~= 1 and "s" ) or "" ) .. ")" )
 					loadouttoggle.DoClick = loadoutsell
 					function loadouttoggle:GetButtonBGColor()
 						
-						if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor end
+						if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
 						
 					end
 					
 				else
 					
-					local text = "Buy for " .. item.Cost .. " loadout point"
-					if item.Cost ~= 1 then text = text .. "s" end
-					text = text .. " (" .. ply.LoadoutPoints .. " remaining)"
-					loadouttoggle:SetText( text )
+					loadouttoggle:SetText( "Buy (" .. item.Cost .. " point" .. ( ( item.Cost ~= 1 and "s" ) or "" ) .. ")" )
 					loadouttoggle.DoClick = loadoutbuy
 					function loadouttoggle:GetButtonBGColor()
 						
-						if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor end
+						if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
 						
 					end
 					
@@ -562,6 +567,7 @@ local function createmenu( tab, gm )
 			loadoutmodel:SetTall( h * 0.5 )
 			loadoutdesc:SetTall( h * 0.3 )
 			loadouttoggle:SetTall( h * 0.1 )
+			loadoutpoints:SetTall( h * 0.05 )
 			
 		end
 		
