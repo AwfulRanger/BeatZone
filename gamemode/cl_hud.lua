@@ -189,7 +189,7 @@ local function createmenu( tab, gm )
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
 	
-	local framepad = math.min( ScrW(), ScrH() ) * 0.1
+	local framepad = math.Round( math.min( ScrW(), ScrH() ) * 0.1 )
 	
 	frame = vgui.Create( "DFrame" )
 	frame:SetSize( ScrW() - framepad, ScrH() - framepad )
@@ -211,6 +211,7 @@ local function createmenu( tab, gm )
 	
 	local tabs = {}
 	
+	local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.01 )
 	
 	--help
 	do
@@ -241,9 +242,8 @@ local function createmenu( tab, gm )
 		local charsheet = vgui.Create( "DPropertySheet" )
 		charsheet:SetParent( charmenu )
 		charsheet:Dock( FILL )
+		charsheet:SetPadding( spacing )
 		function charsheet:Paint( w, h ) end
-		
-		local spacing = charsheet:GetPadding()
 		
 		local charbg = vgui.Create( "DPanel" )
 		charbg:SetParent( charmenu )
