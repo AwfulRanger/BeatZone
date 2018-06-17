@@ -196,7 +196,10 @@ function GM:PlayerInitialSpawn( ply )
 	self:ResetPlayerCharacter( ply )
 	self:PlayerSendInfo( ply )
 	
-	BaseClass.PlayerInitialSpawn( self, ply )
+	ply:SetTeam( TEAM_SPECTATOR )
+	self:OnPlayerChangedTeam( ply, TEAM_UNASSIGNED, TEAM_SPECTATOR )
+	
+	self:ShowTeam( ply )
 	
 end
 
