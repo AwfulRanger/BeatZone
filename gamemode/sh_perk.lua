@@ -47,7 +47,7 @@ function GM:AddPerk( name, data )
 				local total = self:GetPerkTotal( ply, perk, count )
 				local nexttotal = self:GetPerkTotal( ply, perk, ( count or ( self:PlayerGetPerkNum( ply, perk ) ) ) + 1 )
 				
-				return string.format( ( perk.Description or "" ) .."\nNext level: %s (+%s)", "+" .. total, "+" .. nexttotal, nexttotal - total )
+				return string.format( ( perk.Description or "" ) .."\nNext level: %s (+%s)", "+" .. total, "+" .. nexttotal, math.Round( nexttotal - total, 5 ) )
 				
 			end
 			
@@ -56,9 +56,9 @@ function GM:AddPerk( name, data )
 			data.GetDescription = function( perk, ply, count )
 				
 				local total = self:GetPerkTotal( ply, perk, count ) * 100
-				local nexttotal = ( self:GetPerkTotal( ply, perk, ( count or ( self:PlayerGetPerkNum( ply, perk ) ) ) + 1 ) * 100 )
+				local nexttotal = ( self:GetPerkTotal( ply, perk, ( count or ( self:PlayerGetPerkNum( ply, perk ) ) ) + 1 ) ) * 100
 				
-				return string.format( ( perk.Description or "" ) .."\nNext level: %s (+%s)", "+" .. total .. "%", "+" .. nexttotal .. "%", nexttotal - total )
+				return string.format( ( perk.Description or "" ) .."\nNext level: %s (+%s)", "+" .. total .. "%", "+" .. nexttotal .. "%", math.Round( nexttotal - total, 5 ) )
 				
 			end
 			
@@ -69,7 +69,7 @@ function GM:AddPerk( name, data )
 				local total = self:GetPerkTotal( ply, perk, count )
 				local nexttotal = self:GetPerkTotal( ply, perk, ( count or ( self:PlayerGetPerkNum( ply, perk ) ) ) + 1 )
 				
-				return string.format( ( perk.Description or "" ) .."\nNext level: %s (+%s)", total, nexttotal, nexttotal - total )
+				return string.format( ( perk.Description or "" ) .."\nNext level: %s (+%s)", total, nexttotal, math.Round( nexttotal - total, 5 ) )
 				
 			end
 			
@@ -219,7 +219,7 @@ function GM:PlayerCanBuyPerk( ply, perk )
 	
 	if ply.PerkPoints == nil then return false end
 	
-	return ply:Team() == TEAM_BEAT and ply:Alive() == true and ply.PerkPoints >= perk.Cost and self:GetClassHasPerk( ply, perk ) == true
+	return ply:Team() == TEAM_BEAT and ply:Alive() == true and ply.PerkPoints >= perk.Cost and self:GetClassHasPerk( ply, perk ) == true and self:GetPerkAdd( ply, perk ) > 0
 	
 end
 
@@ -243,7 +243,7 @@ function GM:GetPerkTotal( ply, perk, count )
 	
 	local count = count or self:PlayerGetPerkNum( ply, perk )
 	local total = 0
-	for i = 1, count do total = total + self:GetPerkAdd( ply, perk, i ) end
+	for i = 0, count - 1 do total = total + self:GetPerkAdd( ply, perk, i ) end
 	
 	return math.Round( total, 5 )
 	
@@ -260,6 +260,7 @@ GM:AddPerk( "perk_damage_all", {
 	Name = "Damage Bonus",
 	Description = "%s damage bonus",
 	Type = "addmult",
+	BaseAdd = 0.05,
 	
 } )
 GM:AddPerk( "perk_damage_bullet", {
@@ -267,6 +268,7 @@ GM:AddPerk( "perk_damage_bullet", {
 	Name = "Bullet Damage Bonus",
 	Description = "%s bullet damage bonus",
 	Type = "addmult",
+	BaseAdd = 0.05,
 	
 } )
 GM:AddPerk( "perk_damage_blast", {
@@ -274,6 +276,7 @@ GM:AddPerk( "perk_damage_blast", {
 	Name = "Blast Damage Bonus",
 	Description = "%s blast damage bonus",
 	Type = "addmult",
+	BaseAdd = 0.05,
 	
 } )
 GM:AddPerk( "perk_damage_fire", {
@@ -281,6 +284,7 @@ GM:AddPerk( "perk_damage_fire", {
 	Name = "Fire Damage Bonus",
 	Description = "%s fire damage bonus",
 	Type = "addmult",
+	BaseAdd = 0.05,
 	
 } )
 GM:AddPerk( "perk_damage_melee", {
@@ -288,6 +292,7 @@ GM:AddPerk( "perk_damage_melee", {
 	Name = "Melee Damage Bonus",
 	Description = "%s melee damage bonus",
 	Type = "addmult",
+	BaseAdd = 0.05,
 	
 } )
 
@@ -296,6 +301,7 @@ GM:AddPerk( "perk_damage_critical", {
 	Name = "Critical Damage Bonus",
 	Description = "%s critical damage bonus",
 	Type = "addmult",
+	BaseAdd = 0.05,
 	
 } )
 
