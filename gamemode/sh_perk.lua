@@ -58,7 +58,7 @@ function GM:AddPerk( name, data )
 				local total = self:GetPerkTotal( ply, perk, count ) * 100
 				local nexttotal = ( self:GetPerkTotal( ply, perk, ( count or ( self:PlayerGetPerkNum( ply, perk ) ) ) + 1 ) ) * 100
 				
-				return string.format( ( perk.Description or "" ) .."\nNext level: %s (+%s)", "+" .. total .. "%", "+" .. nexttotal .. "%", math.Round( nexttotal - total, 5 ) )
+				return string.format( ( perk.Description or "" ) .."\nNext level: %s (+%s)", "+" .. total .. "%", "+" .. nexttotal .. "%", math.Round( nexttotal - total, 5 ) .. "%" )
 				
 			end
 			
