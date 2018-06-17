@@ -4,46 +4,58 @@ include( "cl_editplayer.lua" )
 
 
 
-local fontsize = math.min( ScrW(), ScrH() )
-surface.CreateFont( "BZ_MenuButton", {
+local function createfonts()
 	
-	font = "Roboto",
-	size = math.Round( fontsize * 0.025 ),
-	weight = 300,
+	local fontsize = math.min( ScrW(), ScrH() )
+	surface.CreateFont( "BZ_MenuButton", {
+		
+		font = "Roboto",
+		size = math.Round( fontsize * 0.025 ),
+		weight = 300,
+		
+	} )
 	
-} )
-
-surface.CreateFont( "BZ_HUD", {
+	surface.CreateFont( "BZ_MenuButtonSmall", {
+		
+		font = "Roboto",
+		size = math.Round( fontsize * 0.02 ),
+		weight = 300,
+		
+	} )
 	
-	font = "Roboto",
-	size = math.Round( fontsize * 0.05 ),
-	weight = 300,
+	surface.CreateFont( "BZ_HUD", {
+		
+		font = "Roboto",
+		size = math.Round( fontsize * 0.05 ),
+		weight = 300,
+		
+	} )
 	
-} )
-
-surface.CreateFont( "BZ_HUDSmall", {
+	surface.CreateFont( "BZ_HUDSmall", {
+		
+		font = "Roboto",
+		size = math.Round( fontsize * 0.035 ),
+		weight = 300,
+		
+	} )
 	
-	font = "Roboto",
-	size = math.Round( fontsize * 0.035 ),
-	weight = 300,
+	surface.CreateFont( "BZ_Label", {
+		
+		font = "Roboto",
+		size = math.Round( fontsize * 0.02 ),
+		weight = 200,
+		
+	} )
 	
-} )
-
-surface.CreateFont( "BZ_Label", {
+	surface.CreateFont( "BZ_LabelLarge", {
+		
+		font = "Roboto",
+		size = math.Round( fontsize * 0.03 ),
+		weight = 300,
+		
+	} )
 	
-	font = "Roboto",
-	size = math.Round( fontsize * 0.02 ),
-	weight = 200,
-	
-} )
-
-surface.CreateFont( "BZ_LabelLarge", {
-	
-	font = "Roboto",
-	size = math.Round( fontsize * 0.03 ),
-	weight = 300,
-	
-} )
+end
 
 local bgcolor = Color( 47, 4, 70, 250 )
 local detailcolor = Color( 53, 19, 161, 255 )
@@ -177,8 +189,10 @@ local function createmenu( tab, gm )
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
 	
+	local framepad = math.min( ScrW(), ScrH() ) * 0.1
+	
 	frame = vgui.Create( "DFrame" )
-	frame:SetSize( ScrW() * 0.8, ScrH() * 0.8 )
+	frame:SetSize( ScrW() - framepad, ScrH() - framepad )
 	frame:Center()
 	frame:SetTitle( "BeatZone" )
 	frame:SetSizable( true )
@@ -435,6 +449,7 @@ local function createmenu( tab, gm )
 			perkbutton:Dock( TOP )
 			perkbutton:DockMargin( 0, 0, 0, spacing )
 			perkbutton:SetTall( perkbuttontall )
+			perkbutton:SetFont( "BZ_MenuButtonSmall" )
 			function perkbutton:GetButtonBGColor()
 				
 				if gm:PlayerHasPerk( ply, perk ) == true then return buttonspecialcolor end
@@ -580,6 +595,7 @@ local function createmenu( tab, gm )
 			itembutton:Dock( TOP )
 			itembutton:DockMargin( 0, 0, 0, spacing )
 			itembutton:SetTall( itembuttontall )
+			itembutton:SetFont( "BZ_MenuButtonSmall" )
 			function itembutton:GetButtonBGColor()
 				
 				if gm:PlayerHasItem( ply, item ) == true then return buttonspecialcolor end
@@ -705,13 +721,25 @@ local statestr = {
 }
 function GM:HUDPaint()
 	
+	local scrw = ScrW()
+	local scrh = ScrH()
+	
+	if self.LastScrW ~= scrw or self.LastScrH ~= scrh then
+		
+		self.LastScrW = scrw
+		self.LastScrH = scrh
+		
+		createfonts()
+		
+	end
+	
 	local ply = LocalPlayer()
 	local state = self:GetRoundState()
 	
 	surface.SetFont( "BZ_HUDSmall" )
 	local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
 	local sw, sh = surface.GetTextSize( statetext )
-	shadowtext( statetext, ( ScrW() - sw ) * 0.5, ( ScrH() * 0.05 ) - sh )
+	shadowtext( statetext, ( scrw - sw ) * 0.5, ( scrh * 0.05 ) - sh )
 	
 	if ply:Team() == TEAM_BEAT and state == ROUND_INTERMISSION then
 		
@@ -743,13 +771,13 @@ function GM:HUDPaint()
 				local timetext = "Starting in " .. timestr .. " seconds"
 				local tw, th = surface.GetTextSize( timetext )
 				
-				shadowtext( timetext, ( ScrW() - tw ) * 0.5, ScrH() * 0.2 )
+				shadowtext( timetext, ( scrw - tw ) * 0.5, scrh * 0.2 )
 				
 			end
 			
 		end
 		
-		shadowtext( readytext, ( ScrW() - rw ) * 0.5, ( ScrH() * 0.2 ) - rh )
+		shadowtext( readytext, ( scrw - rw ) * 0.5, ( scrh * 0.2 ) - rh )
 		
 	end
 	
