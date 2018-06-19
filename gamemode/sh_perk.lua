@@ -1,3 +1,7 @@
+DEFINE_BASECLASS( "gamemode_base" )
+
+
+
 GM.PlayerPerks = GM.PlayerPerks or {}
 GM.PlayerPerkNames = GM.PlayerPerkNames or {}
 
@@ -420,6 +424,13 @@ GM:AddPerk( "perk_healthregenspecial_enemykilled", {
 } )
 
 --weapons
+GM:AddPerk( "perk_clipsize", {
+	
+	Name = "Clip Size",
+	Description = "%s clip size",
+	Type = "addmult",
+	
+} )
 GM:AddPerk( "perk_maxammo", {
 	
 	Name = "Max Ammo",

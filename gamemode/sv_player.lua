@@ -2,14 +2,11 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 AddCSLuaFile( "sh_item.lua" )
 AddCSLuaFile( "sh_perk.lua" )
+AddCSLuaFile( "sh_class.lua" )
 AddCSLuaFile( "sh_player.lua" )
 AddCSLuaFile( "cl_player.lua" )
-AddCSLuaFile( "player_class/player_bz.lua" )
-AddCSLuaFile( "player_class/player_tuner.lua" )
 
 include( "sh_player.lua" )
-include( "player_class/player_bz.lua" )
-include( "player_class/player_tuner.lua" )
 
 
 
@@ -19,6 +16,16 @@ util.AddNetworkString( "BZ_BuyItem" )
 util.AddNetworkString( "BZ_SellItem" )
 util.AddNetworkString( "BZ_BuyPerk" )
 util.AddNetworkString( "BZ_SellPerk" )
+
+net.Receive( "BZ_SetClass", function( len, ply )
+	
+	local gm = gmod.GetGamemode()
+	local class = gm:GetClass( net.ReadUInt( 32 ) )
+	if class == nil or player_manager.GetPlayerClass( ply ) == class then return end
+	
+	gm:SetPlayerClass( ply, class )
+	
+end )
 
 net.Receive( "BZ_BuyItem", function( len, ply )
 	

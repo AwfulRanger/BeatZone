@@ -1,8 +1,6 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
 include( "sh_player.lua" )
-include( "player_class/player_bz.lua" )
-include( "player_class/player_tuner.lua" )
 
 
 
@@ -15,7 +13,7 @@ CreateConVar( "cl_playerbodygroups", "0", { FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR
 
 net.Receive( "BZ_SetClass", function()
 	
-	gmod.GetGamemode():SetPlayerClass( net.ReadEntity(), net.ReadString() )
+	gmod.GetGamemode():SetPlayerClass( net.ReadEntity(), net.ReadUInt( 32 ) )
 	
 end )
 

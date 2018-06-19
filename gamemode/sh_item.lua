@@ -1,3 +1,7 @@
+DEFINE_BASECLASS( "gamemode_base" )
+
+
+
 GM.PlayerItems = GM.PlayerItems or {}
 GM.PlayerItemNames = GM.PlayerItemNames or {}
 

@@ -321,6 +321,86 @@ local function createmenu( tab, gm )
 		local classmenu = vgui.Create( "DPanel" )
 		function classmenu:Paint( w, h ) end
 		
+		local classscroll = vgui.Create( "DScrollPanel" )
+		classscroll:SetParent( classmenu )
+		classscroll:Dock( LEFT )
+		classscroll:DockMargin( 0, 0, spacing, 0 )
+		
+		local classname = createlabel( classmenu, "", "BZ_LabelLarge" )
+		classname:Dock( TOP )
+		
+		local classdesc = vgui.Create( "RichText" )
+		classdesc:SetParent( classmenu )
+		classdesc:Dock( TOP )
+		function classdesc:PerformLayout( w, h )
+			
+			self:SetFontInternal( "BZ_Label" )
+			self:SetFGColor( textcolor )
+			
+		end
+		
+		local classselect = createbutton( classmenu, "Select class" )
+		classselect:Dock( BOTTOM )
+		
+		local curclass
+		
+		local classbuttontall = math.Round( ScrH() * 0.05 )
+		for i = 1, gm:GetClassCount() do
+			
+			local classid = gm:GetClass( i )
+			local class = baseclass.Get( classid )
+			
+			local classbutton = createbutton( classscroll, class.DisplayName, function()
+				
+				curclass = class
+				
+				classname:SetText( class.DisplayName or "" )
+				class:InitializePerks()
+				classdesc:SetText( class:GetDescription( ply ) )
+				
+				function classselect:DoClick()
+					
+					if player_manager.GetPlayerClass( ply ) ~= classid then
+						
+						net.Start( "BZ_SetClass" )
+							
+							net.WriteUInt( i, 32 )
+							
+						net.SendToServer()
+						
+					end
+					
+				end
+				function classselect:GetButtonBGColor()
+					
+					if player_manager.GetPlayerClass( ply ) == classid then return buttoninactivecolor, true end
+					
+				end
+				
+			end )
+			classbutton:Dock( TOP )
+			classbutton:DockMargin( 0, 0, 0, spacing )
+			classbutton:SetTall( classbuttontall )
+			classbutton:SetFont( "BZ_MenuButtonSmall" )
+			function classbutton:GetButtonBGColor()
+				
+				if player_manager.GetPlayerClass( ply ) == classid then return buttonspecialcolor end
+				
+			end
+			
+			if i == 1 or player_manager.GetPlayerClass( ply ) == classid then classbutton:DoClick() end
+			
+		end
+		
+		function classmenu:PerformLayout( w, h )
+			
+			classscroll:SetWide( w * 0.3 )
+			classname:SetTall( h * 0.05 )
+			classdesc:SetTall( h * 0.3 )
+			classselect:SetTall( h * 0.1 )
+			
+		end
+		
 		charsheet:AddSheet( "Class", classmenu ).Tab.Paint = function( self, w, h )
 			
 			surface.SetDrawColor( buttoncolor )
