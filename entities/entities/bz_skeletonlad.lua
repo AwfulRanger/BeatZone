@@ -114,15 +114,6 @@ if SERVER then
 		
 	end
 	
-	function ENT:HandleStuck()
-		
-		if self:SwingTrace() == true then return end
-		
-		local pos = gmod.GetGamemode():EnemySpawnPos()
-		if pos ~= nil then self:SetPos( pos ) end
-		
-	end
-	
 end
 
 if CLIENT then
