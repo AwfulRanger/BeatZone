@@ -243,13 +243,19 @@ if SERVER then
 		
 	end
 	
-	function ENT:HandleStuck()
+	function ENT:Think()
 		
-		if CurTime() > self.LastStuck + 5 then self.LastMove = CurTime() end
-		self.LastStuck = CurTime()
+		BaseClass.Think( self )
+		
 		if self.loco:GetVelocity():LengthSqr() ~= 0 then self.LastMove = CurTime() end
 		
-		if CurTime() > self.LastMove + 3 and self.loco:IsAttemptingToMove() == true then
+	end
+	
+	function ENT:HandleStuck()
+		
+		if self.loco:GetVelocity():LengthSqr() ~= 0 then self.LastMove = CurTime() end
+		
+		if ( self.LastMove == nil or CurTime() > self.LastMove + 3 ) and self.loco:IsAttemptingToMove() == true then
 			
 			local pos = gmod.GetGamemode():EnemySpawnPos()
 			if pos ~= nil then self:SetPos( pos ) end
