@@ -243,6 +243,13 @@ if SERVER then
 		
 	end
 	
+	function ENT:HandleStuck()
+		
+		local pos = gmod.GetGamemode():EnemySpawnPos()
+		if pos ~= nil then self:SetPos( pos ) end
+		
+	end
+	
 end
 
 if CLIENT then
