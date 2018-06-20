@@ -314,35 +314,35 @@ GM:AddPerk( "perk_resist_all", {
 	
 	Name = "Damage Resistance",
 	Description = "%s damage resistance",
-	Type = "add",
+	Type = "addmult",
 	
 } )
 GM:AddPerk( "perk_resist_bullet", {
 	
 	Name = "Bullet Resistance",
 	Description = "%s bullet damage resistance",
-	Type = "add",
+	Type = "addmult",
 	
 } )
 GM:AddPerk( "perk_resist_blast", {
 	
 	Name = "Blast Resistance",
 	Description = "%s blast damage resistance",
-	Type = "add",
+	Type = "addmult",
 	
 } )
 GM:AddPerk( "perk_resist_fire", {
 	
 	Name = "Fire Resistance",
 	Description = "%s fire damage resistance",
-	Type = "add",
+	Type = "addmult",
 	
 } )
 GM:AddPerk( "perk_resist_melee", {
 	
 	Name = "Melee Resistance",
 	Description = "%s melee damage resistance",
-	Type = "add",
+	Type = "addmult",
 	
 } )
 

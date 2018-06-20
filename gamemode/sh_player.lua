@@ -33,3 +33,6 @@ function GM:ResetPlayerCharacter( ply )
 	end
 	
 end
+
+function GM:ScalePlayerDamage( ply, hitgroup, dmg )
+end

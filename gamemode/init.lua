@@ -40,6 +40,13 @@ function GM:Initialize()
 	
 end
 
+function GM:Think()
+	
+	self:HandleRound()
+	self:HandleTrack()
+	
+end
+
 function GM:OnEntityCreated( ent )
 	
 	hook.Run( "ShouldAddEnemySpawn", ent )
@@ -54,11 +61,57 @@ function GM:EntityKeyValue( ent, key, value )
 	
 end
 
-
-
-function GM:Think()
+local resperks = {
 	
-	self:HandleRound()
-	self:HandleTrack()
+	[ DMG_BULLET ] = "perk_resist_bullet",
+	[ DMG_BLAST ] = "perk_resist_blast",
+	[ DMG_BURN ] = "perk_resist_fire",
+	[ DMG_CLUB ] = "perk_resist_melee",
+	
+}
+local function dores( gm, dmg, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return end
+	dmg:ScaleDamage( 1 - gm:GetPerkTotal( ply, perk ) )
+	
+end
+local dmgperks = {
+	
+	[ DMG_BULLET ] = "perk_damage_bullet",
+	[ DMG_BLAST ] = "perk_damage_blast",
+	[ DMG_BURN ] = "perk_damage_fire",
+	[ DMG_CLUB ] = "perk_damage_melee",
+	
+}
+local function dodmg( gm, dmg, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return end
+	dmg:ScaleDamage( 1 + gm:GetPerkTotal( ply, perk ) )
+	
+end
+function GM:EntityTakeDamage( ent, dmg )
+	
+	if ent:IsPlayer() == true then
+		
+		dores( self, dmg, ent, "perk_resist_all" )
+		local resperk = resperks[ dmg:GetDamageType() ]
+		if resperk ~= nil then dores( self, dmg, ent, resperk ) end
+		
+		if ent:Crouching() == true then dores( self, dmg, ent, "perk_resistspecial_crouch" ) end
+		if ent:GetVelocity():LengthSqr() == 0 then dores( self, dmg, ent, "perk_resistspecial_immobile" ) end
+		
+	end
+	
+	local attacker = dmg:GetAttacker()
+	if IsValid( attacker ) == true and attacker:IsPlayer() ~= true then attacker = attacker:GetOwner() end
+	if attacker:IsPlayer() == true then
+		
+		dodmg( self, dmg, attacker, "perk_damage_all" )
+		local dmgperk = dmgperks[ dmg:GetDamageType() ]
+		if dmgperk ~= nil then dodmg( self, dmg, attacker, dmgperk ) end
+		
+	end
 	
 end
