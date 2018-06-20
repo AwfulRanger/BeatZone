@@ -8,6 +8,14 @@ include( "cl_track.lua" )
 
 
 
+net.Receive( "BZ_UISound", function()
+	
+	surface.PlaySound( net.ReadString() )
+	
+end )
+
+
+
 function GM:InitPostEntity()
 	
 	self:ResetPlayerCharacter( LocalPlayer() )

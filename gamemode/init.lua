@@ -12,6 +12,10 @@ include( "sv_track.lua" )
 
 
 
+util.AddNetworkString( "BZ_UISound" )
+
+
+
 ----
 --Keys for showing menus (F1-F4)
 ----
