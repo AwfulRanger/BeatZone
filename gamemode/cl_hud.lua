@@ -339,10 +339,30 @@ local function createmenu( tab, gm )
 			
 		end
 		
-		local classselect = createbutton( classmenu, "Select class" )
-		classselect:Dock( BOTTOM )
+		local classtoggle = createbutton( classmenu, "Select class" )
+		classtoggle:Dock( BOTTOM )
 		
 		local curclass
+		
+		local function classrespec( button )
+			
+			net.Start( "BZ_ResetPlayer" )
+			net.SendToServer()
+			
+		end
+		local function classselect( button )
+			
+			button:SetText( "Respec class" )
+			
+			net.Start( "BZ_SetClass" )
+				
+				net.WriteUInt( curclass, 32 )
+				
+			net.SendToServer()
+			
+			button.DoClick = classrespec
+			
+		end
 		
 		local classbuttontall = math.Round( ScrH() * 0.05 )
 		for i = 1, gm:GetClassCount() do
@@ -352,28 +372,21 @@ local function createmenu( tab, gm )
 			
 			local classbutton = createbutton( classscroll, class.DisplayName, function()
 				
-				curclass = class
+				curclass = i
 				
 				classname:SetText( class.DisplayName or "" )
 				class:InitializePerks()
 				classdesc:SetText( class:GetDescription( ply ) )
 				
-				function classselect:DoClick()
+				if player_manager.GetPlayerClass( ply ) == classid then
 					
-					if player_manager.GetPlayerClass( ply ) ~= classid then
-						
-						net.Start( "BZ_SetClass" )
-							
-							net.WriteUInt( i, 32 )
-							
-						net.SendToServer()
-						
-					end
+					classtoggle:SetText( "Respec class" )
+					classtoggle.DoClick = classrespec
 					
-				end
-				function classselect:GetButtonBGColor()
+				else
 					
-					if player_manager.GetPlayerClass( ply ) == classid then return buttoninactivecolor, true end
+					classtoggle:SetText( "Select class" )
+					classtoggle.DoClick = classselect
 					
 				end
 				
@@ -397,7 +410,7 @@ local function createmenu( tab, gm )
 			classscroll:SetWide( w * 0.3 )
 			classname:SetTall( h * 0.05 )
 			classdesc:SetTall( h * 0.3 )
-			classselect:SetTall( h * 0.1 )
+			classtoggle:SetTall( h * 0.1 )
 			
 		end
 		

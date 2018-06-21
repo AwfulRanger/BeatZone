@@ -222,14 +222,26 @@ end
 function GM:PlayerCanBuyPerk( ply, perk )
 	
 	if ply.PerkPoints == nil then return false end
+	if ply:Team() ~= TEAM_BEAT then return false end
+	if ply:Alive() ~= true then return false end
+	if self:GetRoundState() == ROUND_ONGOING then return false end
+	if ply.PerkPoints < perk.Cost then return false end
+	if self:GetClassHasPerk( ply, perk ) ~= true then return false end
+	if self:GetPerkAdd( ply, perk ) <= 0 then return false end
 	
-	return ply:Team() == TEAM_BEAT and ply:Alive() == true and ply.PerkPoints >= perk.Cost and self:GetClassHasPerk( ply, perk ) == true and self:GetPerkAdd( ply, perk ) > 0
+	return true
 	
 end
 
 function GM:PlayerCanSellPerk( ply, perk )
 	
-	return ply:Team() == TEAM_BEAT and ply:Alive() == true and self:PlayerHasPerk( ply, perk ) and self:GetClassHasPerk( ply, perk ) == true
+	if ply:Team() ~= TEAM_BEAT then return false end
+	if ply:Alive() ~= true then return false end
+	if self:GetRoundState() == ROUND_ONGOING then return false end
+	if self:PlayerHasPerk( ply, perk ) ~= true then return false end
+	if self:GetClassHasPerk( ply, perk ) ~= true then return false end
+	
+	return true
 	
 end
 

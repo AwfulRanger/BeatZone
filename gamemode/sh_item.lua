@@ -128,14 +128,24 @@ end
 function GM:PlayerCanBuyItem( ply, item )
 	
 	if ply.LoadoutPoints == nil then return false end
+	if ply:Team() ~= TEAM_BEAT then return false end
+	if ply:Alive() ~= true then return false end
+	if self:GetRoundState() == ROUND_ONGOING then return false end
+	if ply.LoadoutPoints < item.Cost then return false end
+	if self:PlayerHasItem( ply, item ) == true then return false end
 	
-	return ply:Team() == TEAM_BEAT and ply:Alive() == true and ply.LoadoutPoints >= item.Cost and self:PlayerHasItem( ply, item ) ~= true
+	return true
 	
 end
 
 function GM:PlayerCanSellItem( ply, item )
 	
-	return ply:Team() == TEAM_BEAT and ply:Alive() == true and self:PlayerHasItem( ply, item )
+	if ply:Team() ~= TEAM_BEAT then return false end
+	if ply:Alive() ~= true then return false end
+	if self:GetRoundState() == ROUND_ONGOING then return false end
+	if self:PlayerHasItem( ply, item ) ~= true then return false end
+	
+	return true
 	
 end
 

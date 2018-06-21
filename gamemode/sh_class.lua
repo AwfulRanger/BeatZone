@@ -39,6 +39,16 @@ end
 
 
 
+function GM:CanChangeClass( ply, class )
+	
+	if ply:Team() ~= TEAM_BEAT then return false end
+	if ply:Alive() ~= true then return false end
+	if self:GetRoundState() == ROUND_ONGOING then return false end
+	
+	return true
+	
+end
+
 function GM:SetPlayerClass( ply, class )
 	
 	if IsValid( ply ) ~= true then return end
@@ -48,6 +58,8 @@ function GM:SetPlayerClass( ply, class )
 	player_manager.RunClass( ply, "InitializePerks" )
 	
 	if SERVER then
+		
+		self:ResetPlayerCharacter( ply )
 		
 		net.Start( "BZ_SetClass" )
 			

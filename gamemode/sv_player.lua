@@ -23,7 +23,15 @@ net.Receive( "BZ_SetClass", function( len, ply )
 	local class = gm:GetClass( net.ReadUInt( 32 ) )
 	if class == nil or player_manager.GetPlayerClass( ply ) == class then return end
 	
-	gm:SetPlayerClass( ply, class )
+	if gm:CanChangeClass( ply, class ) == true then gm:SetPlayerClass( ply, class ) end
+	
+end )
+
+net.Receive( "BZ_ResetPlayer", function( len, ply )
+	
+	local gm = gmod.GetGamemode()
+	
+	if gm:CanChangeClass( ply, player_manager.GetPlayerClass( ply ) ) == true then gm:ResetPlayerCharacter( ply ) end
 	
 end )
 
