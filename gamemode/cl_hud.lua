@@ -182,6 +182,156 @@ local showbuttons = {
 	[ "gm_showspare2" ] = 4,
 	
 }
+
+local function createperkmenu( gm, perkmenu )
+	
+	local ply = LocalPlayer()
+	if IsValid( ply ) ~= true then return end
+	
+	local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.0075 )
+	
+	local children = perkmenu:GetChildren()
+	for i = 1, #children do children[ i ]:Remove() end
+	
+	local perkscroll = vgui.Create( "DScrollPanel" )
+	perkscroll:SetParent( perkmenu )
+	perkscroll:Dock( LEFT )
+	perkscroll:DockMargin( 0, 0, spacing, 0 )
+	
+	local perkname = createlabel( perkmenu, "", "BZ_LabelLarge" )
+	perkname:Dock( TOP )
+	
+	local perkdesc = vgui.Create( "RichText" )
+	perkdesc:SetParent( perkmenu )
+	perkdesc:Dock( TOP )
+	function perkdesc:PerformLayout( w, h )
+		
+		self:SetFontInternal( "BZ_Label" )
+		self:SetFGColor( textcolor )
+		
+	end
+	
+	local curperk
+	local curperkbutton
+	
+	local perkbuttonbg = vgui.Create( "DPanel" )
+	perkbuttonbg:SetParent( perkmenu )
+	perkbuttonbg:Dock( BOTTOM )
+	function perkbuttonbg:Paint( w, h ) end
+	
+	local perkpoints = createlabel( perkmenu, ply.PerkPoints .. " perk points", "BZ_LabelLarge" )
+	perkpoints:Dock( BOTTOM )
+	
+	local perkbuy
+	local perksell
+	local function updateperkmenu( points, count )
+		
+		points = points or ply.PerkPoints
+		count = count or gm:PlayerGetPerkNum( ply, curperk )
+		
+		local cost = "(" .. curperk.Cost .. " point" .. ( ( curperk.Cost ~= 1 and "s" ) or "" ) .. ")"
+		perkbuy:SetText( "Buy " .. cost )
+		perksell:SetText( "Sell " .. cost )
+		perkpoints:SetText( points .. " perk points" )
+		
+		local name = curperk.Name or ""
+		if count ~= 0 then name = name .. " (" .. count .. ")" end
+		curperkbutton:SetText( name )
+		
+	end
+	perkbuy = createbutton( perkbuttonbg, "", function( self )
+		
+		if curperk == nil or gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return end
+		
+		local count = gm:PlayerGetPerkNum( ply, curperk ) + 1
+		updateperkmenu( ply.PerkPoints - curperk.Cost, count )
+		perkdesc:SetText( curperk:GetDescription( ply, count ) )
+		
+		gm:BuyPerk( curperk )
+		
+	end )
+	perkbuy:Dock( LEFT )
+	function perkbuy:GetButtonBGColor()
+		
+		if curperk == nil then return end
+		if gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return buttoninactivecolor, true end
+		
+	end
+	
+	perksell = createbutton( perkbuttonbg, "", function( self )
+		
+		if curperk == nil or gm:PlayerCanSellPerk( ply, curperk ) ~= true then return end
+		
+		local count = gm:PlayerGetPerkNum( ply, curperk ) - 1
+		updateperkmenu( ply.PerkPoints + curperk.Cost, count )
+		perkdesc:SetText( curperk:GetDescription( ply, count ) )
+		
+		gm:SellPerk( curperk )
+		
+	end )
+	perksell:Dock( RIGHT )
+	function perksell:GetButtonBGColor()
+		
+		if curperk == nil then return end
+		if gm:PlayerCanSellPerk( ply, curperk ) ~= true then return buttoninactivecolor, true end
+		
+	end
+	
+	function perkbuttonbg:PerformLayout( w, h )
+		
+		local buttonw = ( w - spacing ) * 0.5
+		perkbuy:SetWide( buttonw )
+		perksell:SetWide( buttonw )
+		
+	end
+	
+	local perkbuttontall = math.Round( ScrH() * 0.05 )
+	
+	for i = 1, gm:GetClassPerkCount( ply ) do
+		
+		local perk = gm:GetClassPerk( ply, i )
+		
+		local name = perk.Name or ""
+		if gm:PlayerHasPerk( ply, perk ) == true then name = name .. " (" .. gm:PlayerGetPerkNum( ply, perk ) .. ")" end
+		
+		local perkbutton = createbutton( perkscroll, name, function( self )
+			
+			curperk = perk
+			curperkbutton = self
+			
+			perkname:SetText( perk.Name or "" )
+			perkdesc:SetText( perk:GetDescription( ply ) )
+			
+			updateperkmenu()
+			
+		end )
+		perkbutton:Dock( TOP )
+		perkbutton:DockMargin( 0, 0, 0, spacing )
+		perkbutton:SetTall( perkbuttontall )
+		perkbutton:SetFont( "BZ_MenuButtonSmall" )
+		function perkbutton:GetButtonBGColor()
+			
+			if gm:PlayerHasPerk( ply, perk ) == true then return buttonspecialcolor end
+			if gm:PlayerCanBuyPerk( ply, perk ) ~= true then return buttoninactivecolor end
+			
+		end
+		
+		if i == 1 then perkbutton:DoClick() end
+		
+	end
+	
+	function perkmenu:PerformLayout( w, h )
+		
+		perkscroll:SetWide( w * 0.3 )
+		perkname:SetTall( h * 0.05 )
+		perkdesc:SetTall( h * 0.8 )
+		perkbuttonbg:SetTall( h * 0.1 )
+		perkpoints:SetTall( h * 0.05 )
+		
+	end
+	
+end
+
 local function createmenu( tab, gm )
 	
 	if IsValid( frame ) == true then frame:Remove() end
@@ -343,8 +493,12 @@ local function createmenu( tab, gm )
 		classtoggle:Dock( BOTTOM )
 		
 		local curclass
+		local respec = false
 		
 		local function classrespec( button )
+			
+			gm:ResetPlayerCharacter( ply )
+			respec = true
 			
 			net.Start( "BZ_ResetPlayer" )
 			net.SendToServer()
@@ -426,141 +580,22 @@ local function createmenu( tab, gm )
 		--perk menu
 		local perkmenu = vgui.Create( "DPanel" )
 		function perkmenu:Paint( w, h ) end
-		
-		local perkscroll = vgui.Create( "DScrollPanel" )
-		perkscroll:SetParent( perkmenu )
-		perkscroll:Dock( LEFT )
-		perkscroll:DockMargin( 0, 0, spacing, 0 )
-		
-		local perkname = createlabel( perkmenu, "", "BZ_LabelLarge" )
-		perkname:Dock( TOP )
-		
-		local perkdesc = vgui.Create( "RichText" )
-		perkdesc:SetParent( perkmenu )
-		perkdesc:Dock( TOP )
-		function perkdesc:PerformLayout( w, h )
+		function perkmenu:Think()
 			
-			self:SetFontInternal( "BZ_Label" )
-			self:SetFGColor( textcolor )
-			
-		end
-		
-		local curperk
-		local curperkbutton
-		
-		local perkbuttonbg = vgui.Create( "DPanel" )
-		perkbuttonbg:SetParent( perkmenu )
-		perkbuttonbg:Dock( BOTTOM )
-		function perkbuttonbg:Paint( w, h ) end
-		
-		local perkpoints = createlabel( perkmenu, ply.PerkPoints .. " perk points", "BZ_LabelLarge" )
-		perkpoints:Dock( BOTTOM )
-		
-		local perkbuy
-		local perksell
-		local function updateperkmenu( points, count )
-			
-			points = points or ply.PerkPoints
-			count = count or gm:PlayerGetPerkNum( ply, curperk )
-			
-			local cost = "(" .. curperk.Cost .. " point" .. ( ( curperk.Cost ~= 1 and "s" ) or "" ) .. ")"
-			perkbuy:SetText( "Buy " .. cost )
-			perksell:SetText( "Sell " .. cost )
-			perkpoints:SetText( points .. " perk points" )
-			
-			local name = curperk.Name or ""
-			if count ~= 0 then name = name .. " (" .. count .. ")" end
-			curperkbutton:SetText( name )
-			
-		end
-		perkbuy = createbutton( perkbuttonbg, "", function( self )
-			
-			if curperk == nil or gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return end
-			
-			local count = gm:PlayerGetPerkNum( ply, curperk ) + 1
-			updateperkmenu( ply.PerkPoints - curperk.Cost, count )
-			perkdesc:SetText( curperk:GetDescription( ply, count ) )
-			
-			gm:BuyPerk( curperk )
-			
-		end )
-		perkbuy:Dock( LEFT )
-		function perkbuy:GetButtonBGColor()
-			
-			if curperk == nil then return end
-			if gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return buttoninactivecolor, true end
-			
-		end
-		
-		perksell = createbutton( perkbuttonbg, "", function( self )
-			
-			if curperk == nil or gm:PlayerCanSellPerk( ply, curperk ) ~= true then return end
-			
-			local count = gm:PlayerGetPerkNum( ply, curperk ) - 1
-			updateperkmenu( ply.PerkPoints + curperk.Cost, count )
-			perkdesc:SetText( curperk:GetDescription( ply, count ) )
-			
-			gm:SellPerk( curperk )
-			
-		end )
-		perksell:Dock( RIGHT )
-		function perksell:GetButtonBGColor()
-			
-			if curperk == nil then return end
-			if gm:PlayerCanSellPerk( ply, curperk ) ~= true then return buttoninactivecolor, true end
-			
-		end
-		
-		function perkbuttonbg:PerformLayout( w, h )
-			
-			local buttonw = ( w - spacing ) * 0.5
-			perkbuy:SetWide( buttonw )
-			perksell:SetWide( buttonw )
-			
-		end
-		
-		local perkbuttontall = math.Round( ScrH() * 0.05 )
-		
-		for i = 1, gm:GetClassPerkCount( ply ) do
-			
-			local perk = gm:GetClassPerk( ply, i )
-			
-			local name = perk.Name or ""
-			if gm:PlayerHasPerk( ply, perk ) == true then name = name .. " (" .. gm:PlayerGetPerkNum( ply, perk ) .. ")" end
-			
-			local perkbutton = createbutton( perkscroll, name, function( self )
+			local curclass = player_manager.GetPlayerClass( ply )
+			if self.curclass ~= curclass then
 				
-				curperk = perk
-				curperkbutton = self
-				
-				perkname:SetText( perk.Name or "" )
-				perkdesc:SetText( perk:GetDescription( ply ) )
-				
-				updateperkmenu()
-				
-			end )
-			perkbutton:Dock( TOP )
-			perkbutton:DockMargin( 0, 0, 0, spacing )
-			perkbutton:SetTall( perkbuttontall )
-			perkbutton:SetFont( "BZ_MenuButtonSmall" )
-			function perkbutton:GetButtonBGColor()
-				
-				if gm:PlayerHasPerk( ply, perk ) == true then return buttonspecialcolor end
-				if gm:PlayerCanBuyPerk( ply, perk ) ~= true then return buttoninactivecolor end
+				self.curclass = curclass
+				createperkmenu( gm, perkmenu )
 				
 			end
 			
-			if i == 1 then perkbutton:DoClick() end
-			
-		end
-		
-		function perkmenu:PerformLayout( w, h )
-			
-			perkscroll:SetWide( w * 0.3 )
-			perkname:SetTall( h * 0.05 )
-			perkdesc:SetTall( h * 0.8 )
-			perkbuttonbg:SetTall( h * 0.1 )
-			perkpoints:SetTall( h * 0.05 )
+			if respec == true then
+				
+				respec = false
+				createperkmenu( gm, perkmenu )
+				
+			end
 			
 		end
 		
