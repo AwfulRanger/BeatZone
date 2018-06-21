@@ -27,7 +27,14 @@ function GM:AddItem( name, data )
 	data.Name = data.Name or ( "#" .. name )
 	data.Class = data.Class or name
 	data.Cost = data.Cost or 1
-	data.OnBuy = data.OnBuy or function( self, ply ) ply:Give( self.Class, true ) end
+	data.OnBuy = data.OnBuy or function( self, ply )
+		
+		local wep = ply:Give( self.Class, true )
+		if IsValid( wep ) ~= true then return end
+		wep:SetClip1( wep:GetMaxClip1() )
+		wep:SetClip2( wep:GetMaxClip2() )
+		
+	end
 	data.OnSell = data.OnSell or function( self, ply ) ply:StripWeapon( self.Class ) end
 	data.GetDescription = data.GetDescription or function( self, ply ) return self.Description or "" end
 	

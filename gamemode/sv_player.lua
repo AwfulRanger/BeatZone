@@ -74,7 +74,8 @@ function GM:PlayerLoadout( ply )
 	ply:StripWeapons()
 	ply:StripAmmo()
 	ply:Give( "weapon_crowbar", true )
-	ply:Give( "weapon_pistol", true )
+	local pistol = ply:Give( "weapon_pistol", true )
+	pistol:SetClip1( pistol:GetMaxClip1() )
 	
 	for i = 1, self:PlayerGetItemCount( ply ) do
 		
@@ -82,6 +83,9 @@ function GM:PlayerLoadout( ply )
 		if item ~= nil then item:OnBuy( ply ) end
 		
 	end
+	
+	if self.AmmoNum == nil then self.AmmoNum = 27 + #game.BuildAmmoTypes() end
+	for i = 1, self.AmmoNum do ply:SetAmmo( game.GetAmmoMax( i ), i ) end
 	
 end
 

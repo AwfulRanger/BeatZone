@@ -22,26 +22,20 @@ function ENT:Initialize()
 	
 	self:SetModel( self.Model )
 	
-	if SERVER then
-		
-		self.AmmoNum = self.AmmoNum + #game.BuildAmmoTypes()
-		
-		self:SetTrigger( true )
-		
-	end
+	if SERVER then self:SetTrigger( true ) end
 	self:UseTriggerBounds( true, 24 )
 	
 end
 
 if SERVER then
 	
-	ENT.AmmoNum = 27
 	function ENT:Touch( ent )
 		
 		if ent:IsPlayer() ~= true or CurTime() < self:GetUseTime() + self.UseCooldown then return end
 		
 		local take = false
 		
+		if self.AmmoNum == nil then self.AmmoNum = 27 + #game.BuildAmmoTypes() end
 		for i = 1, self.AmmoNum do
 			
 			local max = game.GetAmmoMax( i )
