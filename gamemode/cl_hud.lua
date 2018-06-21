@@ -332,6 +332,312 @@ local function createperkmenu( gm, perkmenu )
 	
 end
 
+local function createcharsheet( gm, charmenu )
+	
+	local ply = LocalPlayer()
+	if IsValid( ply ) ~= true then return end
+	
+	local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.0075 )
+	
+	local charsheet = vgui.Create( "DPropertySheet" )
+	charsheet:SetParent( charmenu )
+	charsheet:Dock( FILL )
+	charsheet:SetPadding( spacing )
+	function charsheet:Paint( w, h ) end
+	
+	
+	--class menu
+	local classmenu = vgui.Create( "DPanel" )
+	function classmenu:Paint( w, h ) end
+	
+	local classscroll = vgui.Create( "DScrollPanel" )
+	classscroll:SetParent( classmenu )
+	classscroll:Dock( LEFT )
+	classscroll:DockMargin( 0, 0, spacing, 0 )
+	
+	local classname = createlabel( classmenu, "", "BZ_LabelLarge" )
+	classname:Dock( TOP )
+	
+	local classdesc = vgui.Create( "RichText" )
+	classdesc:SetParent( classmenu )
+	classdesc:Dock( TOP )
+	function classdesc:PerformLayout( w, h )
+		
+		self:SetFontInternal( "BZ_Label" )
+		self:SetFGColor( textcolor )
+		
+	end
+	
+	local classtoggle = createbutton( classmenu, "Select class" )
+	classtoggle:Dock( BOTTOM )
+	
+	local curclass
+	local respec = false
+	
+	local function classrespec( button )
+		
+		gm:ResetPlayerCharacter( ply )
+		respec = true
+		
+		net.Start( "BZ_ResetPlayer" )
+		net.SendToServer()
+		
+	end
+	local function classselect( button )
+		
+		button:SetText( "Respec class" )
+		
+		net.Start( "BZ_SetClass" )
+			
+			net.WriteUInt( curclass, 32 )
+			
+		net.SendToServer()
+		
+		button.DoClick = classrespec
+		
+	end
+	
+	local classbuttontall = math.Round( ScrH() * 0.05 )
+	for i = 1, gm:GetClassCount() do
+		
+		local classid = gm:GetClass( i )
+		local class = baseclass.Get( classid )
+		
+		local classbutton = createbutton( classscroll, class.DisplayName, function()
+			
+			curclass = i
+			
+			classname:SetText( class.DisplayName or "" )
+			class:InitializePerks()
+			classdesc:SetText( class:GetDescription( ply ) )
+			
+			if player_manager.GetPlayerClass( ply ) == classid then
+				
+				classtoggle:SetText( "Respec class" )
+				classtoggle.DoClick = classrespec
+				
+			else
+				
+				classtoggle:SetText( "Select class" )
+				classtoggle.DoClick = classselect
+				
+			end
+			
+		end )
+		classbutton:Dock( TOP )
+		classbutton:DockMargin( 0, 0, 0, spacing )
+		classbutton:SetTall( classbuttontall )
+		classbutton:SetFont( "BZ_MenuButtonSmall" )
+		function classbutton:GetButtonBGColor()
+			
+			if player_manager.GetPlayerClass( ply ) == classid then return buttonspecialcolor end
+			
+		end
+		
+		if i == 1 or player_manager.GetPlayerClass( ply ) == classid then classbutton:DoClick() end
+		
+	end
+	
+	function classmenu:PerformLayout( w, h )
+		
+		classscroll:SetWide( w * 0.3 )
+		classname:SetTall( h * 0.05 )
+		classdesc:SetTall( h * 0.3 )
+		classtoggle:SetTall( h * 0.1 )
+		
+	end
+	
+	charsheet:AddSheet( "Class", classmenu ).Tab.Paint = function( self, w, h )
+		
+		surface.SetDrawColor( buttoncolor )
+		if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
+		surface.DrawRect( 0, 0, w, 20 )
+		
+	end
+	
+	
+	--perk menu
+	local perkmenu = vgui.Create( "DPanel" )
+	function perkmenu:Paint( w, h ) end
+	function perkmenu:Think()
+		
+		local curclass = player_manager.GetPlayerClass( ply )
+		if self.curclass ~= curclass then
+			
+			self.curclass = curclass
+			createperkmenu( gm, perkmenu )
+			
+		end
+		
+		if respec == true then
+			
+			respec = false
+			createperkmenu( gm, perkmenu )
+			
+		end
+		
+	end
+	
+	charsheet:AddSheet( "Perks", perkmenu ).Tab.Paint = function( self, w, h )
+		
+		surface.SetDrawColor( buttoncolor )
+		if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
+		surface.DrawRect( 0, 0, w, 20 )
+		
+	end
+	
+	
+	--loadout menu
+	local loadoutmenu = vgui.Create( "DPanel" )
+	function loadoutmenu:Paint( w, h ) end
+	
+	local loadoutscroll = vgui.Create( "DScrollPanel" )
+	loadoutscroll:SetParent( loadoutmenu )
+	loadoutscroll:Dock( LEFT )
+	loadoutscroll:DockMargin( 0, 0, spacing, 0 )
+	
+	local loadoutname = createlabel( loadoutmenu, "", "BZ_LabelLarge" )
+	loadoutname:Dock( TOP )
+	
+	local loadoutmodel = vgui.Create( "DModelPanel" )
+	loadoutmodel:SetParent( loadoutmenu )
+	loadoutmodel:Dock( TOP )
+	
+	local loadoutdesc = vgui.Create( "RichText" )
+	loadoutdesc:SetParent( loadoutmenu )
+	loadoutdesc:Dock( TOP )
+	function loadoutdesc:PerformLayout( w, h )
+		
+		self:SetFontInternal( "BZ_Label" )
+		self:SetFGColor( textcolor )
+		
+	end
+	
+	local loadouttoggle = createbutton( loadoutmenu )
+	loadouttoggle:Dock( BOTTOM )
+	
+	local loadoutpoints = createlabel( loadoutmenu, ply.LoadoutPoints .. " loadout points", "BZ_LabelLarge" )
+	loadoutpoints:Dock( BOTTOM )
+	
+	local curitem
+	
+	local loadoutsell
+	local function loadoutbuy( button )
+		
+		if curitem == nil or gm:PlayerCanBuyItem( ply, curitem ) ~= true then return end
+		
+		button:SetText( "Sell (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
+		loadoutpoints:SetText( ( ply.LoadoutPoints - curitem.Cost ) .. " loadout points" )
+		
+		gm:BuyItem( curitem )
+		
+		button.DoClick = loadoutsell
+		function button:GetButtonBGColor()
+			
+			if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
+			
+		end
+		
+	end
+	function loadoutsell( button )
+		
+		if curitem == nil or gm:PlayerCanSellItem( ply, curitem ) ~= true then return end
+		
+		button:SetText( "Buy (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
+		loadoutpoints:SetText( ( ply.LoadoutPoints + curitem.Cost ) .. " loadout points" )
+		
+		gm:SellItem( curitem )
+		
+		button.DoClick = loadoutbuy
+		function button:GetButtonBGColor()
+			
+			if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
+			
+		end
+		
+	end
+	
+	local itembuttontall = math.Round( ScrH() * 0.05 )
+	for i = 1, gm:GetItemCount() do
+		
+		local item = gm:GetItem( i )
+		
+		local itembutton = createbutton( loadoutscroll, item.Name, function()
+			
+			curitem = item
+			
+			loadoutname:SetText( item.Name or "" )
+			loadoutmodel:SetModel( item.Model or "" )
+			local ent = loadoutmodel.Entity
+			if IsValid( ent ) == true then
+				
+				loadoutmodel:SetLookAt( ent:GetPos() )
+				
+			end
+			loadoutdesc:SetText( item:GetDescription( ply ) )
+			
+			if gm:PlayerHasItem( ply, item ) == true then
+				
+				loadouttoggle:SetText( "Sell (" .. item.Cost .. " point" .. ( ( item.Cost ~= 1 and "s" ) or "" ) .. ")" )
+				loadouttoggle.DoClick = loadoutsell
+				function loadouttoggle:GetButtonBGColor()
+					
+					if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
+					
+				end
+				
+			else
+				
+				loadouttoggle:SetText( "Buy (" .. item.Cost .. " point" .. ( ( item.Cost ~= 1 and "s" ) or "" ) .. ")" )
+				loadouttoggle.DoClick = loadoutbuy
+				function loadouttoggle:GetButtonBGColor()
+					
+					if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
+					
+				end
+				
+			end
+			
+		end )
+		itembutton:Dock( TOP )
+		itembutton:DockMargin( 0, 0, 0, spacing )
+		itembutton:SetTall( itembuttontall )
+		itembutton:SetFont( "BZ_MenuButtonSmall" )
+		function itembutton:GetButtonBGColor()
+			
+			if gm:PlayerHasItem( ply, item ) == true then return buttonspecialcolor end
+			if gm:PlayerCanBuyItem( ply, item ) ~= true then return buttoninactivecolor end
+			
+		end
+		
+		if i == 1 then itembutton:DoClick() end
+		
+	end
+	
+	function loadoutmenu:PerformLayout( w, h )
+		
+		loadoutscroll:SetWide( w * 0.3 )
+		loadoutname:SetTall( h * 0.05 )
+		loadoutmodel:SetTall( h * 0.5 )
+		loadoutdesc:SetTall( h * 0.3 )
+		loadouttoggle:SetTall( h * 0.1 )
+		loadoutpoints:SetTall( h * 0.05 )
+		
+	end
+	
+	charsheet:AddSheet( "Loadout", loadoutmenu ).Tab.Paint = function( self, w, h )
+		
+		surface.SetDrawColor( buttoncolor )
+		if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
+		surface.DrawRect( 0, 0, w, 20 )
+		
+	end
+	
+	
+	return charsheet
+	
+end
+
 local function createmenu( tab, gm )
 	
 	if IsValid( frame ) == true then frame:Remove() end
@@ -388,12 +694,26 @@ local function createmenu( tab, gm )
 			surface.DrawRect( ( size * 0.5 ) - 1, 0, 1, h )
 			
 		end
-		
-		local charsheet = vgui.Create( "DPropertySheet" )
-		charsheet:SetParent( charmenu )
-		charsheet:Dock( FILL )
-		charsheet:SetPadding( spacing )
-		function charsheet:Paint( w, h ) end
+		function charmenu:Think()
+			
+			local vis = ply:Team() == TEAM_BEAT
+			if self.vis ~= vis then
+				
+				self.vis = vis
+				
+				if vis == true then
+					
+					self.charsheet = createcharsheet( gm, charmenu )
+					
+				elseif IsValid( self.charsheet ) == true then
+					
+					self.charsheet:Remove()
+					
+				end
+				
+			end
+			
+		end
 		
 		local charbg = vgui.Create( "DPanel" )
 		charbg:SetParent( charmenu )
@@ -464,296 +784,6 @@ local function createmenu( tab, gm )
 			joinspec:SetWide( buttonw )
 			
 		end
-		
-		
-		
-		--class menu
-		local classmenu = vgui.Create( "DPanel" )
-		function classmenu:Paint( w, h ) end
-		
-		local classscroll = vgui.Create( "DScrollPanel" )
-		classscroll:SetParent( classmenu )
-		classscroll:Dock( LEFT )
-		classscroll:DockMargin( 0, 0, spacing, 0 )
-		
-		local classname = createlabel( classmenu, "", "BZ_LabelLarge" )
-		classname:Dock( TOP )
-		
-		local classdesc = vgui.Create( "RichText" )
-		classdesc:SetParent( classmenu )
-		classdesc:Dock( TOP )
-		function classdesc:PerformLayout( w, h )
-			
-			self:SetFontInternal( "BZ_Label" )
-			self:SetFGColor( textcolor )
-			
-		end
-		
-		local classtoggle = createbutton( classmenu, "Select class" )
-		classtoggle:Dock( BOTTOM )
-		
-		local curclass
-		local respec = false
-		
-		local function classrespec( button )
-			
-			gm:ResetPlayerCharacter( ply )
-			respec = true
-			
-			net.Start( "BZ_ResetPlayer" )
-			net.SendToServer()
-			
-		end
-		local function classselect( button )
-			
-			button:SetText( "Respec class" )
-			
-			net.Start( "BZ_SetClass" )
-				
-				net.WriteUInt( curclass, 32 )
-				
-			net.SendToServer()
-			
-			button.DoClick = classrespec
-			
-		end
-		
-		local classbuttontall = math.Round( ScrH() * 0.05 )
-		for i = 1, gm:GetClassCount() do
-			
-			local classid = gm:GetClass( i )
-			local class = baseclass.Get( classid )
-			
-			local classbutton = createbutton( classscroll, class.DisplayName, function()
-				
-				curclass = i
-				
-				classname:SetText( class.DisplayName or "" )
-				class:InitializePerks()
-				classdesc:SetText( class:GetDescription( ply ) )
-				
-				if player_manager.GetPlayerClass( ply ) == classid then
-					
-					classtoggle:SetText( "Respec class" )
-					classtoggle.DoClick = classrespec
-					
-				else
-					
-					classtoggle:SetText( "Select class" )
-					classtoggle.DoClick = classselect
-					
-				end
-				
-			end )
-			classbutton:Dock( TOP )
-			classbutton:DockMargin( 0, 0, 0, spacing )
-			classbutton:SetTall( classbuttontall )
-			classbutton:SetFont( "BZ_MenuButtonSmall" )
-			function classbutton:GetButtonBGColor()
-				
-				if player_manager.GetPlayerClass( ply ) == classid then return buttonspecialcolor end
-				
-			end
-			
-			if i == 1 or player_manager.GetPlayerClass( ply ) == classid then classbutton:DoClick() end
-			
-		end
-		
-		function classmenu:PerformLayout( w, h )
-			
-			classscroll:SetWide( w * 0.3 )
-			classname:SetTall( h * 0.05 )
-			classdesc:SetTall( h * 0.3 )
-			classtoggle:SetTall( h * 0.1 )
-			
-		end
-		
-		charsheet:AddSheet( "Class", classmenu ).Tab.Paint = function( self, w, h )
-			
-			surface.SetDrawColor( buttoncolor )
-			if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
-			surface.DrawRect( 0, 0, w, 20 )
-			
-		end
-		
-		
-		--perk menu
-		local perkmenu = vgui.Create( "DPanel" )
-		function perkmenu:Paint( w, h ) end
-		function perkmenu:Think()
-			
-			local curclass = player_manager.GetPlayerClass( ply )
-			if self.curclass ~= curclass then
-				
-				self.curclass = curclass
-				createperkmenu( gm, perkmenu )
-				
-			end
-			
-			if respec == true then
-				
-				respec = false
-				createperkmenu( gm, perkmenu )
-				
-			end
-			
-		end
-		
-		charsheet:AddSheet( "Perks", perkmenu ).Tab.Paint = function( self, w, h )
-			
-			surface.SetDrawColor( buttoncolor )
-			if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
-			surface.DrawRect( 0, 0, w, 20 )
-			
-		end
-		
-		
-		--loadout menu
-		local loadoutmenu = vgui.Create( "DPanel" )
-		function loadoutmenu:Paint( w, h ) end
-		
-		local loadoutscroll = vgui.Create( "DScrollPanel" )
-		loadoutscroll:SetParent( loadoutmenu )
-		loadoutscroll:Dock( LEFT )
-		loadoutscroll:DockMargin( 0, 0, spacing, 0 )
-		
-		local loadoutname = createlabel( loadoutmenu, "", "BZ_LabelLarge" )
-		loadoutname:Dock( TOP )
-		
-		local loadoutmodel = vgui.Create( "DModelPanel" )
-		loadoutmodel:SetParent( loadoutmenu )
-		loadoutmodel:Dock( TOP )
-		
-		local loadoutdesc = vgui.Create( "RichText" )
-		loadoutdesc:SetParent( loadoutmenu )
-		loadoutdesc:Dock( TOP )
-		function loadoutdesc:PerformLayout( w, h )
-			
-			self:SetFontInternal( "BZ_Label" )
-			self:SetFGColor( textcolor )
-			
-		end
-		
-		local loadouttoggle = createbutton( loadoutmenu )
-		loadouttoggle:Dock( BOTTOM )
-		
-		local loadoutpoints = createlabel( loadoutmenu, ply.LoadoutPoints .. " loadout points", "BZ_LabelLarge" )
-		loadoutpoints:Dock( BOTTOM )
-		
-		local curitem
-		
-		local loadoutsell
-		local function loadoutbuy( button )
-			
-			if curitem == nil or gm:PlayerCanBuyItem( ply, curitem ) ~= true then return end
-			
-			button:SetText( "Sell (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
-			loadoutpoints:SetText( ( ply.LoadoutPoints - curitem.Cost ) .. " loadout points" )
-			
-			gm:BuyItem( curitem )
-			
-			button.DoClick = loadoutsell
-			function button:GetButtonBGColor()
-				
-				if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
-				
-			end
-			
-		end
-		function loadoutsell( button )
-			
-			if curitem == nil or gm:PlayerCanSellItem( ply, curitem ) ~= true then return end
-			
-			button:SetText( "Buy (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
-			loadoutpoints:SetText( ( ply.LoadoutPoints + curitem.Cost ) .. " loadout points" )
-			
-			gm:SellItem( curitem )
-			
-			button.DoClick = loadoutbuy
-			function button:GetButtonBGColor()
-				
-				if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
-				
-			end
-			
-		end
-		
-		local itembuttontall = math.Round( ScrH() * 0.05 )
-		for i = 1, gm:GetItemCount() do
-			
-			local item = gm:GetItem( i )
-			
-			local itembutton = createbutton( loadoutscroll, item.Name, function()
-				
-				curitem = item
-				
-				loadoutname:SetText( item.Name or "" )
-				loadoutmodel:SetModel( item.Model or "" )
-				local ent = loadoutmodel.Entity
-				if IsValid( ent ) == true then
-					
-					loadoutmodel:SetLookAt( ent:GetPos() )
-					
-				end
-				loadoutdesc:SetText( item:GetDescription( ply ) )
-				
-				if gm:PlayerHasItem( ply, item ) == true then
-					
-					loadouttoggle:SetText( "Sell (" .. item.Cost .. " point" .. ( ( item.Cost ~= 1 and "s" ) or "" ) .. ")" )
-					loadouttoggle.DoClick = loadoutsell
-					function loadouttoggle:GetButtonBGColor()
-						
-						if gm:PlayerCanSellItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
-						
-					end
-					
-				else
-					
-					loadouttoggle:SetText( "Buy (" .. item.Cost .. " point" .. ( ( item.Cost ~= 1 and "s" ) or "" ) .. ")" )
-					loadouttoggle.DoClick = loadoutbuy
-					function loadouttoggle:GetButtonBGColor()
-						
-						if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return buttoninactivecolor, true end
-						
-					end
-					
-				end
-				
-			end )
-			itembutton:Dock( TOP )
-			itembutton:DockMargin( 0, 0, 0, spacing )
-			itembutton:SetTall( itembuttontall )
-			itembutton:SetFont( "BZ_MenuButtonSmall" )
-			function itembutton:GetButtonBGColor()
-				
-				if gm:PlayerHasItem( ply, item ) == true then return buttonspecialcolor end
-				if gm:PlayerCanBuyItem( ply, item ) ~= true then return buttoninactivecolor end
-				
-			end
-			
-			if i == 1 then itembutton:DoClick() end
-			
-		end
-		
-		function loadoutmenu:PerformLayout( w, h )
-			
-			loadoutscroll:SetWide( w * 0.3 )
-			loadoutname:SetTall( h * 0.05 )
-			loadoutmodel:SetTall( h * 0.5 )
-			loadoutdesc:SetTall( h * 0.3 )
-			loadouttoggle:SetTall( h * 0.1 )
-			loadoutpoints:SetTall( h * 0.05 )
-			
-		end
-		
-		charsheet:AddSheet( "Loadout", loadoutmenu ).Tab.Paint = function( self, w, h )
-			
-			surface.SetDrawColor( buttoncolor )
-			if self:IsActive() then surface.SetDrawColor( buttonactivecolor ) end
-			surface.DrawRect( 0, 0, w, 20 )
-			
-		end
-		
 		
 		function charmenu:PerformLayout( w, h )
 			
