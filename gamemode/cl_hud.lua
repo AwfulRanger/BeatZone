@@ -944,6 +944,9 @@ end
 local cmenu
 function GM:OnContextMenuOpen()
 	
+	local ply = LocalPlayer()
+	if IsValid( ply ) ~= true then return end
+	
 	if IsValid( cmenu ) == true then cmenu:Remove() end
 	
 	cmenu = vgui.Create( "DPanel" )
@@ -951,12 +954,26 @@ function GM:OnContextMenuOpen()
 	cmenu:MakePopup()
 	cmenu:SetKeyboardInputEnabled( false )
 	function cmenu:Paint() end
-	
-	if self:GetRoundState() == ROUND_INTERMISSION then
+	function cmenu.Think( panel )
 		
-		local ready = createbutton( cmenu, "Toggle ready", function() self:Ready() end )
-		ready:SetPos( ScrW() * 0.2, ScrH() * 0.45 )
-		ready:SetSize( ScrW() * 0.1, ScrH() * 0.1 )
+		local vis = self:GetRoundState() == ROUND_INTERMISSION and ply:Team() == TEAM_BEAT
+		if panel.vis ~= vis then
+			
+			panel.vis = vis
+			
+			if vis == true then
+				
+				panel.ready = createbutton( panel, "Toggle ready", function() self:Ready() end )
+				panel.ready:SetPos( ScrW() * 0.2, ScrH() * 0.45 )
+				panel.ready:SetSize( ScrW() * 0.1, ScrH() * 0.1 )
+				
+			elseif IsValid( panel.ready ) == true then
+				
+				panel.ready:Remove()
+				
+			end
+			
+		end
 		
 	end
 	

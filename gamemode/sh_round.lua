@@ -101,7 +101,7 @@ function GM:PlayerReady( ply, ready )
 	ready = ready or false
 	if ready == self:PlayerIsReady( ply ) then return end
 	
-	if ready == true and ply:Team() ~= TEAM_BEAT then return end
+	if ready == true and ( ply:Team() ~= TEAM_BEAT or self:GetRoundState() ~= ROUND_INTERMISSION ) then return end
 	
 	local rplys = self.ReadyPlayers
 	if ready == true then
