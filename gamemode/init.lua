@@ -49,6 +49,9 @@ function GM:Think()
 	self:HandleRound()
 	self:HandleTrack()
 	
+	local plys = player.GetAll()
+	for i = 1, #plys do self:HandlePlayerShield( plys[ i ] ) end
+	
 end
 
 function GM:OnEntityCreated( ent )
@@ -99,6 +102,8 @@ function GM:EntityTakeDamage( ent, dmg )
 	
 	if ent:IsPlayer() == true then
 		
+		ent:SetDamagedTime( CurTime() )
+		
 		dores( self, dmg, ent, "perk_resist_all" )
 		local resperk = resperks[ dmg:GetDamageType() ]
 		if resperk ~= nil then dores( self, dmg, ent, resperk ) end
@@ -115,6 +120,23 @@ function GM:EntityTakeDamage( ent, dmg )
 		dodmg( self, dmg, attacker, "perk_damage_all" )
 		local dmgperk = dmgperks[ dmg:GetDamageType() ]
 		if dmgperk ~= nil then dodmg( self, dmg, attacker, dmgperk ) end
+		
+	end
+	
+	--shield damage
+	if ent:IsPlayer() == true then
+		
+		ent:SetDamagedTime( CurTime() )
+		
+		local damage = dmg:GetDamage()
+		local shield = ent:GetShield()
+		local block = math.min( damage, shield )
+		if block > 0 then
+			
+			dmg:SetDamage( damage - block )
+			ent:SetShield( shield - block )
+			
+		end
 		
 	end
 	

@@ -27,4 +27,7 @@ function GM:Think()
 	if self:GetRoundState() == ROUND_INITIALIZING then self:SetRoundState( ROUND_INTERMISSION ) end
 	self:HandleTrack()
 	
+	local plys = player.GetAll()
+	for i = 1, #plys do self:HandlePlayerShield( plys[ i ] ) end
+	
 end

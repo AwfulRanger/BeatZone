@@ -36,3 +36,42 @@ end
 
 function GM:ScalePlayerDamage( ply, hitgroup, dmg )
 end
+
+
+
+local meta = FindMetaTable( "Player" )
+
+function meta:SetDamagedTime( time ) self:SetNW2Float( "BZ_DamagedTime", time ) end
+function meta:GetDamagedTime() return self:GetNW2Float( "BZ_DamagedTime" ) end
+
+function meta:SetShieldTime( time ) self:SetNW2Float( "BZ_ShieldTime", time ) end
+function meta:GetShieldTime() return self:GetNW2Float( "BZ_ShieldTime" ) end
+
+function meta:SetShield( shield ) self:SetNW2Int( "BZ_Shield", math.Round( shield ) ) end
+function meta:GetShield() return self:GetNW2Int( "BZ_Shield" ) end
+
+function meta:SetShieldMax( max ) self:SetNW2Int( "BZ_ShieldMax", math.Round( max ) ) end
+function meta:GetShieldMax() return self:GetNW2Int( "BZ_ShieldMax", 100 ) end
+
+function GM:HandlePlayerShield( ply )
+	
+	local shield = ply:GetShield()
+	local max = ply:GetShieldMax()
+	if CurTime() > ply:GetDamagedTime() + 5 and shield < max then
+		
+		local regen = math.floor( ( CurTime() - ply:GetShieldTime() ) * 25 )
+		if regen > 0 then
+			
+			ply:SetShield( math.min( shield + regen, max ) )
+			
+			ply:SetShieldTime( CurTime() )
+			
+		end
+		
+	else
+		
+		ply:SetShieldTime( CurTime() )
+		
+	end
+	
+end
