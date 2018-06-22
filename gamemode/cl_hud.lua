@@ -941,6 +941,8 @@ function GM:HUDPaint()
 	
 end
 
+local plyreadycolor = Color( 0, 255, 0, 255 )
+local plyunreadycolor = Color( 255, 0, 0, 255 )
 local cmenu
 function GM:OnContextMenuOpen()
 	
@@ -953,7 +955,32 @@ function GM:OnContextMenuOpen()
 	cmenu:SetSize( ScrW(), ScrH() )
 	cmenu:MakePopup()
 	cmenu:SetKeyboardInputEnabled( false )
-	function cmenu:Paint() end
+	function cmenu.Paint( panel, w, h )
+		
+		surface.SetFont( "BZ_HUDSmall" )
+		
+		if self:GetRoundState() == ROUND_INTERMISSION then
+			
+			local x = math.Round( w * 0.15 )
+			local y = math.Round( h * 0.5 )
+			local tw, th = surface.GetTextSize( " " )
+			
+			local plys = self:GetPlayers()
+			local count = #plys
+			for i = 1, count do
+				
+				local ply = plys[ i ]
+				
+				local color = plyunreadycolor
+				if self:PlayerIsReady( ply ) == true then color = plyreadycolor end
+				
+				shadowtext( ply:Name(), x, y + ( th * ( ( i - 1 ) - ( count * 0.5 ) ) ), color )
+				
+			end
+			
+		end
+		
+	end
 	function cmenu.Think( panel )
 		
 		local vis = self:GetRoundState() == ROUND_INTERMISSION and ply:Team() == TEAM_BEAT
@@ -964,7 +991,7 @@ function GM:OnContextMenuOpen()
 			if vis == true then
 				
 				panel.ready = createbutton( panel, "Toggle ready", function() self:Ready() end )
-				panel.ready:SetPos( ScrW() * 0.2, ScrH() * 0.45 )
+				panel.ready:SetPos( ScrW() * 0.025, ScrH() * 0.45 )
 				panel.ready:SetSize( ScrW() * 0.1, ScrH() * 0.1 )
 				
 			elseif IsValid( panel.ready ) == true then
