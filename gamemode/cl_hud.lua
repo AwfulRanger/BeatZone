@@ -65,6 +65,7 @@ local buttoninactivecolor = Color( 85, 0, 48, 255 )
 local buttonspecialcolor = Color( 149, 9, 88, 255 )
 local textcolor = Color( 255, 255, 255, 255 )
 local textshadowcolor = Color( 0, 0, 0, 255 )
+local hudbgcolor = Color( 47, 4, 70, 100 )
 
 local function shadowtext( text, x, y, tcolor, scolor )
 	
@@ -868,6 +869,29 @@ function GM:ShowSpare2() createmenu( 4, self ) end
 ----
 --HUD
 ----
+local nodraw = {
+	
+	[ "CHudHealth" ] = false,
+	[ "CHudBattery" ] = false,
+	[ "CHudAmmo" ] = false,
+	[ "CHudSecondaryAmmo" ] = false,
+	
+}
+function GM:HUDShouldDraw( hud )
+	
+	local show = nodraw[ hud ]
+	if show ~= nil then return show end
+	
+	return true
+	
+end
+
+local drawhud = true
+
+local healthcolor = Color( 227, 24, 139, 100 )
+local shieldcolor = Color( 41, 92, 209, 100 )
+local clipcolor = Color( 146, 32, 209, 100 )
+local ammocolor = Color( 69, 10, 101, 100 )
 local statestr = {
 	
 	[ ROUND_INITIALIZING ] = "Initializing",
@@ -891,60 +915,257 @@ function GM:HUDPaint()
 		
 	end
 	
+	if drawhud ~= true then return end
+	
 	local ply = LocalPlayer()
+	if IsValid( ply ) ~= true then return end
+	
 	local state = self:GetRoundState()
 	
-	surface.SetFont( "BZ_HUDSmall" )
-	local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
-	local sw, sh = surface.GetTextSize( statetext )
-	shadowtext( statetext, ( scrw - sw ) * 0.5, ( scrh * 0.05 ) - sh )
+	local size = math.min( scrw, scrh )
+	local spacing = math.Round( size * 0.05 )
+	local hudspacing = math.Round( size * 0.005 )
 	
-	if ply:Team() == TEAM_BEAT and state == ROUND_INTERMISSION then
+	--health/shield
+	do
 		
-		local readycount = self.ReadyPlayers.Count
-		local plycount = #self:GetPlayers()
+		surface.SetFont( "BZ_HUDSmall" )
 		
-		local readytext = "Hold " .. string.upper( input.LookupBinding( "+menu_context", true ) or "(UNBOUND)" ) .. " to toggle ready"
-		local bind = input.LookupBinding( "bz_toggleready" )
-		if bind ~= nil then readytext = "Press " .. string.upper( bind ) .. " to toggle ready" end
-		readytext = readytext .. " (" .. readycount .. "/" .. plycount .. ")"
+		local hw = math.Round( scrw * 0.25 )
+		local hh = math.Round( scrh * 0.1 )
+		local hx = spacing
+		local hy = scrh - hh - spacing
+		local hbarh = math.Round( hh * 0.5 ) - math.Round( hudspacing * 1.5 )
+		
+		surface.SetDrawColor( hudbgcolor )
+		surface.DrawRect( hx, hy, hw, hh )
+		
+		local health = ply:Health()
+		local maxhealth = ply:GetMaxHealth()
+		local healthsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 )
+		surface.SetDrawColor( healthcolor )
+		surface.DrawRect( hx + hudspacing, hy + hudspacing, healthsize, hbarh )
+		
+		local htext = health .. "/" .. maxhealth
+		local htw, hth = surface.GetTextSize( htext )
+		shadowtext( htext, hx + ( hudspacing * 2 ), hy + hudspacing + ( ( hbarh - hth ) * 0.5 ) )
+		
+		local shield = ply:GetShield()
+		local maxshield = ply:GetShieldMax()
+		local shieldsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( shield / maxshield, 0, 1 )
+		surface.SetDrawColor( shieldcolor )
+		surface.DrawRect( hx + hudspacing, hy + hbarh + ( hudspacing * 2 ), shieldsize, hbarh )
+		
+		local stext = shield .. "/" .. maxshield
+		local stw, sth = surface.GetTextSize( stext )
+		shadowtext( stext, hx + ( hudspacing * 2 ), hy + hbarh + ( hudspacing * 2 ) + ( ( hbarh - sth ) * 0.5 ) )
+		
+	end
+	
+	--ammo
+	do
 		
 		surface.SetFont( "BZ_HUD" )
 		
-		local rw, rh = surface.GetTextSize( readytext )
-		
-		local readytime = self.FirstReadyTime
-		if readytime ~= nil then
+		local weapon = ply:GetActiveWeapon()
+		local ammotype1 = -1
+		local ammotype2 = -1
+		if IsValid( weapon ) == true then
 			
-			local basetime = 30 * ( plycount - readycount )
-			local time = math.Round( basetime - ( CurTime() - readytime ), 1 )
+			ammotype1 = weapon:GetPrimaryAmmoType()
+			ammotype2 = weapon:GetSecondaryAmmoType()
 			
-			if time > 0 then
+		end
+		if ammotype1 ~= -1 or ammotype2 ~= -1 then
+			
+			local aw = math.Round( scrw * 0.25 )
+			local ah = math.Round( scrh * 0.1 )
+			local ax = scrw - aw - spacing
+			local ay = scrh - ah - spacing
+			
+			surface.SetDrawColor( hudbgcolor )
+			surface.DrawRect( ax, ay, aw, ah )
+			
+			--primary ammo
+			if ammotype1 ~= -1 then
 				
-				if #tostring( time ) > 3 then time = math.floor( time ) end
+				local acx = ax + hudspacing
+				local acy = ay + hudspacing
+				local acw = math.Round( aw * 0.5 ) - ( hudspacing * 2 )
+				local ach = ah - ( hudspacing * 2 )
 				
-				local timestr = tostring( time )
-				if #timestr == 1 then timestr = timestr .. ".0" end
+				local clip = weapon:Clip1()
+				local maxclip = weapon:GetMaxClip1()
+				local ammo = ply:GetAmmoCount( ammotype1 )
+				local maxammo = game.GetAmmoMax( ammotype1 )
+				if clip == -1 or ammo == -1 then
+					
+					local maxcount = maxammo
+					local count = ammo
+					if maxcount == -1 then
+						
+						maxcount = maxclip
+						count = clip
+						
+					end
+					if maxcount ~= -1 then
+						
+						surface.SetDrawColor( clipcolor )
+						local csize = math.Round( ach * math.Clamp( count / maxcount, 0, 1 ) )
+						surface.DrawRect( acx, acy + ( ach - csize ), acw, csize )
+						
+						local ctw, cth = surface.GetTextSize( count )
+						shadowtext( count, acx + math.Round( ( acw - ctw ) * 0.5 ), acy + math.Round( ( ach - cth ) * 0.5 ) )
+						
+					end
+					
+				else 
+					
+					local cw = math.Round( ( acw - hudspacing ) * 0.5 )
+					local cspacing = math.Round( hudspacing * 0.5 )
+					
+					--clip
+					surface.SetDrawColor( clipcolor )
+					local clipsize = math.Round( ach * math.Clamp( clip / maxclip, 0, 1 ) )
+					surface.DrawRect( acx, acy + ( ach - clipsize ), cw - cspacing, clipsize )
+					
+					local ctw, cth = surface.GetTextSize( clip )
+					shadowtext( clip, acx + math.Round( ( cw - cspacing - ctw ) * 0.5 ), acy + math.Round( ( ach - cth ) * 0.5 ) )
+					
+					--ammo
+					surface.SetDrawColor( ammocolor )
+					local ammosize = math.Round( ach * math.Clamp( ammo / maxammo, 0, 1 ) )
+					surface.DrawRect( acx + cw + cspacing, acy + ( ach - ammosize ), cw, ammosize )
+					
+					local atw, ath = surface.GetTextSize( ammo )
+					shadowtext( ammo, acx + cw + cspacing + math.Round( ( cw - atw ) * 0.5 ), acy + math.Round( ( ach - ath ) * 0.5 ) )
+					
+				end
 				
-				local timetext = "Starting in " .. timestr .. " seconds"
-				local tw, th = surface.GetTextSize( timetext )
+			end
+			
+			--secondary ammo
+			if ammotype2 ~= -1 then
 				
-				shadowtext( timetext, ( scrw - tw ) * 0.5, scrh * 0.2 )
+				local acx = ax + hudspacing + math.Round( aw * 0.5 )
+				local acy = ay + hudspacing
+				local acw = math.Round( aw * 0.5 ) - ( hudspacing * 2 )
+				local ach = ah - ( hudspacing * 2 )
+				
+				local clip = weapon:Clip2()
+				local maxclip = weapon:GetMaxClip2()
+				local ammo = ply:GetAmmoCount( ammotype2 )
+				local maxammo = game.GetAmmoMax( ammotype2 )
+				if clip == -1 or ammo == -1 then
+					
+					local maxcount = maxammo
+					local count = ammo
+					if maxcount == -1 then
+						
+						maxcount = maxclip
+						count = clip
+						
+					end
+					if maxcount ~= -1 then
+						
+						surface.SetDrawColor( clipcolor )
+						local csize = math.Round( ach * math.Clamp( count / maxcount, 0, 1 ) )
+						surface.DrawRect( acx, acy + ( ach - csize ), acw, csize )
+						
+						local ctw, cth = surface.GetTextSize( count )
+						shadowtext( count, acx + math.Round( ( acw - ctw ) * 0.5 ), acy + math.Round( ( ach - cth ) * 0.5 ) )
+						
+					end
+					
+				else 
+					
+					local cw = math.Round( ( acw - hudspacing ) * 0.5 )
+					local cspacing = math.Round( hudspacing * 0.5 )
+					
+					--clip
+					surface.SetDrawColor( clipcolor )
+					local clipsize = math.Round( ach * math.Clamp( clip / maxclip, 0, 1 ) )
+					surface.DrawRect( acx, acy + ( ach - clipsize ), cw - cspacing, clipsize )
+					
+					local ctw, cth = surface.GetTextSize( clip )
+					shadowtext( clip, acx + math.Round( ( cw - cspacing - ctw ) * 0.5 ), acy + math.Round( ( ach - cth ) * 0.5 ) )
+					
+					--ammo
+					surface.SetDrawColor( ammocolor )
+					local ammosize = math.Round( ach * math.Clamp( ammo / maxammo, 0, 1 ) )
+					surface.DrawRect( acx + cw + cspacing, acy + ( ach - ammosize ), cw, ammosize )
+					
+					local atw, ath = surface.GetTextSize( ammo )
+					shadowtext( ammo, acx + cw + cspacing + math.Round( ( cw - atw ) * 0.5 ), acy + math.Round( ( ach - ath ) * 0.5 ) )
+					
+				end
 				
 			end
 			
 		end
 		
-		shadowtext( readytext, ( scrw - rw ) * 0.5, ( scrh * 0.2 ) - rh )
+	end
+	
+	--state/round
+	do
+		
+		surface.SetFont( "BZ_HUDSmall" )
+		local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
+		local sw, sh = surface.GetTextSize( statetext )
+		shadowtext( statetext, ( scrw - sw ) * 0.5, ( scrh * 0.05 ) - sh )
+		
+		if ply:Team() == TEAM_BEAT and state == ROUND_INTERMISSION then
+			
+			local readycount = self.ReadyPlayers.Count
+			local plycount = #self:GetPlayers()
+			
+			local readytext = "Hold " .. string.upper( input.LookupBinding( "+menu_context", true ) or "(UNBOUND)" ) .. " to toggle ready"
+			local bind = input.LookupBinding( "bz_toggleready" )
+			if bind ~= nil then readytext = "Press " .. string.upper( bind ) .. " to toggle ready" end
+			readytext = readytext .. " (" .. readycount .. "/" .. plycount .. ")"
+			
+			surface.SetFont( "BZ_HUD" )
+			
+			local rw, rh = surface.GetTextSize( readytext )
+			
+			local readytime = self.FirstReadyTime
+			if readytime ~= nil then
+				
+				local basetime = 30 * ( plycount - readycount )
+				local time = math.Round( basetime - ( CurTime() - readytime ), 1 )
+				
+				if time > 0 then
+					
+					if #tostring( time ) > 3 then time = math.floor( time ) end
+					
+					local timestr = tostring( time )
+					if #timestr == 1 then timestr = timestr .. ".0" end
+					
+					local timetext = "Starting in " .. timestr .. " seconds"
+					local tw, th = surface.GetTextSize( timetext )
+					
+					shadowtext( timetext, ( scrw - tw ) * 0.5, scrh * 0.2 )
+					
+				end
+				
+			end
+			
+			shadowtext( readytext, ( scrw - rw ) * 0.5, ( scrh * 0.2 ) - rh )
+			
+		end
 		
 	end
 	
 end
 
+
+
 local plyreadycolor = Color( 0, 255, 0, 255 )
 local plyunreadycolor = Color( 255, 0, 0, 255 )
 local cmenu
 function GM:OnContextMenuOpen()
+	
+	drawhud = false
 	
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
@@ -1007,6 +1228,8 @@ function GM:OnContextMenuOpen()
 end
 
 function GM:OnContextMenuClose()
+	
+	drawhud = true
 	
 	if IsValid( cmenu ) == true then cmenu:Remove() end
 	
