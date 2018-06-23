@@ -95,7 +95,7 @@ function GM:PlayerLoadout( ply )
 	if self.AmmoNum == nil then self.AmmoNum = 27 + #game.BuildAmmoTypes() end
 	for i = 1, self.AmmoNum do ply:SetAmmo( game.GetAmmoMax( i ), i ) end
 	
-	ply:SetShield( ply:GetShieldMax() )
+	ply:SetShield( ply:GetMaxShield() )
 	
 end
 

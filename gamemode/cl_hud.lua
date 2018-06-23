@@ -951,7 +951,7 @@ function GM:HUDPaint()
 		shadowtext( htext, hx + ( hudspacing * 2 ), hy + hudspacing + ( ( hbarh - hth ) * 0.5 ) )
 		
 		local shield = ply:GetShield()
-		local maxshield = ply:GetShieldMax()
+		local maxshield = ply:GetMaxShield()
 		local shieldsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( shield / maxshield, 0, 1 )
 		surface.SetDrawColor( shieldcolor )
 		surface.DrawRect( hx + hudspacing, hy + hbarh + ( hudspacing * 2 ), shieldsize, hbarh )

@@ -50,13 +50,13 @@ function meta:GetShieldTime() return self:GetNW2Float( "BZ_ShieldTime" ) end
 function meta:SetShield( shield ) self:SetNW2Int( "BZ_Shield", math.Round( shield ) ) end
 function meta:GetShield() return self:GetNW2Int( "BZ_Shield" ) end
 
-function meta:SetShieldMax( max ) self:SetNW2Int( "BZ_ShieldMax", math.Round( max ) ) end
-function meta:GetShieldMax() return self:GetNW2Int( "BZ_ShieldMax", 100 ) end
+function meta:SetMaxShield( max ) self:SetNW2Int( "BZ_MaxShield", math.Round( max ) ) end
+function meta:GetMaxShield() return self:GetNW2Int( "BZ_MaxShield", 100 ) end
 
 function GM:HandlePlayerShield( ply )
 	
 	local shield = ply:GetShield()
-	local max = ply:GetShieldMax()
+	local max = ply:GetMaxShield()
 	if CurTime() > ply:GetDamagedTime() + 5 and shield < max then
 		
 		local regen = math.floor( ( CurTime() - ply:GetShieldTime() ) * 25 )
