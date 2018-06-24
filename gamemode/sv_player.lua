@@ -386,6 +386,6 @@ function GM:PlayerDeath( ply, inflictor, attacker )
 		
 	net.Broadcast()
 	
-	BaseClass.PlayerDeath( self, ply )
+	BaseClass.PlayerDeath( self, ply, inflictor, attacker )
 	
 end
