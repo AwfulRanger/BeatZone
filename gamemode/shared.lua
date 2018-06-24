@@ -12,7 +12,7 @@ GM.SecondsBetweenTeamSwitches = 1
 TEAM_BEAT = 1
 function GM:CreateTeams()
 	
-	team.SetUp( TEAM_BEAT, "Beat", Color( 0, 255, 0 ) )
+	team.SetUp( TEAM_BEAT, "Beat", Color( 200, 0, 255 ) )
 	
 end
 
