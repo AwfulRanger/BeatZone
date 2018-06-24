@@ -47,6 +47,14 @@ local function createfonts()
 		
 	} )
 	
+	surface.CreateFont( "BZ_LabelBold", {
+		
+		font = "Roboto",
+		size = math.Round( fontsize * 0.02 ),
+		weight = 300,
+		
+	} )
+	
 	surface.CreateFont( "BZ_LabelLarge", {
 		
 		font = "Roboto",
@@ -118,7 +126,7 @@ local function paintpanel( self, w, h )
 	
 end
 
-local function createlabel( parent, text, font )
+local function createlabel( parent, text, font, centerx, centery )
 	
 	local label = vgui.Create( "DLabel" )
 	if parent ~= nil then label:SetParent( parent ) end
@@ -128,11 +136,16 @@ local function createlabel( parent, text, font )
 		surface.SetFont( self:GetFont() )
 		local text = self:GetText()
 		local tw, th = surface.GetTextSize( text )
-		shadowtext( text, ( w - tw ) * 0.5, ( h - th ) * 0.5 )
+		local x = 0
+		if centerx ~= false then x = ( w - tw ) * 0.5 end
+		local y = 0
+		if centery ~= false then y = ( h - th ) * 0.5 end
+		shadowtext( text, x, y )
 		
 		return true
 		
 	end
+	
 	label:SetFont( font or "BZ_Label" )
 	
 	return label
@@ -886,7 +899,8 @@ function GM:HUDShouldDraw( hud )
 	
 end
 
-local drawhud = true
+local cmenudrawn = false
+local sbdrawn = false
 
 local healthcolor = Color( 227, 24, 139, 200 )
 local shieldcolor = Color( 41, 92, 209, 200 )
@@ -915,7 +929,7 @@ function GM:HUDPaint()
 		
 	end
 	
-	if drawhud ~= true then return end
+	if cmenudrawn == true or sbdrawn == true then return end
 	
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
@@ -1165,7 +1179,7 @@ local plyunreadycolor = Color( 255, 0, 0, 255 )
 local cmenu
 function GM:OnContextMenuOpen()
 	
-	drawhud = false
+	cmenudrawn = true
 	
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
@@ -1229,8 +1243,266 @@ end
 
 function GM:OnContextMenuClose()
 	
-	drawhud = true
+	cmenudrawn = false
 	
 	if IsValid( cmenu ) == true then cmenu:Remove() end
+	
+end
+
+
+
+local deadcolor = Color( 255, 0, 0, 255 )
+local function createsbpanel( gm, parent )
+	
+	local plys = player.GetAll()
+	local plycount = #plys
+	
+	local size = math.min( ScrW(), ScrH() )
+	local plypanelh = math.Round( size * 0.1 )
+	local panelw = math.Round( ScrW() * 0.5 )
+	
+	local sbpanel = vgui.Create( "DPanel" )
+	sbpanel:SetParent( parent )
+	sbpanel:SetSize( panelw, math.min( plypanelh * 8, plypanelh * plycount ) )
+	sbpanel:Center()
+	sbpanel:MakePopup()
+	sbpanel:SetKeyboardInputEnabled( false )
+	function sbpanel:Paint( w, h )
+		
+		surface.SetDrawColor( bgcolor )
+		surface.DrawRect( 0, 0, w, h )
+		
+	end
+	
+	local scroll = vgui.Create( "DScrollPanel" )
+	scroll:SetParent( sbpanel )
+	scroll:Dock( FILL )
+	
+	for i = 1, plycount do
+		
+		local ply = plys[ i ]
+		
+		local plypanel = vgui.Create( "DPanel" )
+		plypanel:SetParent( scroll )
+		plypanel:Dock( TOP )
+		plypanel:SetTall( plypanelh )
+		plypanel.Paint = paintpanel
+		
+		local asize = math.Round( plypanelh * 0.8 )
+		local apos = math.Round( ( plypanelh - asize ) * 0.5 )
+		
+		local avatar = vgui.Create( "AvatarImage" )
+		avatar:SetParent( plypanel )
+		avatar:SetPos( apos, apos )
+		avatar:SetSize( asize, asize )
+		avatar:SetPlayer( ply, 184 )
+		
+		if ply:IsBot() ~= true then
+			
+			local showprofile = vgui.Create( "DButton" )
+			showprofile:SetParent( avatar )
+			showprofile:Dock( FILL )
+			showprofile:SetText( "Show profile" )
+			function showprofile:Paint( w, h )
+				
+				return true
+				
+			end
+			function showprofile:DoClick()
+				
+				ply:ShowProfile()
+				
+			end
+			
+		end
+		
+		local px = asize + ( apos * 2 )
+		local pw = panelw - px - apos
+		
+		local name = createlabel( plypanel, ply:Nick(), "BZ_LabelBold", false, false )
+		name:SetPos( px, apos )
+		name:SetSize( pw, apos * 2 )
+		function name:Think()
+			
+			if IsValid( ply ) ~= true then return end
+			
+			local nick = ply:Nick()
+			if nick ~= self:GetText() then self:SetText( nick ) end
+			
+		end
+		
+		local status = vgui.Create( "DPanel" )
+		status:SetParent( plypanel )
+		status:SetPos( px, apos * 3 )
+		status:SetSize( pw, plypanelh - ( apos * 4 ) )
+		function status:Paint( w, h )
+		end
+		
+		local miscw = math.Round( pw * 0.2 )
+		
+		local ping = vgui.Create( "DPanel" )
+		ping:SetParent( status )
+		ping:Dock( RIGHT )
+		ping:SetWide( miscw )
+		function ping:Paint( w, h )
+			
+			if IsValid( ply ) ~= true then return end
+			
+			local th = math.Round( h * 0.45 )
+			
+			surface.SetFont( "BZ_LabelBold" )
+			
+			local top = "Ping"
+			local ttw, tth = surface.GetTextSize( top )
+			shadowtext( top, ( w - ttw ) * 0.5, ( th - tth ) * 0.5 )
+			
+			local bot = ply:Ping()
+			if ply:IsBot() == true then bot = "BOT" end
+			local btw, bth = surface.GetTextSize( bot )
+			shadowtext( bot, ( w - btw ) * 0.5, ( h - th ) + ( ( th - bth ) * 0.5 ) )
+			
+		end
+		
+		local deaths = vgui.Create( "DPanel" )
+		deaths:SetParent( status )
+		deaths:Dock( RIGHT )
+		deaths:SetWide( miscw )
+		function deaths:Paint( w, h )
+			
+			if IsValid( ply ) ~= true then return end
+			
+			local th = math.Round( h * 0.45 )
+			
+			surface.SetFont( "BZ_LabelBold" )
+			
+			local top = "Deaths"
+			local ttw, tth = surface.GetTextSize( top )
+			shadowtext( top, ( w - ttw ) * 0.5, ( th - tth ) * 0.5 )
+			
+			local bot = ply:Deaths()
+			local btw, bth = surface.GetTextSize( bot )
+			shadowtext( bot, ( w - btw ) * 0.5, ( h - th ) + ( ( th - bth ) * 0.5 ) )
+			
+		end
+		
+		local kills = vgui.Create( "DPanel" )
+		kills:SetParent( status )
+		kills:Dock( RIGHT )
+		kills:SetWide( miscw )
+		function kills:Paint( w, h )
+			
+			if IsValid( ply ) ~= true then return end
+			
+			local th = math.Round( h * 0.45 )
+			
+			surface.SetFont( "BZ_LabelBold" )
+			
+			local top = "Kills"
+			local ttw, tth = surface.GetTextSize( top )
+			shadowtext( top, ( w - ttw ) * 0.5, ( th - tth ) * 0.5 )
+			
+			local bot = ply:Frags()
+			local btw, bth = surface.GetTextSize( bot )
+			shadowtext( bot, ( w - btw ) * 0.5, ( h - th ) + ( ( th - bth ) * 0.5 ) )
+			
+		end
+		
+		local hp = vgui.Create( "DPanel" )
+		hp:SetParent( status )
+		hp:Dock( FILL )
+		function hp:Paint( w, h )
+			
+			if IsValid( ply ) ~= true then return end
+			
+			local plyteam = ply:Team()
+			if plyteam ~= TEAM_BEAT then
+				
+				surface.SetFont( "BZ_LabelLarge" )
+				
+				local text = "Unassigned"
+				if plyteam == TEAM_SPECTATOR then text = "Spectating" end
+				local tw, th = surface.GetTextSize( text )
+				shadowtext( text, ( w - tw ) * 0.5, ( h - th ) * 0.5 )
+				
+			elseif ply:Alive() ~= true then
+				
+				surface.SetFont( "BZ_LabelLarge" )
+				
+				local text = "Dead"
+				local tw, th = surface.GetTextSize( text )
+				shadowtext( text, ( w - tw ) * 0.5, ( h - th ) * 0.5, deadcolor )
+				
+			else
+				
+				local hh = math.Round( h * 0.45 )
+				
+				surface.SetFont( "BZ_LabelBold" )
+				
+				local health = ply:Health()
+				local maxhealth = ply:GetMaxHealth()
+				local healthsize = math.Round( w * math.Clamp( health / maxhealth, 0, 1 ) )
+				surface.SetDrawColor( healthcolor )
+				surface.DrawRect( 0, 0, healthsize, hh )
+				
+				local htext = health .. "/" .. maxhealth
+				local htw, hth = surface.GetTextSize( htext )
+				local hs = ( hh - hth ) * 0.5
+				shadowtext( htext, hs, hs )
+				
+				local shield = ply:GetShield()
+				local maxshield = ply:GetMaxShield()
+				local shieldsize = math.Round( w * math.Clamp( shield / maxshield, 0, 1 ) )
+				surface.SetDrawColor( shieldcolor )
+				surface.DrawRect( 0, h - hh, shieldsize, hh )
+				
+				local stext = shield .. "/" .. maxshield
+				local stw, sth = surface.GetTextSize( stext )
+				local ss = ( hh - sth ) * 0.5
+				shadowtext( stext, ss, ( h - hh ) + ss )
+				
+			end
+			
+		end
+		
+	end
+	
+	return sbpanel
+	
+end
+
+local sbpanel
+function GM:ScoreboardShow()
+	
+	sbdrawn = true
+	
+	if IsValid( sbpanel ) == true then sbpanel:Remove() end
+	
+	sbpanel = vgui.Create( "DPanel" )
+	sbpanel:SetSize( ScrW(), ScrH() )
+	sbpanel:MakePopup()
+	sbpanel:SetKeyboardInputEnabled( false )
+	function sbpanel:Paint( w, h )
+	end
+	function sbpanel.Think( panel )
+		
+		local plycount = player.GetCount()
+		if panel.plycount ~= plycount then
+			
+			panel.plycount = plycount
+			
+			if IsValid( panel.panel ) == true then panel.panel:Remove() end
+			panel.panel = createsbpanel( self, panel )
+			
+		end
+		
+	end
+	
+end
+
+function GM:ScoreboardHide()
+	
+	sbdrawn = false
+	
+	if IsValid( sbpanel ) == true then sbpanel:Remove() end
 	
 end
