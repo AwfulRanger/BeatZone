@@ -57,13 +57,17 @@ function GM:HandlePlayerShield( ply )
 	
 	local shield = ply:GetShield()
 	local max = ply:GetMaxShield()
-	if CurTime() > ply:GetDamagedTime() + 5 and shield < max then
+	if ply:Alive() ~= true then
+		
+		if shield ~= 0 then ply:SetShield( 0 ) end
+		ply:SetShieldTime( CurTime() )
+		
+	elseif CurTime() > ply:GetDamagedTime() + 5 and shield < max then
 		
 		local regen = math.floor( ( CurTime() - ply:GetShieldTime() ) * 25 )
 		if regen > 0 then
 			
 			ply:SetShield( math.min( shield + regen, max ) )
-			
 			ply:SetShieldTime( CurTime() )
 			
 		end
