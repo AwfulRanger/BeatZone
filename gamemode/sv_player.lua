@@ -16,6 +16,7 @@ util.AddNetworkString( "BZ_BuyItem" )
 util.AddNetworkString( "BZ_SellItem" )
 util.AddNetworkString( "BZ_BuyPerk" )
 util.AddNetworkString( "BZ_SellPerk" )
+util.AddNetworkString( "BZ_PlayerDeath" )
 
 net.Receive( "BZ_SetClass", function( len, ply )
 	
@@ -373,5 +374,18 @@ function GM:PlayerDeathThink( ply )
 	
 	if ply:Team() == TEAM_SPECTATOR or ply:IsBot() == true then ply:Spawn() return end
 	for i = 1, #keys do if ply:KeyPressed( keys[ i ] ) == true then ply:Spawn() return end end
+	
+end
+
+function GM:PlayerDeath( ply, inflictor, attacker )
+	
+	net.Start( "BZ_PlayerDeath" )
+		
+		net.WriteEntity( ply )
+		net.WriteEntity( attacker )
+		
+	net.Broadcast()
+	
+	BaseClass.PlayerDeath( self, ply )
 	
 end
