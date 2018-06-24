@@ -57,7 +57,7 @@ function GM:HandlePlayerShield( ply )
 	
 	local shield = ply:GetShield()
 	local max = ply:GetMaxShield()
-	if ply:Alive() ~= true then
+	if ply:Alive() ~= true or ply:Team() ~= TEAM_BEAT then
 		
 		if shield ~= 0 then ply:SetShield( 0 ) end
 		ply:SetShieldTime( CurTime() )
