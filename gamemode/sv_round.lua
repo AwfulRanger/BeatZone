@@ -117,6 +117,14 @@ function GM:HandleRound()
 		
 	elseif state == ROUND_INTERMISSION then
 		
+		local plys = self.ReadyPlayers.Players
+		for i = 1, #plys do
+			
+			local ply = plys[ i ]
+			if ply:Team() ~= TEAM_BEAT then self:PlayerReady( ply, false ) end
+			
+		end
+		
 		local rply = self.ReadyPlayers
 		if rply.Count <= 0 then
 			
