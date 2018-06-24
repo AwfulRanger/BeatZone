@@ -97,6 +97,15 @@ function GM:RoundLost()
 	local skels = self.Skeletons
 	for i = 1, #skels do skels[ i ]:Remove() end
 	
+	local plys = player.GetAll()
+	for i = 1, #plys do
+		
+		local ply = plys[ i ]
+		ply:SetFrags( 0 )
+		ply:SetDeaths( 0 )
+		
+	end
+	
 end
 
 function GM:HandleRound()
