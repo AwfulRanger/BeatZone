@@ -933,6 +933,9 @@ function GM:HUDPaint()
 	
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
+	local obs = ply:GetObserverTarget()
+	if IsValid( obs ) == true then ply = obs end
+	if ply:Alive() ~= true or ply:Team() ~= TEAM_BEAT then return end
 	
 	local state = self:GetRoundState()
 	
