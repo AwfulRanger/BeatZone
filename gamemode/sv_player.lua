@@ -116,6 +116,19 @@ function GM:PlayerSetModel( ply )
 	
 end
 
+function GM:PlayerSetHandsModel( ply, ent )
+	
+	local hands = player_manager.TranslatePlayerHands( ply:GetInfo( "cl_playermodel" ) )
+	if hands ~= nil then
+		
+		ent:SetModel( hands.model )
+		ent:SetSkin( hands.skin )
+		ent:SetBodyGroups( hands.body )
+		
+	end
+	
+end
+
 --Send info about the round to the player
 function GM:PlayerSendInfo( ply )
 	
