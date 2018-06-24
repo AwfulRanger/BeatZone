@@ -370,7 +370,7 @@ local keys = { IN_ATTACK, IN_ATTACK2, IN_JUMP }
 function GM:PlayerDeathThink( ply )
 	
 	local state = self:GetRoundState()
-	if state == ROUND_ONGOING or state == ROUND_ENDING then return end
+	if state == ROUND_ONGOING or state == ROUND_ENDING then return false end
 	
 	if ply:Team() == TEAM_SPECTATOR or ply:IsBot() == true then ply:Spawn() return end
 	for i = 1, #keys do if ply:KeyPressed( keys[ i ] ) == true then ply:Spawn() return end end
@@ -387,5 +387,60 @@ function GM:PlayerDeath( ply, inflictor, attacker )
 	net.Broadcast()
 	
 	BaseClass.PlayerDeath( self, ply, inflictor, attacker )
+	
+end
+
+
+
+local obsmode = {
+	
+	OBS_MODE_ROAMING,
+	OBS_MODE_IN_EYE,
+	OBS_MODE_CHASE,
+	
+}
+local function cycleobstarget( gm, ply, num )
+	
+	local players = gm:GetPlayers()
+	local targets = {}
+	for i = 1, #players do
+		
+		local ply = players[ i ]
+		if ply:Alive() == true then table.insert( targets, ply ) end
+		
+	end
+	local targetsnum = #targets
+	
+	if num == nil then num = 1 end
+	if ply.BZ_OBSTarget == nil then ply.BZ_OBSTarget = 0 end
+	ply.BZ_OBSTarget = ply.BZ_OBSTarget + num
+	if targetsnum > 0 then
+		
+		if ply.BZ_OBSTarget > targetsnum then ply.BZ_OBSTarget = 1 end
+		if ply.BZ_OBSTarget < 1 then ply.BZ_OBSTarget = targetsnum end
+		
+	end
+	
+	local target = targets[ ply.BZ_OBSTarget ]
+	if IsValid( target ) == true then ply:SpectateEntity( target ) end
+	
+end
+local function cycleobsmode( gm, ply )
+	
+	if ply.BZ_OBSMode == nil then ply.BZ_OBSMode = 0 end
+	ply.BZ_OBSMode = ply.BZ_OBSMode + 1
+	if ply.BZ_OBSMode > #obsmode then ply.BZ_OBSMode = 1 end
+	
+	ply:Spectate( obsmode[ ply.BZ_OBSMode ] )
+	cycleobstarget( gm, ply, 0 )
+	
+end
+function GM:KeyPress( ply, key )
+	
+	if ply:Alive() == true and ply:Team() ~= TEAM_SPECTATOR then return end
+	
+	if key == IN_JUMP then cycleobsmode( self, ply ) end
+	if key == IN_ATTACK then cycleobstarget( self, ply, 1 ) end
+	if key == IN_ATTACK2 then cycleobstarget( self, ply, -1 ) end
 	
 end
