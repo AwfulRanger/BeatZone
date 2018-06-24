@@ -888,10 +888,10 @@ end
 
 local drawhud = true
 
-local healthcolor = Color( 227, 24, 139, 100 )
-local shieldcolor = Color( 41, 92, 209, 100 )
-local clipcolor = Color( 146, 32, 209, 100 )
-local ammocolor = Color( 69, 10, 101, 100 )
+local healthcolor = Color( 227, 24, 139, 200 )
+local shieldcolor = Color( 41, 92, 209, 200 )
+local clipcolor = Color( 146, 32, 209, 200 )
+local ammocolor = Color( 69, 10, 101, 200 )
 local statestr = {
 	
 	[ ROUND_INITIALIZING ] = "Initializing",
