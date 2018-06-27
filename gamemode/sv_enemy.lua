@@ -94,6 +94,19 @@ function GM:EnemySpawnPos()
 	
 end
 
+function GM:SpawnEnemy( class, pos )
+	
+	if pos == nil then pos = self:EnemySpawnPos() end
+	if pos == nil then return end
+	
+	local enemy = ents.Create( class )
+	enemy:SetPos( pos )
+	enemy:Spawn()
+	
+	return enemy
+	
+end
+
 GM.Skeletons = GM.Skeletons or {}
 local skeletonclass = {
 	
@@ -110,9 +123,7 @@ function GM:SpawnSkeleton( class )
 	
 	class = class or skeletonclass[ math.random( #skeletonclass ) ]
 	
-	local skel = ents.Create( class )
-	skel:SetPos( pos )
-	skel:Spawn()
+	local skel = self:SpawnEnemy( class, pos )
 	
 	table.insert( self.Skeletons, skel )
 	
@@ -123,7 +134,7 @@ end
 local isskeleton = {}
 for i = 1, #skeletonclass do isskeleton[ skeletonclass[ i ] ] = true end
 function GM:EntityRemoved( ent )
-	
+
 	if isskeleton[ ent:GetClass() ] == true then table.RemoveByValue( self.Skeletons, ent ) end
 	
 end

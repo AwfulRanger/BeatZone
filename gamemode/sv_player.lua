@@ -224,6 +224,16 @@ function GM:PlayerSendInfo( ply )
 		
 	end
 	
+	--send boss
+	net.Start( "BZ_SetBoss" )
+		
+		local boss = self.EnemyBoss
+		local set = boss ~= nil
+		net.WriteBool( set )
+		if set == true then net.WriteEntity( boss ) end
+		
+	net.Send( ply )
+	
 end
 
 function GM:PlayerInitialSpawn( ply )

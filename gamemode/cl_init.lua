@@ -14,7 +14,27 @@ net.Receive( "BZ_UISound", function()
 	
 end )
 
+net.Receive( "BZ_SetBoss", function()
+	
+	local boss = nil
+	local set = net.ReadBool()
+	if set == true then boss = net.ReadEntity() end
+	gmod.GetGamemode().EnemyBoss = boss
+	
+end )
 
+
+
+local bossclass = {
+	
+	[ "bz_boss_horseman" ] = true,
+	
+}
+function GM:OnEntityCreated( ent )
+	
+	if self.EnemyBoss == NULL and bossclass[ ent:GetClass() ] == true then self.EnemyBoss = ent end
+	
+end
 
 function GM:InitPostEntity()
 	

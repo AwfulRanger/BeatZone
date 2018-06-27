@@ -12,6 +12,7 @@ util.AddNetworkString( "BZ_ResetReady" )
 util.AddNetworkString( "BZ_PlayerReady" )
 util.AddNetworkString( "BZ_FirstReadyTime" )
 util.AddNetworkString( "BZ_SetRound" )
+util.AddNetworkString( "BZ_SetBoss" )
 
 
 
@@ -30,7 +31,10 @@ function GM:GetRoundEnemyCount( round )
 	
 	round = round or self:GetRound()
 	
-	return math.floor( 20 + ( round * 0.2 ) )
+	local base = 20
+	if round % 6 == 0 then base = 5 end
+	
+	return math.floor( base + ( round * 0.2 ) )
 	
 end
 
@@ -39,6 +43,7 @@ end
 ----
 function GM:StartIntermission()
 	
+	self.IsRoundLost = false
 	self:SetRound()
 	self:ResetReady()
 	self:SetRoundState( ROUND_INTERMISSION )
@@ -71,6 +76,7 @@ end
 
 function GM:EndRound()
 	
+	self.IsRoundLost = false
 	self:SetRoundState( ROUND_ENDING )
 	
 end
@@ -176,12 +182,46 @@ function GM:HandleRound()
 		for i = 1, #plys do if plys[ i ]:Alive() == true then alive = true break end end
 		if alive ~= true then self:LoseRound() return end
 		
-		if self.EnemiesKilled >= self.EnemyCount then self:EndRound() return end
-		
-		local skel = NULL
-		while ( #self.Skeletons < math.min( self.MaxEnemies, self.EnemyCount - self.EnemiesKilled ) ) and skel ~= nil do
+		if self:GetRound() % 6 == 0 then
 			
-			skel = self:SpawnSkeleton()
+			if self.EnemyBoss == nil then
+				
+				self.EnemyBoss = self:SpawnEnemy( "bz_boss_horseman" )
+				net.Start( "BZ_SetBoss" )
+					
+					net.WriteBool( true )
+					net.WriteEntity( self.EnemyBoss )
+					
+				net.Broadcast()
+				
+			elseif IsValid( self.EnemyBoss ) ~= true then
+				
+				local skels = self.Skeletons
+				for i = 1, #skels do skels[ i ]:Remove() end
+				
+				self:EndRound()
+				
+				return
+				
+			end
+			
+			local skel = NULL
+			while #self.Skeletons < math.min( self.MaxEnemies, self.EnemyCount ) and skel ~= nil do
+				
+				skel = self:SpawnSkeleton()
+				
+			end
+			
+		else
+			
+			if self.EnemiesKilled >= self.EnemyCount then self:EndRound() return end
+			
+			local skel = NULL
+			while #self.Skeletons < math.min( self.MaxEnemies, self.EnemyCount - self.EnemiesKilled ) and skel ~= nil do
+				
+				skel = self:SpawnSkeleton()
+				
+			end
 			
 		end
 		
@@ -190,6 +230,13 @@ function GM:HandleRound()
 		if self.RoundEndTime == nil then self.RoundEndTime = CurTime() end
 		
 		if CurTime() > self.RoundEndTime + 5 then
+			
+			self.EnemyBoss = nil
+			net.Start( "BZ_SetBoss" )
+				
+				net.WriteBool( false )
+				
+			net.Broadcast()
 			
 			self.RoundEndTime = nil
 			if self.IsRoundLost == true then

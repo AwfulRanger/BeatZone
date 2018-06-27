@@ -931,19 +931,97 @@ function GM:HUDPaint()
 	
 	if cmenudrawn == true or sbdrawn == true then return end
 	
-	BaseClass.HUDPaint( self )
-	
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
-	local obs = ply:GetObserverTarget()
-	if IsValid( obs ) == true then ply = obs end
-	if ply:Alive() ~= true or ply:Team() ~= TEAM_BEAT then return end
-	
-	local state = self:GetRoundState()
 	
 	local size = math.min( scrw, scrh )
 	local spacing = math.Round( size * 0.05 )
 	local hudspacing = math.Round( size * 0.005 )
+	
+	--state/round
+	do
+		
+		local state = self:GetRoundState()
+		
+		surface.SetFont( "BZ_HUDSmall" )
+		local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
+		local sw, sh = surface.GetTextSize( statetext )
+		shadowtext( statetext, ( scrw - sw ) * 0.5, ( scrh * 0.05 ) - sh )
+		
+		if ply:Team() == TEAM_BEAT and state == ROUND_INTERMISSION then
+			
+			local readycount = self.ReadyPlayers.Count
+			local plycount = #self:GetPlayers()
+			
+			local readytext = "Hold " .. string.upper( input.LookupBinding( "+menu_context", true ) or "(UNBOUND)" ) .. " to toggle ready"
+			local bind = input.LookupBinding( "bz_toggleready" )
+			if bind ~= nil then readytext = "Press " .. string.upper( bind ) .. " to toggle ready" end
+			readytext = readytext .. " (" .. readycount .. "/" .. plycount .. ")"
+			
+			surface.SetFont( "BZ_HUD" )
+			
+			local rw, rh = surface.GetTextSize( readytext )
+			
+			local readytime = self.FirstReadyTime
+			if readytime ~= nil then
+				
+				local basetime = 30 * ( plycount - readycount )
+				local time = math.Round( basetime - ( CurTime() - readytime ), 1 )
+				
+				if time > 0 then
+					
+					if #tostring( time ) > 3 then time = math.floor( time ) end
+					
+					local timestr = tostring( time )
+					if #timestr == 1 then timestr = timestr .. ".0" end
+					
+					local timetext = "Starting in " .. timestr .. " seconds"
+					local tw, th = surface.GetTextSize( timetext )
+					
+					shadowtext( timetext, ( scrw - tw ) * 0.5, scrh * 0.2 )
+					
+				end
+				
+			end
+			
+			shadowtext( readytext, ( scrw - rw ) * 0.5, ( scrh * 0.2 ) - rh )
+			
+		end
+		
+	end
+	
+	--boss health
+	local boss = self.EnemyBoss
+	if IsValid( boss ) == true then
+		
+		surface.SetFont( "BZ_HUDSmall" )
+		
+		local hw = math.Round( scrw * 0.5 )
+		local hh = math.Round( scrh * 0.05 )
+		local hx = math.Round( ( scrw - hw ) * 0.5 )
+		local hy = math.Round( scrh * 0.075 )
+		local hbarh = hh - hudspacing * 2
+		
+		surface.SetDrawColor( hudbgcolor )
+		surface.DrawRect( hx, hy, hw, hh )
+		
+		local health = boss:Health()
+		local maxhealth = boss:GetMaxHealth()
+		local healthsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 )
+		surface.SetDrawColor( healthcolor )
+		surface.DrawRect( hx + hudspacing, hy + hudspacing, healthsize, hbarh )
+		
+		local htext = health .. "/" .. maxhealth
+		local htw, hth = surface.GetTextSize( htext )
+		shadowtext( htext, hx + ( hudspacing * 2 ), hy + hudspacing + ( ( hbarh - hth ) * 0.5 ) )
+		
+	end
+	
+	BaseClass.HUDPaint( self )
+	
+	local obs = ply:GetObserverTarget()
+	if IsValid( obs ) == true then ply = obs end
+	if ply:Alive() ~= true or ply:Team() ~= TEAM_BEAT then return end
 	
 	--health/shield
 	do
@@ -1120,56 +1198,6 @@ function GM:HUDPaint()
 				end
 				
 			end
-			
-		end
-		
-	end
-	
-	--state/round
-	do
-		
-		surface.SetFont( "BZ_HUDSmall" )
-		local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
-		local sw, sh = surface.GetTextSize( statetext )
-		shadowtext( statetext, ( scrw - sw ) * 0.5, ( scrh * 0.05 ) - sh )
-		
-		if ply:Team() == TEAM_BEAT and state == ROUND_INTERMISSION then
-			
-			local readycount = self.ReadyPlayers.Count
-			local plycount = #self:GetPlayers()
-			
-			local readytext = "Hold " .. string.upper( input.LookupBinding( "+menu_context", true ) or "(UNBOUND)" ) .. " to toggle ready"
-			local bind = input.LookupBinding( "bz_toggleready" )
-			if bind ~= nil then readytext = "Press " .. string.upper( bind ) .. " to toggle ready" end
-			readytext = readytext .. " (" .. readycount .. "/" .. plycount .. ")"
-			
-			surface.SetFont( "BZ_HUD" )
-			
-			local rw, rh = surface.GetTextSize( readytext )
-			
-			local readytime = self.FirstReadyTime
-			if readytime ~= nil then
-				
-				local basetime = 30 * ( plycount - readycount )
-				local time = math.Round( basetime - ( CurTime() - readytime ), 1 )
-				
-				if time > 0 then
-					
-					if #tostring( time ) > 3 then time = math.floor( time ) end
-					
-					local timestr = tostring( time )
-					if #timestr == 1 then timestr = timestr .. ".0" end
-					
-					local timetext = "Starting in " .. timestr .. " seconds"
-					local tw, th = surface.GetTextSize( timetext )
-					
-					shadowtext( timetext, ( scrw - tw ) * 0.5, scrh * 0.2 )
-					
-				end
-				
-			end
-			
-			shadowtext( readytext, ( scrw - rw ) * 0.5, ( scrh * 0.2 ) - rh )
 			
 		end
 		
