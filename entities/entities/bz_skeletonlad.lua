@@ -21,6 +21,15 @@ end
 
 if SERVER then
 	
+	ENT.Activity = {
+		
+		Spawn = ACT_TRANSITION,
+		Stand = ACT_MP_STAND_MELEE,
+		Run = ACT_MP_RUN_MELEE,
+		Attack = ACT_MP_ATTACK_STAND_MELEE,
+		
+	}
+	
 	ENT.MoveSpeed = 320
 	
 	ENT.SwingLength = 48
@@ -56,7 +65,7 @@ if SERVER then
 		local target = self:GetTarget()
 		if IsValid( target ) == true then
 			
-			self:StartActivity( ACT_MP_RUN_MELEE )
+			self:StartActivity( self.Activity.Run or ACT_MP_RUN_MELEE )
 			
 			self.loco:SetDesiredSpeed( self.MoveSpeed )
 			
@@ -99,7 +108,7 @@ if SERVER then
 					self:SetSwinging( true )
 					self:SetSwingTime( CurTime() )
 					
-					self:RestartGesture( ACT_MP_ATTACK_STAND_MELEE )
+					self:RestartGesture( self.Activity.Attack or ACT_MP_ATTACK_STAND_MELEE )
 					self:EmitSound( self.SwingSounds[ math.random( #self.SwingSounds ) ], nil, nil, nil, CHAN_WEAPON )
 					
 				end
@@ -108,7 +117,7 @@ if SERVER then
 			
 		else
 			
-			self:StartActivity( ACT_MP_STAND_MELEE )
+			self:StartActivity( self.Activity.Stand or ACT_MP_STAND_MELEE )
 			
 		end
 		

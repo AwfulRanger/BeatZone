@@ -24,6 +24,15 @@ end
 
 if SERVER then
 	
+	ENT.Activity = {
+		
+		Spawn = ACT_TRANSITION,
+		Stand = ACT_MP_STAND_ITEM1,
+		Run = ACT_MP_RUN_ITEM1,
+		Attack = ACT_MP_ATTACK_STAND_ITEM1,
+		
+	}
+	
 	ENT.MoveSpeed = 300
 	
 	ENT.ShootSounds = { Sound( "weapons/iceaxe/iceaxe_swing1.wav" ) }
@@ -95,7 +104,7 @@ if SERVER then
 		
 		self:SetShootTime( CurTime() )
 		
-		self:RestartGesture( ACT_MP_ATTACK_STAND_ITEM1 )
+		self:RestartGesture( self.Activity.Attack or ACT_MP_ATTACK_STAND_ITEM1 )
 		self:EmitSound( self.ShootSounds[ math.random( #self.ShootSounds ) ], 140, nil, nil, CHAN_WEAPON )
 		
 	end
@@ -111,7 +120,7 @@ if SERVER then
 			
 			if self:ShouldChase( target ) == true then
 				
-				self:StartActivity( ACT_MP_RUN_ITEM1 )
+				self:StartActivity( self.Activity.Run or ACT_MP_RUN_ITEM1 )
 				
 				self:FollowEntity( target, { maxage = 0.1, think = function()
 					
@@ -123,7 +132,7 @@ if SERVER then
 				
 			else
 				
-				self:StartActivity( ACT_MP_STAND_ITEM1 )
+				self:StartActivity( self.Activity.Stand or ACT_MP_STAND_ITEM1 )
 				
 				self:HandleShoot( target )
 				
@@ -131,7 +140,7 @@ if SERVER then
 			
 		else
 			
-			self:StartActivity( ACT_MP_STAND_ITEM1 )
+			self:StartActivity( self.Activity.Stand or ACT_MP_STAND_ITEM1 )
 			
 		end
 		

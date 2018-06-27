@@ -54,6 +54,12 @@ end
 
 if SERVER then
 	
+	ENT.Activity = {
+		
+		Spawn = ACT_TRANSITION,
+		
+	}
+	
 	function ENT:FollowEntity( ent, options )
 		
 		options = options or {}
@@ -160,7 +166,7 @@ if SERVER then
 				
 				self:SetNoDraw( false )
 				
-				self:PlaySequenceAndWait( self:SelectWeightedSequence( ACT_TRANSITION ) )
+				self:PlaySequenceAndWait( self:SelectWeightedSequence( self.Activity.Spawn or ACT_TRANSITION ) )
 				self.Spawning = false
 				
 			end

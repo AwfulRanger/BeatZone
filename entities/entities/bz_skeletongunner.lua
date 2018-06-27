@@ -20,6 +20,16 @@ end
 
 if SERVER then
 	
+	ENT.Activity = {
+		
+		Spawn = ACT_TRANSITION,
+		Stand = ACT_MP_STAND_PRIMARY,
+		Run = ACT_MP_RUN_PRIMARY,
+		Crouch = ACT_MP_CROUCH_PRIMARY,
+		Attack = ACT_MP_ATTACK_STAND_PRIMARY,
+		
+	}
+	
 	ENT.MoveSpeed = 280
 	
 	ENT.ShootSounds = { Sound( "weapons/sniper_rifle_classic_shoot.wav" ) }
@@ -97,7 +107,7 @@ if SERVER then
 		
 		self:SetShootTime( CurTime() )
 		
-		self:RestartGesture( ACT_MP_ATTACK_STAND_PRIMARY )
+		self:RestartGesture( self.Activity.Attack or ACT_MP_ATTACK_STAND_PRIMARY )
 		self:EmitSound( self.ShootSounds[ math.random( #self.ShootSounds ) ], 140, nil, nil, CHAN_WEAPON )
 		
 	end
@@ -113,7 +123,7 @@ if SERVER then
 			
 			if self:ShouldChase( target ) == true then
 				
-				self:StartActivity( ACT_MP_RUN_PRIMARY )
+				self:StartActivity( self.Activity.Run or ACT_MP_RUN_PRIMARY )
 				
 				self:FollowEntity( target, { maxage = 0.1, think = function()
 					
@@ -131,13 +141,13 @@ if SERVER then
 				
 				if pos:Distance( tr.HitPos ) < 32 then
 					
-					self:StartActivity( ACT_MP_CROUCH_PRIMARY )
+					self:StartActivity( self.Activity.Crouch or ACT_MP_CROUCH_PRIMARY )
 					
 					self:HandleShoot( target )
 					
 				else
 					
-					self:StartActivity( ACT_MP_RUN_PRIMARY )
+					self:StartActivity( self.Activity.Run or ACT_MP_RUN_PRIMARY )
 					
 					self:MoveToPos( tr.HitPos, { tolerance = 32 } )
 					
@@ -145,7 +155,7 @@ if SERVER then
 				
 			else
 				
-				self:StartActivity( ACT_MP_CROUCH_PRIMARY )
+				self:StartActivity( self.Activity.Crouch or ACT_MP_CROUCH_PRIMARY )
 				
 				self:HandleShoot( target )
 				
@@ -153,7 +163,7 @@ if SERVER then
 			
 		else
 			
-			self:StartActivity( ACT_MP_STAND_PRIMARY )
+			self:StartActivity( self.Activity.Stand or ACT_MP_STAND_PRIMARY )
 			
 		end
 		
