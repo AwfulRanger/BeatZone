@@ -456,7 +456,7 @@ local function createcharsheet( gm, charmenu )
 		
 		classscroll:SetWide( w * 0.3 )
 		classname:SetTall( h * 0.05 )
-		classdesc:SetTall( h * 0.3 )
+		classdesc:SetTall( h * 0.85 )
 		classtoggle:SetTall( h * 0.1 )
 		
 	end
