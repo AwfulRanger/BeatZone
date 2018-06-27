@@ -199,7 +199,8 @@ if SERVER then
 	}
 	function ENT:BodyUpdate()
 		
-		if self.MoveActivities[ self:GetActivity() ] == true then self:BodyMoveXY() end
+		local act = self:GetActivity()
+		if self.MoveActivities[ act ] == true or act == self.Activity.Run then self:BodyMoveXY() end
 		
 		local yaw = 0
 		
