@@ -931,6 +931,8 @@ function GM:HUDPaint()
 	
 	if cmenudrawn == true or sbdrawn == true then return end
 	
+	BaseClass.HUDPaint( self )
+	
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
 	local obs = ply:GetObserverTarget()
@@ -1172,8 +1174,6 @@ function GM:HUDPaint()
 		end
 		
 	end
-	
-	BaseClass.HUDPaint( self )
 	
 end
 
