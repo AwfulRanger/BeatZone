@@ -9,7 +9,7 @@ ENT.Base = "base_anim"
 ENT.PrintName = "Ammo"
 ENT.Model = Model( "models/items/ammopack_medium.mdl" )
 
-ENT.UseCooldown = 10
+ENT.UseCooldown = 30
 function ENT:SetupDataTables()
 	
 	self:NetworkVar( "Float", 0, "UseTime" )

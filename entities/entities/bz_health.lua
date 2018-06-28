@@ -9,7 +9,7 @@ ENT.Base = "base_anim"
 ENT.PrintName = "Health"
 ENT.Model = Model( "models/items/medkit_medium.mdl" )
 
-ENT.UseCooldown = 10
+ENT.UseCooldown = 30
 function ENT:SetupDataTables()
 	
 	self:NetworkVar( "Float", 0, "UseTime" )
