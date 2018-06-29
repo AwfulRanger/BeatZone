@@ -1632,7 +1632,8 @@ function GM:DrawDeathNotice( dx, dy )
 	for i = 1, #deaths do
 		
 		local death = deaths[ i ]
-		if CurTime() > death.time + deathtime:GetFloat() then
+		local time = death.time + deathtime:GetFloat()
+		if CurTime() > time then
 			
 			table.insert( remove, i )
 			
@@ -1643,7 +1644,18 @@ function GM:DrawDeathNotice( dx, dy )
 			msg = string.Replace( msg, "%s2", death.attacker )
 			
 			local tw, th = surface.GetTextSize( msg )
-			shadowtext( msg, sx - tw, sy + ( deathh * ( i - 1 ) ) )
+			
+			local tcolor
+			local scolor
+			if CurTime() > time - 1 then
+				
+				local alpha = time - CurTime()
+				tcolor = Color( textcolor.r, textcolor.g, textcolor.b, 255 * alpha )
+				scolor = Color( textshadowcolor.r, textshadowcolor.g, textshadowcolor.b, 255 * alpha )
+				
+			end
+			
+			shadowtext( msg, sx - tw, sy + ( deathh * ( i - 1 ) ), tcolor, scolor )
 			
 		end
 		
