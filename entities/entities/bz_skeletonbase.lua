@@ -11,6 +11,17 @@ ENT.Skin = 0 --0 = red, 1 = blue, 2 = green, 3 = yellow
 ENT.IsBZEnemy = true
 ENT.StartHealth = 30
 
+function ENT:GetBuffed( val, mult )
+	
+	val = val or 1
+	mult = mult or 1.1
+	
+	for i = 1, math.floor( ( gmod.GetGamemode():GetRound() - 1 ) / 6 ) do val = val * mult end
+	
+	return val
+	
+end
+
 function ENT:SetupDataTables()
 	
 	self:NetworkVar( "Entity", 0, "Target" )
@@ -26,8 +37,9 @@ function ENT:Initialize()
 		
 		self:PrecacheGibs()
 		
-		self:SetMaxHealth( self.StartHealth )
-		self:SetHealth( self.StartHealth )
+		local hp = self:GetBuffed( self.StartHealth )
+		self:SetMaxHealth( hp )
+		self:SetHealth( hp )
 		
 		self:SetNoDraw( true )
 		

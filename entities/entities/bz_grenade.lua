@@ -45,7 +45,7 @@ if SERVER then
 	function ENT:SetRadius( radius ) self.Radius = radius end
 	function ENT:GetRadius() return self.Radius end
 	
-	ENT.Damage = 10
+	ENT.Damage = 25
 	function ENT:SetDamage( damage ) self.Damage = damage end
 	function ENT:GetDamage() return self.Damage end
 	

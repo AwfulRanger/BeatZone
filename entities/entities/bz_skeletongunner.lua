@@ -84,7 +84,7 @@ if SERVER then
 		
 	end
 	
-	ENT.ShootDamage = 3
+	ENT.ShootDamage = 15
 	function ENT:Shoot( target )
 		
 		if target == nil then target = self:GetTarget() end
@@ -97,7 +97,7 @@ if SERVER then
 		self:FireBullets( {
 			
 			Attacker = self,
-			Damage = self.ShootDamage,
+			Damage = self:GetBuffed( self.ShootDamage ),
 			Distance = self.MaxRange,
 			Src = pos,
 			Dir = dir,

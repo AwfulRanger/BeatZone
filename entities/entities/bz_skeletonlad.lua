@@ -57,7 +57,7 @@ if SERVER then
 	
 	ENT.SwingCooldown = 1.5
 	ENT.SwingTime = 0.25
-	ENT.SwingDamage = 10
+	ENT.SwingDamage = 30
 	function ENT:HandleAI()
 		
 		BaseClass.HandleAI( self )
@@ -90,7 +90,7 @@ if SERVER then
 							local dmg = DamageInfo()
 							dmg:SetAttacker( self )
 							dmg:SetInflictor( self )
-							dmg:SetDamage( self.SwingDamage )
+							dmg:SetDamage( self:GetBuffed( self.SwingDamage ) )
 							dmg:SetDamageType( DMG_CLUB )
 							
 							ent:TakeDamageInfo( dmg )

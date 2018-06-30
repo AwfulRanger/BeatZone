@@ -39,7 +39,7 @@ end
 
 if SERVER then
 	
-	ENT.Duration = 1
+	ENT.Duration = 3
 	function ENT:SetDuration( duration ) self.Duration = duration end
 	function ENT:GetDuration() return self.Duration end
 	

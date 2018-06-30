@@ -86,7 +86,7 @@ if SERVER then
 		
 	end
 	
-	ENT.RocketDamage = 10
+	ENT.RocketDamage = 25
 	ENT.RocketSpeed = 1200
 	ENT.RocketRadius = 100
 	function ENT:ShootRocket( target )
@@ -106,7 +106,7 @@ if SERVER then
 		rocket:Spawn()
 		local phys = rocket:GetPhysicsObject()
 		if IsValid( phys ) == true then phys:SetVelocity( dir * self.RocketSpeed ) end
-		rocket:SetDamage( self.RocketDamage )
+		rocket:SetDamage( self:GetBuffed( self.RocketDamage ) )
 		rocket:SetRadius( self.RocketRadius )
 		
 		self:SetShootTime( CurTime() )
@@ -116,7 +116,7 @@ if SERVER then
 		
 	end
 	
-	ENT.GrenadeDamage = 10
+	ENT.GrenadeDamage = 25
 	ENT.GrenadeSpeed = 1200
 	ENT.GrenadeRadius = 100
 	function ENT:ShootGrenade( target )
@@ -140,7 +140,7 @@ if SERVER then
 			phys:SetVelocity( dir * self.GrenadeSpeed )
 			
 		end
-		grenade:SetDamage( self.GrenadeDamage )
+		grenade:SetDamage( self:GetBuffed( self.GrenadeDamage ) )
 		grenade:SetRadius( self.GrenadeRadius )
 		
 		self:SetShootTime( CurTime() )

@@ -75,7 +75,7 @@ if SERVER then
 		
 	end
 	
-	ENT.FireballDuration = 1
+	ENT.FireballDuration = 3
 	ENT.FireballSpeed = 2400
 	ENT.FireballRadius = 100
 	function ENT:ShootFireball( target )
@@ -99,7 +99,7 @@ if SERVER then
 			phys:SetVelocity( dir * self.FireballSpeed )
 			
 		end
-		fireball:SetDuration( self.FireballDuration )
+		fireball:SetDuration( self:GetBuffed( self.FireballDuration ) )
 		fireball:SetRadius( self.FireballRadius )
 		
 		self:SetShootTime( CurTime() )
