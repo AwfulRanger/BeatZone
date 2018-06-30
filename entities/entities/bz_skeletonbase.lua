@@ -107,7 +107,7 @@ if SERVER then
 	function ENT:ValidTarget( ent )
 		
 		if IsValid( ent ) ~= true then return false end
-		if ent:IsPlayer() == true and ent:Alive() ~= true then return false end
+		if ent:IsPlayer() == true and ( ent:Alive() ~= true or ent:Team() ~= TEAM_BEAT ) then return false end
 		
 		return true
 		
@@ -120,7 +120,7 @@ if SERVER then
 		local dist
 		local ply
 		
-		local targets, count = hook.Run( "GetEnemyTargets" )
+		local targets, count = hook.Run( "GetEnemyTargets", self )
 		for i = 1, count do
 			
 			local p = targets[ i ]
