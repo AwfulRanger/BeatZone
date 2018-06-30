@@ -140,7 +140,7 @@ end
 
 function GM:PlayerBuyPerk( ply, perk )
 	
-	ply.PerkPoints = ply.PerkPoints - perk.Cost
+	ply:AddPerkPoints( -perk.Cost )
 	local id = perk.Index
 	if ply.Perks[ id ] == nil then ply.Perks[ id ] = table.insert( ply.PerkNames, id ) end
 	self:PlayerSetPerkNum( ply, perk, self:PlayerGetPerkNum( ply, perk ) + 1 )
@@ -165,7 +165,7 @@ function GM:PlayerSellPerk( ply, perk )
 	
 	local count = self:PlayerGetPerkNum( ply, perk ) - 1
 	
-	ply.PerkPoints = ply.PerkPoints + perk.Cost
+	ply:AddPerkPoints( perk.Cost )
 	local id = perk.Index
 	if count <= 0 then
 		
@@ -221,11 +221,10 @@ end
 
 function GM:PlayerCanBuyPerk( ply, perk )
 	
-	if ply.PerkPoints == nil then return false end
 	if ply:Team() ~= TEAM_BEAT then return false end
 	if ply:Alive() ~= true then return false end
 	if self:GetRoundState() == ROUND_ONGOING then return false end
-	if ply.PerkPoints < perk.Cost then return false end
+	if ply:GetPerkPoints() < perk.Cost then return false end
 	if self:GetClassHasPerk( ply, perk ) ~= true then return false end
 	if self:GetPerkAdd( ply, perk ) <= 0 then return false end
 	

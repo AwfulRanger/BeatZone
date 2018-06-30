@@ -233,14 +233,14 @@ local function createperkmenu( gm, perkmenu )
 	perkbuttonbg:Dock( BOTTOM )
 	function perkbuttonbg:Paint( w, h ) end
 	
-	local perkpoints = createlabel( perkmenu, ply.PerkPoints .. " perk points", "BZ_LabelLarge" )
+	local perkpoints = createlabel( perkmenu, ply:GetPerkPoints() .. " perk points", "BZ_LabelLarge" )
 	perkpoints:Dock( BOTTOM )
 	
 	local perkbuy
 	local perksell
 	local function updateperkmenu( points, count )
 		
-		points = points or ply.PerkPoints
+		points = points or ply:GetPerkPoints()
 		count = count or gm:PlayerGetPerkNum( ply, curperk )
 		
 		local cost = "(" .. curperk.Cost .. " point" .. ( ( curperk.Cost ~= 1 and "s" ) or "" ) .. ")"
@@ -258,7 +258,7 @@ local function createperkmenu( gm, perkmenu )
 		if curperk == nil or gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return end
 		
 		local count = gm:PlayerGetPerkNum( ply, curperk ) + 1
-		updateperkmenu( ply.PerkPoints - curperk.Cost, count )
+		updateperkmenu( ply:GetPerkPoints() - curperk.Cost, count )
 		perkdesc:SetText( curperk:GetDescription( ply, count ) )
 		
 		gm:BuyPerk( curperk )
@@ -277,7 +277,7 @@ local function createperkmenu( gm, perkmenu )
 		if curperk == nil or gm:PlayerCanSellPerk( ply, curperk ) ~= true then return end
 		
 		local count = gm:PlayerGetPerkNum( ply, curperk ) - 1
-		updateperkmenu( ply.PerkPoints + curperk.Cost, count )
+		updateperkmenu( ply:GetPerkPoints() + curperk.Cost, count )
 		perkdesc:SetText( curperk:GetDescription( ply, count ) )
 		
 		gm:SellPerk( curperk )
@@ -530,7 +530,7 @@ local function createcharsheet( gm, charmenu )
 	local loadouttoggle = createbutton( loadoutmenu )
 	loadouttoggle:Dock( BOTTOM )
 	
-	local loadoutpoints = createlabel( loadoutmenu, ply.LoadoutPoints .. " loadout points", "BZ_LabelLarge" )
+	local loadoutpoints = createlabel( loadoutmenu, ply:GetLoadoutPoints() .. " loadout points", "BZ_LabelLarge" )
 	loadoutpoints:Dock( BOTTOM )
 	
 	local curitem
@@ -541,7 +541,7 @@ local function createcharsheet( gm, charmenu )
 		if curitem == nil or gm:PlayerCanBuyItem( ply, curitem ) ~= true then return end
 		
 		button:SetText( "Sell (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
-		loadoutpoints:SetText( ( ply.LoadoutPoints - curitem.Cost ) .. " loadout points" )
+		loadoutpoints:SetText( ( ply:GetLoadoutPoints() - curitem.Cost ) .. " loadout points" )
 		
 		gm:BuyItem( curitem )
 		
@@ -558,7 +558,7 @@ local function createcharsheet( gm, charmenu )
 		if curitem == nil or gm:PlayerCanSellItem( ply, curitem ) ~= true then return end
 		
 		button:SetText( "Buy (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
-		loadoutpoints:SetText( ( ply.LoadoutPoints + curitem.Cost ) .. " loadout points" )
+		loadoutpoints:SetText( ( ply:GetLoadoutPoints() + curitem.Cost ) .. " loadout points" )
 		
 		gm:SellItem( curitem )
 		

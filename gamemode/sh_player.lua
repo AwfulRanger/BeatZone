@@ -12,15 +12,27 @@ function GM:GetPlayers()
 	
 end
 
+function GM:GetLoadoutPoints( ply )
+	
+	return 10
+	
+end
+
+function GM:GetPerkPoints( ply )
+	
+	return 10 + ( math.floor( math.max( 0, self:GetRound() - 1 ) / 6 ) * 5 )
+	
+end
+
 function GM:ResetPlayerCharacter( ply )
 	
 	ply.Loadout = {}
 	ply.LoadoutNames = {}
-	ply.LoadoutPoints = 10
+	ply:SetLoadoutPoints( self:GetLoadoutPoints( ply ) )
 	ply.Perks = {}
 	ply.PerkNames = {}
 	ply.PerkNum = {}
-	ply.PerkPoints = 10
+	ply:SetPerkPoints( self:GetPerkPoints( ply ) )
 	
 	if SERVER then
 		
@@ -40,6 +52,14 @@ end
 
 
 local meta = FindMetaTable( "Player" )
+
+function meta:SetLoadoutPoints( points ) self:SetNW2Int( "BZ_LoadoutPoints", math.Round( points ) ) end
+function meta:GetLoadoutPoints() return self:GetNW2Int( "BZ_LoadoutPoints" ) end
+function meta:AddLoadoutPoints( points ) self:SetLoadoutPoints( self:GetLoadoutPoints() + points ) end
+
+function meta:SetPerkPoints( points ) self:SetNW2Int( "BZ_PerkPoints", math.Round( points ) )end
+function meta:GetPerkPoints() return self:GetNW2Int( "BZ_PerkPoints" ) end
+function meta:AddPerkPoints( points ) self:SetPerkPoints( self:GetPerkPoints() + points ) end
 
 function meta:SetDamagedTime( time ) self:SetNW2Float( "BZ_DamagedTime", time ) end
 function meta:GetDamagedTime() return self:GetNW2Float( "BZ_DamagedTime" ) end

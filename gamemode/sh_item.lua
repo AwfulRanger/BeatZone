@@ -60,7 +60,7 @@ end
 
 function GM:PlayerBuyItem( ply, item )
 	
-	ply.LoadoutPoints = ply.LoadoutPoints - item.Cost
+	ply:AddLoadoutPoints( -item.Cost )
 	local id = item.Index
 	ply.Loadout[ id ] = ply.Loadout[ id ] or table.insert( ply.LoadoutNames, id )
 	
@@ -81,7 +81,7 @@ end
 
 function GM:PlayerSellItem( ply, item )
 	
-	ply.LoadoutPoints = ply.LoadoutPoints + item.Cost
+	ply:AddLoadoutPoints( item.Cost )
 	local id = item.Index
 	table.remove( ply.LoadoutNames, ply.Loadout[ id ] )
 	ply.Loadout[ id ] = nil
@@ -127,11 +127,10 @@ end
 
 function GM:PlayerCanBuyItem( ply, item )
 	
-	if ply.LoadoutPoints == nil then return false end
 	if ply:Team() ~= TEAM_BEAT then return false end
 	if ply:Alive() ~= true then return false end
 	if self:GetRoundState() == ROUND_ONGOING then return false end
-	if ply.LoadoutPoints < item.Cost then return false end
+	if ply:GetLoadoutPoints() < item.Cost then return false end
 	if self:PlayerHasItem( ply, item ) == true then return false end
 	
 	return true
