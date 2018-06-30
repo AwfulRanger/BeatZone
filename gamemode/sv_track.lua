@@ -34,24 +34,41 @@ function GM:PlayTrack( track )
 	
 end
 
-function GM:StopTrack()
+function GM:StopTrack( fade )
 	
 	net.Start( "BZ_StopTrack" )
+		
+		net.WriteBool( fade or false )
+		
 	net.Broadcast()
 	
 	self.CurrentTrack = nil
 	
 end
 
+GM.TrackFaded = false
 function GM:HandleTrack()
 	
 	local curtrack = self.CurrentTrack
-	if self:GetRoundState() == ROUND_ONGOING then
+	local state = self:GetRoundState()
+	
+	if state == ROUND_ENDING and ( self.IsRoundLost == true or self:GetRound() % 6 == 0 ) then
 		
+		if curtrack ~= nil and self.TrackFaded ~= true then
+			
+			self.TrackFaded = true
+			self:StopTrack( true )
+			
+		end
+		
+	elseif state ~= ROUND_INTERMISSION then
+		
+		self.TrackFaded = false
 		if curtrack == nil or CurTime() - curtrack.Time > curtrack.Track.Length then self:PlayTrack() end
 		
 	elseif curtrack ~= nil then
 		
+		self.TrackFaded = false
 		self:StopTrack()
 		
 	end
