@@ -454,3 +454,6 @@ function GM:KeyPress( ply, key )
 	if key == IN_ATTACK2 then cycleobstarget( self, ply, -1 ) end
 	
 end
+
+function GM:OnDamagedByExplosion( ply, dmg )
+end
