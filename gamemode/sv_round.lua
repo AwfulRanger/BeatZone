@@ -248,7 +248,7 @@ function GM:HandleRound()
 			elseif self:GetRound() % 6 == 0 then
 				
 				local plys = self:GetPlayers()
-				for i = 1, #plys do plys[ i ]:AddPerkPoints( 5 ) end
+				for i = 1, #plys do plys[ i ]:AddPerkPoints( 10 ) end
 				
 				self:StartIntermission()
 				

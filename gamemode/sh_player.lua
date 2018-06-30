@@ -44,7 +44,7 @@ end
 
 function GM:GetPerkPoints( ply )
 	
-	return 10 + ( math.floor( math.max( 0, self:GetRound() - 1 ) / 6 ) * 5 )
+	return 10 + ( math.floor( math.max( 0, self:GetRound() - 1 ) / 6 ) * 10 )
 	
 end
 
