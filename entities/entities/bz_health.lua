@@ -42,6 +42,12 @@ if SERVER then
 			take = true
 			
 		end
+		if ent:IsOnFire() == true then
+			
+			ent:Extinguish()
+			take = true
+			
+		end
 		
 		if take == true then
 			
