@@ -457,3 +457,11 @@ end
 
 function GM:OnDamagedByExplosion( ply, dmg )
 end
+
+function GM:PlayerShouldTakeDamage( ply, attacker )
+	
+	if attacker:IsPlayer() == true then return false end
+	
+	return BaseClass.PlayerShouldTakeDamage( ply, attack )
+	
+end
