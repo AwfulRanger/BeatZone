@@ -22,9 +22,17 @@ function GM:AddItem( name, data )
 		
 	end
 	
+	local printname = name
+	if data.Name == nil then
+		
+		local wep = weapons.GetStored( name )
+		if wep ~= nil and wep.PrintName ~= nil then printname = wep.PrintName end
+		
+	end
+	
 	data.IDName = name
 	data.Index = index
-	data.Name = data.Name or ( "#" .. name )
+	data.Name = data.Name or ( "#" .. printname )
 	data.Class = data.Class or name
 	data.Cost = data.Cost or 1
 	data.OnBuy = data.OnBuy or function( self, ply )
@@ -159,5 +167,6 @@ GM:AddItem( "weapon_smg1", { Cost = 3, Model = "models/weapons/w_smg1.mdl" } )
 GM:AddItem( "weapon_ar2", { Cost = 3, Model = "models/weapons/w_irifle.mdl" } )
 GM:AddItem( "weapon_shotgun", { Cost = 3, Model = "models/weapons/w_shotgun.mdl" } )
 GM:AddItem( "weapon_crossbow", { Cost = 3, Model = "models/weapons/w_crossbow.mdl" } )
-GM:AddItem( "weapon_frag", { Cost = 2, Model = "models/weapons/w_grenade.mdl" } )
+GM:AddItem( "weapon_frag", { Cost = 1, Model = "models/weapons/w_grenade.mdl" } )
 GM:AddItem( "weapon_rpg", { Cost = 5, Model = "models/weapons/w_rocket_launcher.mdl" } )
+GM:AddItem( "weapon_medkit", { Cost = 2, Model = "models/items/healthkit.mdl" } )
