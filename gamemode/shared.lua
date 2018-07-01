@@ -4,6 +4,8 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 
 
+CreateConVar( "bz_friendlyfire", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Enable friendly fire (0 = disabled, 1 = shields only, 2 = all)" )
+
 GM.Name = "BeatZone"
 GM.Author = "AwfulRanger"
 GM.TeamBased = true

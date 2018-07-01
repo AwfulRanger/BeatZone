@@ -103,8 +103,6 @@ function GM:EntityTakeDamage( ent, dmg )
 	
 	if ent:IsPlayer() == true then
 		
-		ent:SetDamagedTime( CurTime() )
-		
 		dores( self, dmg, ent, "perk_resist_all" )
 		local resperk = resperks[ dmg:GetDamageType() ]
 		if resperk ~= nil then dores( self, dmg, ent, resperk ) end
@@ -132,12 +130,22 @@ function GM:EntityTakeDamage( ent, dmg )
 				
 			net.Send( attacker )
 			
+		elseif GetConVar( "bz_friendlyfire" ):GetInt() == 1 and ent:GetShield() > 0 then
+			
+			net.Start( "BZ_EntityDamaged" )
+				
+				net.WriteEntity( ent )
+				net.WriteInt( math.min( dmg:GetDamage(), ent:GetShield() ), 32 )
+				net.WriteVector( dmg:GetDamagePosition() )
+				
+			net.Send( attacker )
+			
 		end
 		
 	end
 	
 	--shield damage
-	if ent:IsPlayer() == true then
+	if ent:IsPlayer() == true and ( attacker:IsPlayer() ~= true or GetConVar( "bz_friendlyfire" ):GetInt() > 0 ) then
 		
 		ent:SetDamagedTime( CurTime() )
 		
