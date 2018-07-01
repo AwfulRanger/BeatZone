@@ -1371,15 +1371,30 @@ local function createsbpanel( gm, parent )
 		local px = asize + ( apos * 2 )
 		local pw = panelw - px - apos
 		
-		local name = createlabel( plypanel, ply:Nick(), "BZ_LabelBold", false, false )
-		name:SetPos( px, apos )
-		name:SetSize( pw, apos * 2 )
-		function name:Think()
+		local nameclass = vgui.Create( "DPanel" )
+		nameclass:SetParent( plypanel )
+		nameclass:SetPos( px, apos )
+		nameclass:SetSize( pw, apos * 2 )
+		function nameclass:Paint( w, h )
 			
 			if IsValid( ply ) ~= true then return end
 			
+			surface.SetFont( "BZ_LabelBold" )
+			
 			local nick = ply:Nick()
-			if nick ~= self:GetText() then self:SetText( nick ) end
+			local ntw, nth = surface.GetTextSize( nick )
+			shadowtext( nick, 0, ( h - nth ) * 0.5 )
+			
+			if ply:Team() ~= TEAM_BEAT then return end
+			
+			local plyclass = player_manager.GetPlayerClass( ply )
+			if plyclass == nil or plyclass == "" then return end
+			plyclass = baseclass.Get( plyclass )
+			if plyclass == nil or plyclass.DisplayName == nil then return end
+			
+			local class = plyclass.DisplayName
+			local ctw, cth = surface.GetTextSize( class )
+			shadowtext( class, w - ctw, ( h - cth ) * 0.5 )
 			
 		end
 		
