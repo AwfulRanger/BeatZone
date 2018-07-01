@@ -63,6 +63,14 @@ local function createfonts()
 		
 	} )
 	
+	surface.CreateFont( "BZ_DamageNumber", {
+		
+		font = "Roboto",
+		size = 128,
+		weight = 300,
+		
+	} )
+	
 end
 
 local bgcolor = Color( 47, 4, 70, 250 )
@@ -1203,6 +1211,8 @@ function GM:HUDPaint()
 		
 	end
 	
+	self:DrawDamageNumbers()
+	
 end
 
 
@@ -1662,5 +1672,166 @@ function GM:DrawDeathNotice( dx, dy )
 	end
 	
 	for i = 1, #remove do table.remove( deaths, remove[ i ] ) end
+	
+end
+
+
+
+local hitsound = CreateClientConVar( "bz_hitsound", "sound/ui/hitsound.wav" )
+local hitsoundvolume = CreateClientConVar( "bz_hitsoundvolume", 0.25 )
+local enabledmgnum = CreateClientConVar( "bz_damagenumbers", 1 )
+local dmgnumbatch = CreateClientConVar( "bz_damagenumbersbatch", 1 )
+local dmgnumbatchtime = CreateClientConVar( "bz_damagenumbersbatchtime", 1 )
+local dmgnumtime = CreateClientConVar( "bz_damagenumberstime", 3 )
+
+local damagenumbers = {}
+local damagenumbersbatch = {}
+
+function GM:AddDamageNumber( ent, dmg, pos )
+	
+	local snd = hitsound:GetString()
+	local vol = hitsoundvolume:GetFloat()
+	if snd ~= "" and vol > 0 then sound.PlayFile( snd, "noplay", function( channel ) channel:SetVolume( vol ) channel:Play() end ) end
+	
+	if enabledmgnum:GetBool() ~= true then return end
+	
+	if dmgnumbatch:GetBool() == true then
+		
+		local batch = damagenumbersbatch[ ent ]
+		local key
+		if batch ~= nil and CurTime() < batch.time + dmgnumbatchtime:GetFloat() then key = batch.key end
+		local dmgnum = damagenumbers[ key ]
+		if key ~= nil and dmgnum ~= nil then
+			
+			damagenumbers[ key ] = {
+				
+				time = CurTime(),
+				ent = ent,
+				dmg = dmgnum.dmg + dmg,
+				pos = pos
+				
+			}
+			
+			batch.time = CurTime()
+			
+		else
+			
+			local key = table.insert( damagenumbers, {
+				
+				time = CurTime(),
+				ent = ent,
+				dmg = dmg,
+				pos = pos,
+				
+			} )
+			
+			damagenumbersbatch[ ent ] = {
+				
+				time = CurTime(),
+				key = key,
+				
+			}
+			
+		end
+		
+	else
+		
+		table.insert( damagenumbers, {
+			
+			time = CurTime(),
+			ent = ent,
+			dmg = dmg,
+			pos = pos,
+			
+		} )
+		
+	end
+	
+end
+
+net.Receive( "BZ_EntityDamaged", function()
+	
+	gmod.GetGamemode():AddDamageNumber( net.ReadEntity(), net.ReadInt( 32 ), net.ReadVector() )
+	
+end )
+
+local dmgstartcolor = Color( 0, 255, 0, 255 )
+local dmgendcolor = Color( 255, 0, 0, 0 )
+local colorval = { "r", "g", "b", "a" }
+function GM:DrawDamageNumbers()
+	
+	cam.Start3D()
+		
+		local remove = {}
+		
+		surface.SetFont( "BZ_DamageNumber" )
+		
+		for i = 1, #damagenumbers do
+			
+			local dmgnum = damagenumbers[ i ]
+			
+			local length = dmgnumtime:GetFloat()
+			local time = dmgnum.time + length
+			if CurTime() > time then
+				
+				table.insert( remove, i )
+				
+			else
+				
+				local delta = ( ( CurTime() - time ) / length ) + 1
+				
+				local pos = dmgnum.pos
+				
+				local ang = ( pos - EyePos() ):Angle()
+				ang:RotateAroundAxis( ang:Right(), 90 )
+				ang:RotateAroundAxis( ang:Up(), -90 )
+				
+				local text = dmgnum.dmg or ""
+				local tw, th = surface.GetTextSize( text )
+				
+				local scale = 0.1
+				
+				pos = pos - ( ( ang:Forward() * ( tw * 0.5 ) ) * scale )
+				pos = pos - ( ( ang:Right() * ( th * 0.5 ) ) * scale )
+				
+				pos = pos + Vector( 0, 0, 32 * delta )
+				
+				cam.Start3D2D( pos, ang, scale )
+					
+					local sc = dmgstartcolor
+					local ec = dmgendcolor
+					local color = Color( sc.r, sc.b, sc.g, sc.a )
+					for i = 1, #colorval do
+						
+						local k = colorval[ i ]
+						color[ k ] = Lerp( delta, sc[ k ], ec[ k ] )
+						
+					end
+					
+					surface.SetTextColor( textshadowcolor.r, textshadowcolor.g, textshadowcolor.b, Lerp( delta, sc.a, ec.a ) )
+					surface.SetTextPos( 2, 2 )
+					surface.DrawText( text )
+					
+					surface.SetTextColor( color )
+					surface.SetTextPos( 0, 0 )
+					surface.DrawText( text )
+					
+				cam.End3D2D()
+				
+			end
+			
+		end
+		
+		for i = 1, #remove do
+			
+			local key = remove[ i ]
+			
+			table.remove( damagenumbers, key )
+			
+			for _, v in pairs( damagenumbersbatch ) do if v.key > key then v.key = v.key - 1 end end
+			
+		end
+		
+	cam.End3D()
 	
 end

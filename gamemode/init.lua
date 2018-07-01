@@ -13,6 +13,7 @@ include( "sv_track.lua" )
 
 
 util.AddNetworkString( "BZ_UISound" )
+util.AddNetworkString( "BZ_EntityDamaged" )
 
 
 
@@ -120,6 +121,14 @@ function GM:EntityTakeDamage( ent, dmg )
 		dodmg( self, dmg, attacker, "perk_damage_all" )
 		local dmgperk = dmgperks[ dmg:GetDamageType() ]
 		if dmgperk ~= nil then dodmg( self, dmg, attacker, dmgperk ) end
+		
+		net.Start( "BZ_EntityDamaged" )
+			
+			net.WriteEntity( ent )
+			net.WriteInt( dmg:GetDamage(), 32 )
+			net.WriteVector( dmg:GetDamagePosition() )
+			
+		net.Send( attacker )
 		
 	end
 	
