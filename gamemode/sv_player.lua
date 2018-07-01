@@ -432,7 +432,12 @@ local function cycleobstarget( gm, ply, num )
 	end
 	
 	local target = targets[ ply.BZ_OBSTarget ]
-	if IsValid( target ) == true then ply:SpectateEntity( target ) end
+	if IsValid( target ) == true then
+		
+		ply:SpectateEntity( target )
+		ply:SetupHands( target )
+		
+	end
 	
 end
 local function cycleobsmode( gm, ply )
