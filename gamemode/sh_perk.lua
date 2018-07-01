@@ -2,6 +2,12 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 
 
+local meta = FindMetaTable( "Player" )
+
+function meta:SetPerkPoints( points ) self:SetNW2Int( "BZ_PerkPoints", math.Round( points ) ) end
+function meta:GetPerkPoints() return self:GetNW2Int( "BZ_PerkPoints" ) end
+function meta:AddPerkPoints( points ) self:SetPerkPoints( self:GetPerkPoints() + points ) end
+
 GM.PlayerPerks = GM.PlayerPerks or {}
 GM.PlayerPerkNames = GM.PlayerPerkNames or {}
 
@@ -140,6 +146,8 @@ end
 
 function GM:PlayerBuyPerk( ply, perk )
 	
+	if IsValid( ply ) ~= true then return end
+	
 	ply:AddPerkPoints( -perk.Cost )
 	local id = perk.Index
 	if ply.Perks[ id ] == nil then ply.Perks[ id ] = table.insert( ply.PerkNames, id ) end
@@ -162,6 +170,8 @@ function GM:PlayerBuyPerk( ply, perk )
 end
 
 function GM:PlayerSellPerk( ply, perk )
+	
+	if IsValid( ply ) ~= true then return end
 	
 	local count = self:PlayerGetPerkNum( ply, perk ) - 1
 	

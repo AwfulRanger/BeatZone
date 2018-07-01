@@ -8,14 +8,6 @@ include( "sh_class.lua" )
 
 local meta = FindMetaTable( "Player" )
 
-function meta:SetLoadoutPoints( points ) self:SetNW2Int( "BZ_LoadoutPoints", math.Round( points ) ) end
-function meta:GetLoadoutPoints() return self:GetNW2Int( "BZ_LoadoutPoints" ) end
-function meta:AddLoadoutPoints( points ) self:SetLoadoutPoints( self:GetLoadoutPoints() + points ) end
-
-function meta:SetPerkPoints( points ) self:SetNW2Int( "BZ_PerkPoints", math.Round( points ) )end
-function meta:GetPerkPoints() return self:GetNW2Int( "BZ_PerkPoints" ) end
-function meta:AddPerkPoints( points ) self:SetPerkPoints( self:GetPerkPoints() + points ) end
-
 function meta:SetDamagedTime( time ) self:SetNW2Float( "BZ_DamagedTime", time ) end
 function meta:GetDamagedTime() return self:GetNW2Float( "BZ_DamagedTime" ) end
 

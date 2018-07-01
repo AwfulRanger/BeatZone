@@ -10,6 +10,7 @@ include( "sh_player.lua" )
 
 
 
+util.AddNetworkString( "BZ_FullUpdate" )
 util.AddNetworkString( "BZ_SetClass" )
 util.AddNetworkString( "BZ_ResetPlayer" )
 util.AddNetworkString( "BZ_BuyItem" )
@@ -17,6 +18,17 @@ util.AddNetworkString( "BZ_SellItem" )
 util.AddNetworkString( "BZ_BuyPerk" )
 util.AddNetworkString( "BZ_SellPerk" )
 util.AddNetworkString( "BZ_PlayerDeath" )
+
+net.Receive( "BZ_FullUpdate", function( len, ply )
+	
+	if ply.FullyUpdated == true then return end
+	
+	ply.FullyUpdated = true
+	
+	print( "Updating " .. ply:Nick() )
+	gmod.GetGamemode():PlayerSendInfo( ply )
+	
+end )
 
 net.Receive( "BZ_SetClass", function( len, ply )
 	
@@ -243,8 +255,6 @@ function GM:PlayerInitialSpawn( ply )
 	
 	ply:SetTeam( TEAM_SPECTATOR )
 	self:OnPlayerChangedTeam( ply, TEAM_UNASSIGNED, TEAM_SPECTATOR )
-	
-	self:ShowTeam( ply )
 	
 end
 

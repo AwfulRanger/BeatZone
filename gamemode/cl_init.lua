@@ -55,6 +55,11 @@ function GM:InitPostEntity()
 	
 	self:ResetPlayerCharacter( LocalPlayer() )
 	
+	net.Start( "BZ_FullUpdate" )
+	net.SendToServer()
+	
+	self:ShowTeam()
+	
 end
 
 function GM:Think()

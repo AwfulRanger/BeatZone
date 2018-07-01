@@ -2,6 +2,14 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 
 
+local meta = FindMetaTable( "Player" )
+
+function meta:SetLoadoutPoints( points ) self:SetNW2Int( "BZ_LoadoutPoints", math.Round( points ) ) end
+function meta:GetLoadoutPoints() return self:GetNW2Int( "BZ_LoadoutPoints" ) end
+function meta:AddLoadoutPoints( points ) self:SetLoadoutPoints( self:GetLoadoutPoints() + points ) end
+
+
+
 GM.PlayerItems = GM.PlayerItems or {}
 GM.PlayerItemNames = GM.PlayerItemNames or {}
 
@@ -68,6 +76,8 @@ end
 
 function GM:PlayerBuyItem( ply, item )
 	
+	if IsValid( ply ) ~= true then return end
+	
 	ply:AddLoadoutPoints( -item.Cost )
 	local id = item.Index
 	ply.Loadout[ id ] = ply.Loadout[ id ] or table.insert( ply.LoadoutNames, id )
@@ -88,6 +98,8 @@ function GM:PlayerBuyItem( ply, item )
 end
 
 function GM:PlayerSellItem( ply, item )
+	
+	if IsValid( ply ) ~= true then return end
 	
 	ply:AddLoadoutPoints( item.Cost )
 	local id = item.Index
