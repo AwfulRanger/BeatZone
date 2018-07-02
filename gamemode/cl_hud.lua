@@ -1082,6 +1082,11 @@ function GM:HUDPaint()
 		surface.SetFont( "BZ_HUD" )
 		
 		local weapon = ply:GetActiveWeapon()
+		
+		local customammo
+		if weapon.CustomAmmoDisplay ~= nil then customammo = weapon:CustomAmmoDisplay() end
+		customammo = customammo or {}
+		
 		local ammotype1 = -1
 		local ammotype2 = -1
 		if IsValid( weapon ) == true then
@@ -1090,7 +1095,8 @@ function GM:HUDPaint()
 			ammotype2 = weapon:GetSecondaryAmmoType()
 			
 		end
-		if ammotype1 ~= -1 or ammotype2 ~= -1 then
+		
+		if ( ammotype1 ~= -1 or ammotype2 ~= -1 or customammo.Draw == true ) and customammo.Draw ~= false then
 			
 			local aw = math.Round( scrw * 0.25 )
 			local ah = math.Round( scrh * 0.1 )
@@ -1101,7 +1107,7 @@ function GM:HUDPaint()
 			surface.DrawRect( ax, ay, aw, ah )
 			
 			--primary ammo
-			if ammotype1 ~= -1 then
+			if ammotype1 ~= -1 or customammo.PrimaryClip ~= nil or customammo.PrimaryAmmo ~= nil then
 				
 				local acx = ax + hudspacing
 				local acy = ay + hudspacing
@@ -1109,8 +1115,10 @@ function GM:HUDPaint()
 				local ach = ah - ( hudspacing * 2 )
 				
 				local clip = weapon:Clip1()
+				if customammo.PrimaryClip ~= nil then clip = customammo.PrimaryClip end
 				local maxclip = weapon:GetMaxClip1()
 				local ammo = ply:GetAmmoCount( ammotype1 )
+				if customammo.PrimaryAmmo ~= nil then ammo = customammo.PrimaryAmmo end
 				local maxammo = game.GetAmmoMax( ammotype1 )
 				if clip == -1 or ammo == -1 then
 					
@@ -1159,7 +1167,7 @@ function GM:HUDPaint()
 			end
 			
 			--secondary ammo
-			if ammotype2 ~= -1 then
+			if ammotype2 ~= -1 or customammo.SecondaryClip ~= nil or customammo.SecondaryAmmo ~= nil then
 				
 				local acx = ax + hudspacing + math.Round( aw * 0.5 )
 				local acy = ay + hudspacing
@@ -1167,8 +1175,10 @@ function GM:HUDPaint()
 				local ach = ah - ( hudspacing * 2 )
 				
 				local clip = weapon:Clip2()
+				if customammo.SecondaryClip ~= nil then clip = customammo.SecondaryClip end
 				local maxclip = weapon:GetMaxClip2()
 				local ammo = ply:GetAmmoCount( ammotype2 )
+				if customammo.SecondaryAmmo ~= nil then ammo = customammo.SecondaryAmmo end
 				local maxammo = game.GetAmmoMax( ammotype2 )
 				if clip == -1 or ammo == -1 then
 					
