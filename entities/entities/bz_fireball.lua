@@ -54,6 +54,9 @@ if SERVER then
 	
 	function ENT:OnCollide( skybox, ent )
 		
+		if self.HasCollided == true then return end
+		self.HasCollided = true
+		
 		if skybox ~= true then
 			
 			if IsValid( ent ) == true then ent:Ignite( self:GetDuration(), self:GetRadius() ) end

@@ -153,7 +153,12 @@ if SERVER then
 	function ENT:HandleTarget()
 		
 		--if the target hasn't been refreshed recently do it now
-		if self.TargetRefreshTime ~= nil and CurTime() > self.LastTargetRefresh + self.TargetRefreshTime then self:RefreshTarget() end
+		if self.TargetRefreshTime ~= nil and CurTime() > self.LastTargetRefresh + self.TargetRefreshTime then
+			
+			self.LastTargetRefresh = CurTime()
+			self:RefreshTarget()
+			
+		end
 		
 		local target = self:GetTarget()
 		if IsValid( target ) == true and target:Visible( self ) == true then self.LastSeenTarget = CurTime() end

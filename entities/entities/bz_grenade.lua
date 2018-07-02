@@ -61,6 +61,9 @@ if SERVER then
 	
 	function ENT:OnCollide( skybox )
 		
+		if self.HasCollided == true then return end
+		self.HasCollided = true
+		
 		if skybox ~= true then
 			
 			local attacker = self
