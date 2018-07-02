@@ -118,9 +118,6 @@ if SERVER then
 							
 							ent:TakeDamageInfo( dmg )
 							
-							PrintTable( self.HitSounds )
-							print( self.HitSounds[ math.random( #self.HitSounds ) ] )
-							
 							self:EmitSound( self.HitSounds[ math.random( #self.HitSounds ) ], nil, nil, nil, CHAN_WEAPON )
 							
 						end
