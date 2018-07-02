@@ -118,6 +118,6 @@ end
 function GM:Move( ply, mv )
 	
 	dospeed( self, mv, ply, "perk_movespeed" )
-	if CurTime() < ply:GetDamagedTime() + 5 then dospeed( self, mv, ply, "perk_movespeedspecial_damagetaken" ) end
+	if CurTime() < ply:GetDamagedTime() + 1 then dospeed( self, mv, ply, "perk_movespeedspecial_damagetaken" ) end
 	
 end
