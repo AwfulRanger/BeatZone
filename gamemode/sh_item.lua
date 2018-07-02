@@ -176,4 +176,3 @@ GM:AddItem( "weapon_shotgun", { Cost = 3, Model = "models/weapons/w_shotgun.mdl"
 GM:AddItem( "weapon_crossbow", { Cost = 3, Model = "models/weapons/w_crossbow.mdl" } )
 GM:AddItem( "weapon_frag", { Cost = 1, Model = "models/weapons/w_grenade.mdl" } )
 GM:AddItem( "weapon_rpg", { Cost = 5, Model = "models/weapons/w_rocket_launcher.mdl" } )
-GM:AddItem( "weapon_medkit", { Cost = 2, Model = "models/items/healthkit.mdl", Name = "Medkit" } )

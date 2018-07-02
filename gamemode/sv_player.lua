@@ -500,7 +500,7 @@ function GM:SetPlayerHealth( ply, m )
 		
 	end
 	
-	local health = 100 * mult
+	local health = 10000 * mult
 	
 	ply:SetMaxHealth( health )
 	ply:SetHealth( health )
@@ -515,7 +515,7 @@ function GM:SetPlayerShield( ply, m )
 		
 	end
 	
-	local shield = 100 * mult
+	local shield = 10000 * mult
 	
 	ply:SetMaxShield( shield )
 	ply:SetShield( shield )

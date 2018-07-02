@@ -362,6 +362,8 @@ local function doadd( gm, add, ply, perk )
 end
 function GM:EntityTakeDamage( ent, dmg )
 	
+	if ent:IsPlayer() == true or ent.IsBZEnemy == true then dmg:ScaleDamage( 100 ) end
+	
 	if ent:IsPlayer() == true then
 		
 		dores( self, dmg, ent, "perk_resist_all" )

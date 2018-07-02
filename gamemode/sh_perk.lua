@@ -435,6 +435,7 @@ GM:AddPerk( "perk_healthregen", {
 	Name = "Health Regeneration",
 	Description = "%s health regenerated per second",
 	Type = "add",
+	BaseAdd = 10,
 	
 } )
 
@@ -443,6 +444,7 @@ GM:AddPerk( "perk_healthregenspecial_enemykilled", {
 	Name = "Enemy Killed Health Regeneration",
 	Description = "%s health regenerated in 1 second after killing an enemy (does not stack)",
 	Type = "add",
+	BaseAdd = 10,
 	
 } )
 

@@ -37,7 +37,7 @@ function ENT:Initialize()
 		
 		self:PrecacheGibs()
 		
-		local hp = self:GetBuffed( self.StartHealth )
+		local hp = self:GetBuffed( self.StartHealth ) * 100
 		self:SetMaxHealth( hp )
 		self:SetHealth( hp )
 		
