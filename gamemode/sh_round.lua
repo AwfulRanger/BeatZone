@@ -111,8 +111,11 @@ function GM:PlayerReady( ply, ready )
 		
 	else
 		
-		table.remove( rplys.Players, rplys.PlayerIndex[ ply ] )
+		local key = rplys.PlayerIndex[ ply ]
 		rplys.PlayerIndex[ ply ] = nil
+		table.remove( rplys.Players, key )
+		for _, v in pairs( rplys.PlayerIndex ) do if v > key then rplys.PlayerIndex[ _ ] = v - 1 end end
+		
 		rplys.Count = #rplys.Players
 		
 	end

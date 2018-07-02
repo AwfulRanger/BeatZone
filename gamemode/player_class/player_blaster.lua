@@ -18,9 +18,9 @@ function PLAYER:InitializePerks()
 	self:AddPerk( "perk_damage_bullet" )
 	self:AddPerk( "perk_damage_blast" )
 	self:AddPerk( "perk_resist_blast" )
-	self:AddPerk( "perk_armor" )
-	self:AddPerk( "perk_clipsize" )
-	self:AddPerk( "perk_firerate" )
+	self:AddPerk( "perk_shield" )
+	self:AddPerk( "perk_maxammo" )
+	self:AddPerk( "perk_attackspeed" )
 	
 end
 

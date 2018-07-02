@@ -17,6 +17,256 @@ util.AddNetworkString( "BZ_EntityDamaged" )
 
 
 
+GM.IgnitedEntity = {}
+GM.IgnitedEntitySeq = {}
+GM.BleedingEntity = {}
+GM.BleedingEntitySeq = {}
+
+local function tblremove( seq, tbl, key )
+	
+	table.remove( seq, key )
+	for _, v in pairs( tbl ) do if v > key then tbl[ _ ] = v - 1 end end
+	
+end
+
+function GM:HandleEntityIgnite()
+	
+	local remove = {}
+	
+	for i = 1, #self.IgnitedEntitySeq do
+		
+		local ent = self.IgnitedEntitySeq[ i ]
+		
+		if IsValid( ent ) ~= true then
+			
+			table.insert( remove, i )
+			
+		else
+			
+			local lastignite = ent:GetNW2Float( "BZ_LastIgnite", -1 )
+			if lastignite == -1 then
+				
+				lastignite = CurTime()
+				ent:SetNW2Float( "BZ_LastIgnite", lastignite )
+				
+			end
+			
+			if ent.BZ_CurIgniteDamage == nil then ent.BZ_CurIgniteDamage = 0 end
+			if ent.BZ_MaxIgniteDamage == nil then ent.BZ_MaxIgniteDamage = 0 end
+			
+			if ent:IsIgnited() ~= true then
+				
+				if ent.BZ_CurIgniteDamage < ent.BZ_MaxIgniteDamage then
+					
+					local attacker = ent:GetIgniteAttacker()
+					
+					local dmg = DamageInfo()
+					dmg:SetDamage( ent.BZ_MaxIgniteDamage - ent.BZ_CurIgniteDamage )
+					dmg:SetDamageType( DMG_BURN )
+					if IsValid( attacker ) == true then dmg:SetAttacker( attacker ) end
+					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
+					
+					ent:TakeDamageInfo( dmg )
+					
+				end
+				
+				ent:StopIgnite()
+				self.IgnitedEntity[ ent ] = nil
+				table.insert( remove, i )
+				
+			else
+				
+				local idamage = ent:GetIgniteDamage()
+				local damage = idamage * ( CurTime() - lastignite )
+				local fdamage = math.floor( damage )
+				
+				if fdamage > 0 then
+					
+					ent:SetNW2Float( "BZ_LastIgnite", CurTime() - ( damage - fdamage ) / idamage )
+					ent.BZ_CurIgniteDamage = ent.BZ_CurIgniteDamage + fdamage
+					
+					local attacker = ent:GetIgniteAttacker()
+					
+					local dmg = DamageInfo()
+					dmg:SetDamage( fdamage )
+					dmg:SetDamageType( DMG_BURN )
+					if IsValid( attacker ) == true then dmg:SetAttacker( attacker ) end
+					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
+					
+					ent:TakeDamageInfo( dmg )
+					
+				end
+				
+			end
+			
+		end
+		
+	end
+	
+	for i = 1, #remove do tblremove( self.IgnitedEntitySeq, self.IgnitedEntity, remove[ i ] ) end
+	
+end
+
+function GM:HandleEntityBleed()
+	
+	local remove = {}
+	
+	for i = 1, #self.BleedingEntitySeq do
+		
+		local ent = self.BleedingEntitySeq[ i ]
+		
+		if IsValid( ent ) ~= true then
+			
+			table.insert( remove, i )
+			
+		else
+			
+			local lastbleed = ent:GetNW2Float( "BZ_LastBleed", -1 )
+			if lastbleed == -1 then
+				
+				lastbleed = CurTime()
+				ent:SetNW2Float( "BZ_LastBleed", lastbleed )
+				
+			end
+			
+			if ent.BZ_CurBleedDamage == nil then ent.BZ_CurBleedDamage = 0 end
+			if ent.BZ_MaxBleedDamage == nil then ent.BZ_MaxBleedDamage = 0 end
+			
+			if ent:IsBleeding() ~= true then
+				
+				if ent.BZ_CurBleedDamage < ent.BZ_MaxBleedDamage then
+					
+					local attacker = ent:GetBleedAttacker()
+					
+					local dmg = DamageInfo()
+					dmg:SetDamage( ent.BZ_MaxBleedDamage - ent.BZ_CurBleedDamage )
+					dmg:SetDamageType( DMG_SLASH )
+					if IsValid( attacker ) == true then dmg:SetAttacker( attacker ) end
+					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
+					
+					ent:TakeDamageInfo( dmg )
+					
+				end
+				
+				ent:StopBleed()
+				self.BleedingEntity[ ent ] = nil
+				table.insert( remove, i )
+				
+			else
+				
+				local bdamage = ent:GetBleedDamage()
+				local damage = bdamage * ( CurTime() - lastbleed )
+				local fdamage = math.floor( damage )
+				
+				if fdamage > 0 then
+					
+					ent:SetNW2Float( "BZ_LastBleed", CurTime() - ( damage - fdamage ) / bdamage )
+					ent.BZ_CurBleedDamage = ent.BZ_CurBleedDamage + fdamage
+					
+					local attacker = ent:GetBleedAttacker()
+					
+					local dmg = DamageInfo()
+					dmg:SetDamage( fdamage )
+					dmg:SetDamageType( DMG_SLASH )
+					if IsValid( attacker ) == true then dmg:SetAttacker( attacker ) end
+					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
+					
+					ent:TakeDamageInfo( dmg )
+					
+				end
+				
+			end
+			
+		end
+		
+	end
+	
+	for i = 1, #remove do tblremove( self.BleedingEntitySeq, self.BleedingEntity, remove[ i ] ) end
+	
+end
+
+
+
+local meta = FindMetaTable( "Entity" )
+
+function meta:StartIgnite( len, dmg, attacker )
+	
+	self:SetNW2Float( "BZ_IgniteTime", CurTime() + ( len or 0 ) )
+	self:SetNW2Int( "BZ_IgniteDamage", math.floor( dmg or 0 ) )
+	self:SetNW2Entity( "BZ_BleedAttacker", attacker )
+	self.BZ_CurIgniteDamage = 0
+	self.BZ_MaxIgniteDamage = math.floor( len * dmg )
+	
+	local gm = gmod.GetGamemode()
+	
+	local id = gm.IgnitedEntity[ self ]
+	if id == nil then
+		
+		id = table.insert( gm.IgnitedEntitySeq, self )
+		gm.IgnitedEntity[ self ] = id
+		
+	end
+	
+end
+function meta:StopIgnite()
+	
+	self:SetNW2Float( "BZ_IgniteTime", -1 )
+	self:SetNW2Float( "BZ_LastIgnite", -1 )
+	self.BZ_CurIgniteDamage = nil
+	self.BZ_MaxIgniteDamage = nil
+	
+	local gm = gmod.GetGamemode()
+	
+	local id = gm.IgnitedEntity[ self ]
+	if id ~= nil then
+		
+		gm.IgnitedEntity[ self ] = nil
+		tblremove( gm.IgnitedEntitySeq, gm.IgnitedEntity, id )
+		
+	end
+	
+end
+
+function meta:StartBleed( len, dmg, attacker )
+	
+	self:SetNW2Float( "BZ_BleedTime", CurTime() + ( len or 0 ) )
+	self:SetNW2Int( "BZ_BleedDamage", math.floor( dmg or 0 ) )
+	self:SetNW2Entity( "BZ_BleedAttacker", attacker )
+	self.BZ_CurBleedDamage = 0
+	self.BZ_MaxBleedDamage = math.floor( len * dmg )
+	
+	local gm = gmod.GetGamemode()
+	
+	local id = gm.BleedingEntity[ self ]
+	if id == nil then
+		
+		id = table.insert( gm.BleedingEntitySeq, self )
+		gm.BleedingEntity[ self ] = id
+		
+	end
+	
+end
+function meta:StopBleed()
+	
+	self:SetNW2Float( "BZ_BleedTime", -1 )
+	self:SetNW2Float( "BZ_LastBleed", -1 )
+	self.BZ_CurBleedDamage = nil
+	self.BZ_MaxBleedDamage = nil
+	
+	local gm = gmod.GetGamemode()
+	
+	local id = gm.BleedingEntity[ self ]
+	if id ~= nil then
+		
+		gm.BleedingEntity[ self ] = nil
+		tblremove( gm.BleedingEntitySeq, gm.BleedingEntity, id )
+		
+	end
+	
+end
+
+
+
 ----
 --Keys for showing menus (F1-F4)
 ----
@@ -50,8 +300,11 @@ function GM:Think()
 	self:HandleRound()
 	self:HandleTrack()
 	
+	self:HandleEntityIgnite()
+	self:HandleEntityBleed()
+	
 	local plys = player.GetAll()
-	for i = 1, #plys do self:HandlePlayerShield( plys[ i ] ) end
+	for i = 1, #plys do self:HandlePlayer( plys[ i ] ) end
 	
 end
 
@@ -99,6 +352,14 @@ local function dodmg( gm, dmg, ply, perk )
 	dmg:ScaleDamage( 1 + gm:GetPerkTotal( ply, perk ) )
 	
 end
+local function doadd( gm, add, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return add end
+	
+	return add + gm:GetPerkTotal( ply, perk )
+	
+end
 function GM:EntityTakeDamage( ent, dmg )
 	
 	if ent:IsPlayer() == true then
@@ -109,7 +370,7 @@ function GM:EntityTakeDamage( ent, dmg )
 		
 		if ent:Crouching() == true then dores( self, dmg, ent, "perk_resistspecial_crouch" ) end
 		if ent:GetVelocity():LengthSqr() == 0 then dores( self, dmg, ent, "perk_resistspecial_immobile" ) end
-		if ent.LastEnemyKilled ~= nil and CurTime() < ent.LastEnemyKilled + 1 then dores( self, dmg, ent, "perk_resistspecial_enemykilled" ) end
+		if CurTime() < ent:GetEnemyKilledTime() + 1 then dores( self, dmg, ent, "perk_resistspecial_enemykilled" ) end
 		
 	end
 	
@@ -126,6 +387,28 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 			dmg:ScaleDamage( 2 )
 			dodmg( self, dmg, attacker, "perk_damage_critical" )
+			
+		end
+		
+		if ent.IsBZEnemy == true then
+			
+			local dmgtype = dmg:GetDamageType()
+			
+			if dmgtype ~= DMG_BURN then
+				
+				local ignitetime = 0
+				ignitetime = doadd( self, ignitetime, attacker, "perk_enemyignite" )
+				if ignitetime > 0 then ent:StartIgnite( ignitetime, 5, attacker ) end
+				
+			end
+			
+			if dmgtype ~= DMG_SLASH then
+				
+				local bleedtime = 0
+				bleedtime = doadd( self, bleedtime, attacker, "perk_enemybleed" )
+				if bleedtime > 0 then ent:StartBleed( bleedtime, 5, attacker ) end
+				
+			end
 			
 		end
 		

@@ -119,8 +119,6 @@ if SERVER then
 		local target = self:GetTarget()
 		if IsValid( target ) == true then
 			
-			self.loco:SetDesiredSpeed( self.MoveSpeed )
-			
 			if self:ShouldChase( target ) == true then
 				
 				self:StartActivity( self.Activity.Run or ACT_MP_RUN_PRIMARY )

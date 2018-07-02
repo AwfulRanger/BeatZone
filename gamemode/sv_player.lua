@@ -101,14 +101,14 @@ function GM:PlayerLoadout( ply )
 	for i = 1, self:PlayerGetItemCount( ply ) do
 		
 		local item = self:PlayerGetItem( ply, i )
-		if item ~= nil then item:OnBuy( ply ) end
+		if item ~= nil then item:OnBuy( ply, self ) end
 		
 	end
 	
-	if self.AmmoNum == nil then self.AmmoNum = 27 + #game.BuildAmmoTypes() end
-	for i = 1, self.AmmoNum do ply:SetAmmo( game.GetAmmoMax( i ), i ) end
+	for i = 1, self:GetAmmoTypes() do ply:SetAmmo( self:GetPlayerMaxAmmo( ply, i ), i ) end
 	
-	ply:SetShield( ply:GetMaxShield() )
+	self:SetPlayerHealth( ply )
+	self:SetPlayerShield( ply )
 	
 end
 
@@ -478,5 +478,46 @@ function GM:PlayerShouldTakeDamage( ply, attacker )
 	if attacker:IsPlayer() == true and GetConVar( "bz_friendlyfire" ):GetInt() < 2 then return false end
 	
 	return BaseClass.PlayerShouldTakeDamage( ply, attack )
+	
+end
+
+
+
+local function domult( gm, mult, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return mult end
+	
+	return mult * ( 1 + gm:GetPerkTotal( ply, perk ) )
+	
+end
+function GM:SetPlayerHealth( ply, m )
+	
+	local mult = m or 1
+	if m == nil then
+		
+		mult = domult( self, mult, ply, "perk_health" )
+		
+	end
+	
+	local health = 100 * mult
+	
+	ply:SetMaxHealth( health )
+	ply:SetHealth( health )
+	
+end
+function GM:SetPlayerShield( ply, m )
+	
+	local mult = m or 1
+	if m == nil then
+		
+		mult = domult( self, mult, ply, "perk_shield" )
+		
+	end
+	
+	local shield = 100 * mult
+	
+	ply:SetMaxShield( shield )
+	ply:SetShield( shield )
 	
 end

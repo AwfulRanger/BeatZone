@@ -9,7 +9,7 @@ function GM:OnNPCKilled( npc, attacker, inflictor )
 	if npc.IsBZEnemy == true and IsValid( attacker ) == true and attacker:IsPlayer() == true then
 		
 		attacker:AddFrags( 1 )
-		attacker.LastEnemyKill = CurTime()
+		attacker:SetEnemyKilledTime( CurTime() )
 		self.EnemiesKilled = self.EnemiesKilled + 1
 		
 	end

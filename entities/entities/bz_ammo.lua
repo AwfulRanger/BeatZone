@@ -33,12 +33,13 @@ if SERVER then
 		
 		if ent:IsPlayer() ~= true or CurTime() < self:GetUseTime() + self.UseCooldown then return end
 		
+		local gm = gmod.GetGamemode()
+		
 		local take = false
 		
-		if self.AmmoNum == nil then self.AmmoNum = 27 + #game.BuildAmmoTypes() end
-		for i = 1, self.AmmoNum do
+		for i = 1, gm:GetAmmoTypes() do
 			
-			local max = game.GetAmmoMax( i )
+			local max = gm:GetPlayerMaxAmmo( ent, i )
 			if ent:GetAmmoCount( i ) < max then
 				
 				ent:SetAmmo( max, i )

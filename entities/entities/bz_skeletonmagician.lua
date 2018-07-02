@@ -76,8 +76,8 @@ if SERVER then
 	end
 	
 	ENT.FireballDuration = 3
+	ENT.FireballDamage = 5
 	ENT.FireballSpeed = 2400
-	ENT.FireballRadius = 100
 	function ENT:ShootFireball( target )
 		
 		if target == nil then target = self:GetTarget() end
@@ -100,7 +100,7 @@ if SERVER then
 			
 		end
 		fireball:SetDuration( self:GetBuffed( self.FireballDuration ) )
-		fireball:SetRadius( self.FireballRadius )
+		fireball:SetDamage( self.FireballDamage )
 		
 		self:SetShootTime( CurTime() )
 		
@@ -115,8 +115,6 @@ if SERVER then
 		
 		local target = self:GetTarget()
 		if IsValid( target ) == true then
-			
-			self.loco:SetDesiredSpeed( self.MoveSpeed )
 			
 			if self:ShouldChase( target ) == true then
 				

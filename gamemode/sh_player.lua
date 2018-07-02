@@ -8,17 +8,145 @@ include( "sh_class.lua" )
 
 local meta = FindMetaTable( "Player" )
 
+function meta:SetEnemyKilledTime( time ) self:SetNW2Float( "BZ_EnemyKilledTime", time ) end
+function meta:GetEnemyKilledTime() return self:GetNW2Float( "BZ_EnemyKilledTime", -1 ) end
+
 function meta:SetDamagedTime( time ) self:SetNW2Float( "BZ_DamagedTime", time ) end
 function meta:GetDamagedTime() return self:GetNW2Float( "BZ_DamagedTime" ) end
+
+function meta:SetHealthTime( time ) self:SetNW2Float( "BZ_HealthTime", time ) end
+function meta:GetHealthTime() return self:GetNW2Float( "BZ_HealthTime" ) end
 
 function meta:SetShieldTime( time ) self:SetNW2Float( "BZ_ShieldTime", time ) end
 function meta:GetShieldTime() return self:GetNW2Float( "BZ_ShieldTime" ) end
 
-function meta:SetShield( shield ) self:SetNW2Int( "BZ_Shield", math.Round( shield ) ) end
+function meta:SetShield( shield ) self:SetNW2Int( "BZ_Shield", math.floor( shield ) ) end
 function meta:GetShield() return self:GetNW2Int( "BZ_Shield" ) end
 
-function meta:SetMaxShield( max ) self:SetNW2Int( "BZ_MaxShield", math.Round( max ) ) end
+function meta:SetMaxShield( max ) self:SetNW2Int( "BZ_MaxShield", math.floor( max ) ) end
 function meta:GetMaxShield() return self:GetNW2Int( "BZ_MaxShield", 100 ) end
+
+
+
+function GM:HandlePlayer( ply )
+	
+	self:HandlePlayerHealth( ply )
+	self:HandlePlayerShield( ply )
+	self:HandlePlayerAttackSpeed( ply )
+	
+end
+
+local function doadd( gm, add, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return add end
+	
+	return add + gm:GetPerkTotal( ply, perk )
+	
+end
+
+function GM:HandlePlayerHealth( ply )
+	
+	local health = ply:Health()
+	local max = ply:GetMaxHealth()
+	
+	local hpregen = 0
+	hpregen = doadd( self, hpregen, ply, "perk_healthregen" )
+	if CurTime() < ply:GetEnemyKilledTime() + 1 then hpregen = doadd( self, hpregen, ply, "perk_healthregenspecial_enemykilled" ) end
+	
+	if ply:Alive() ~= true or ply:Team() ~= TEAM_BEAT then
+		
+		if health ~= 0 then ply:SetHealth( 0 ) end
+		ply:SetHealthTime( CurTime() )
+		
+	elseif health < max and hpregen > 0 then
+		
+		local regen = math.floor( ( CurTime() - ply:GetHealthTime() ) * hpregen )
+		if regen > 0 then
+			
+			ply:SetHealth( math.min( health + regen, max ) )
+			ply:SetHealthTime( CurTime() )
+			
+		end
+		
+	else
+		
+		ply:SetHealthTime( CurTime() )
+		
+	end
+	
+end
+
+function GM:HandlePlayerShield( ply )
+	
+	local shield = ply:GetShield()
+	local max = ply:GetMaxShield()
+	if ply:Alive() ~= true or ply:Team() ~= TEAM_BEAT then
+		
+		if shield ~= 0 then ply:SetShield( 0 ) end
+		ply:SetShieldTime( CurTime() )
+		
+	elseif CurTime() > ply:GetDamagedTime() + 5 and shield < max then
+		
+		local regen = math.floor( ( CurTime() - ply:GetShieldTime() ) * 25 )
+		if regen > 0 then
+			
+			ply:SetShield( math.min( shield + regen, max ) )
+			ply:SetShieldTime( CurTime() )
+			
+		end
+		
+	else
+		
+		ply:SetShieldTime( CurTime() )
+		
+	end
+	
+end
+
+local function domult( gm, mult, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return mult end
+	
+	return mult * ( 1 - gm:GetPerkTotal( ply, perk ) )
+	
+end
+
+--absolutely disgusting btw
+function GM:HandlePlayerAttackSpeed( ply )
+	
+	local wep = ply:GetActiveWeapon()
+	if IsValid( wep ) ~= true then return end
+	
+	local mult = 1
+	mult = domult( self, mult, ply, "perk_attackspeed" )
+	
+	if mult == 1 then return end
+	
+	local nextprimary = wep:GetNextPrimaryFire()
+	if wep:GetNW2Float( "BZ_NextPrimaryFire", -1 ) == -1 then wep:SetNW2Float( "BZ_NextPrimaryFire", nextprimary ) end
+	if wep:GetNW2Float( "BZ_NextPrimaryFire" ) ~= nextprimary and ( wep:Clip1() ~= 0 or wep:GetPrimaryAmmoType() < 0 ) then
+		
+		local newnextprimary = CurTime() + ( ( nextprimary - CurTime() ) * mult )
+		
+		wep:SetNW2Float( "BZ_NextPrimaryFire", newnextprimary )
+		wep:SetNextPrimaryFire( newnextprimary )
+		
+	end
+	
+	local nextsecondary = wep:GetNextSecondaryFire()
+	if wep:GetNW2Float( "BZ_NextSecondaryFire", -1 ) == -1 then wep:SetNW2Float( "BZ_NextSecondaryFire", nextsecondary ) end
+	if wep:GetNW2Float( "BZ_NextSecondaryFire" ) ~= nextsecondary and ( wep:Clip2() ~= 0 or wep:GetSecondaryAmmoType() < 0 ) then
+		
+		local newnextsecondary = CurTime() + ( ( nextsecondary - CurTime() ) * mult )
+		
+		wep:SetNW2Float( "BZ_NextSecondaryFire", newnextsecondary )
+		wep:SetNextSecondaryFire( newnextsecondary )
+		
+	end
+	
+end
 
 
 
@@ -64,35 +192,12 @@ function GM:ResetPlayerCharacter( ply )
 	
 end
 
+
+
 function GM:ScalePlayerDamage( ply, hitgroup, dmg )
 end
 
-function GM:HandlePlayerShield( ply )
-	
-	local shield = ply:GetShield()
-	local max = ply:GetMaxShield()
-	if ply:Alive() ~= true or ply:Team() ~= TEAM_BEAT then
-		
-		if shield ~= 0 then ply:SetShield( 0 ) end
-		ply:SetShieldTime( CurTime() )
-		
-	elseif CurTime() > ply:GetDamagedTime() + 5 and shield < max then
-		
-		local regen = math.floor( ( CurTime() - ply:GetShieldTime() ) * 25 )
-		if regen > 0 then
-			
-			ply:SetShield( math.min( shield + regen, max ) )
-			ply:SetShieldTime( CurTime() )
-			
-		end
-		
-	else
-		
-		ply:SetShieldTime( CurTime() )
-		
-	end
-	
-end
+
 
 function GM:GetPlayerCritChance( ply )
 	
@@ -105,6 +210,8 @@ function GM:GetPlayerCrit( ply )
 	return math.Rand( 0, 1 ) < self:GetPlayerCritChance( ply )
 	
 end
+
+
 
 local function dospeed( gm, mv, ply, perk )
 	
@@ -119,5 +226,37 @@ function GM:Move( ply, mv )
 	
 	dospeed( self, mv, ply, "perk_movespeed" )
 	if CurTime() < ply:GetDamagedTime() + 1 then dospeed( self, mv, ply, "perk_movespeedspecial_damagetaken" ) end
+	
+end
+
+
+
+function GM:GetAmmoTypes( refresh )
+	
+	if self.AmmoNum == nil or refresh == true then self.AmmoNum = 27 + #game.BuildAmmoTypes() end
+	
+	return self.AmmoNum
+	
+end
+
+local function doaddmult( gm, mult, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return mult end
+	
+	return mult * ( 1 + gm:GetPerkTotal( ply, perk ) )
+	
+end
+
+function GM:GetPlayerMaxAmmo( ply, id, m )
+	
+	local mult = m or 1
+	if m == nil then
+		
+		mult = doaddmult( self, mult, ply, "perk_maxammo" )
+		
+	end
+	
+	return math.min( math.floor( game.GetAmmoMax( id ) * mult ), 9999 )
 	
 end

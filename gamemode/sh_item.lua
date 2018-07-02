@@ -35,7 +35,7 @@ function GM:AddItem( name, data )
 	data.Name = data.Name or ( "#" .. name )
 	data.Class = data.Class or name
 	data.Cost = data.Cost or 1
-	data.OnBuy = data.OnBuy or function( self, ply )
+	data.OnBuy = data.OnBuy or function( self, ply, gm )
 		
 		local wep = ply:Give( self.Class, true )
 		if IsValid( wep ) ~= true then return end
@@ -43,7 +43,7 @@ function GM:AddItem( name, data )
 		wep:SetClip2( wep:GetMaxClip2() )
 		
 	end
-	data.OnSell = data.OnSell or function( self, ply ) ply:StripWeapon( self.Class ) end
+	data.OnSell = data.OnSell or function( self, ply, gm ) ply:StripWeapon( self.Class ) end
 	data.GetDescription = data.GetDescription or function( self, ply ) return self.Description or "" end
 	
 	self.PlayerItems[ name ] = data
@@ -76,7 +76,7 @@ function GM:PlayerBuyItem( ply, item )
 	
 	if SERVER then
 		
-		item:OnBuy( ply )
+		item:OnBuy( ply, self )
 		
 		net.Start( "BZ_BuyItem" )
 			
@@ -95,12 +95,15 @@ function GM:PlayerSellItem( ply, item )
 	
 	ply:AddLoadoutPoints( item.Cost )
 	local id = item.Index
-	table.remove( ply.LoadoutNames, ply.Loadout[ id ] )
+	
+	local key = ply.Loadout[ id ]
 	ply.Loadout[ id ] = nil
+	table.remove( ply.LoadoutNames, key )
+	for _, v in pairs( ply.Loadout ) do if v > key then ply.Loadout[ _ ] = v - 1 end end
 	
 	if SERVER then
 		
-		item:OnSell( ply )
+		item:OnSell( ply, self )
 		
 		net.Start( "BZ_SellItem" )
 			

@@ -68,6 +68,6 @@ function GM:Think()
 	self:HandleTrack()
 	
 	local plys = player.GetAll()
-	for i = 1, #plys do self:HandlePlayerShield( plys[ i ] ) end
+	for i = 1, #plys do self:HandlePlayer( plys[ i ] ) end
 	
 end

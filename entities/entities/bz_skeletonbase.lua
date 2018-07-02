@@ -174,6 +174,33 @@ if SERVER then
 		
 	end
 	
+	ENT.MoveSpeed = 300
+	
+	local function domult( gm, mult, ply, perk )
+		
+		if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+		if gm:PlayerHasPerk( ply, perk ) ~= true then return mult end
+		
+		return mult * ( 1 - gm:GetPerkTotal( ply, perk ) )
+		
+	end
+	function ENT:GetMoveSpeed()
+		
+		local speed = self.MoveSpeed
+		
+		local gm = gmod.GetGamemode()
+		
+		if self:IsIgnited() == true then
+			
+			local attacker = self:GetIgniteAttacker()
+			if IsValid( attacker ) == true and attacker:IsPlayer() == true then domult( gm, speed, attacker, "perk_enemymovespeedignited" ) end
+			
+		end
+		
+		return speed
+		
+	end
+	
 	ENT.Spawning = true
 	function ENT:RunBehaviour()
 		

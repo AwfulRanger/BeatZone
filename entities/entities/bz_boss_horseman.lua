@@ -90,8 +90,6 @@ if SERVER then
 			
 			self:StartActivity( self.Activity.Run or ACT_MP_RUN_MELEE )
 			
-			self.loco:SetDesiredSpeed( self.MoveSpeed )
-			
 			self:FollowEntity( target, { maxage = 0.1, think = function()
 				
 				local hit, ent = self:SwingTrace( target )

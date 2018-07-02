@@ -45,9 +45,9 @@ if SERVER then
 	function ENT:SetDuration( duration ) self.Duration = duration end
 	function ENT:GetDuration() return self.Duration end
 	
-	ENT.Radius = 40
-	function ENT:SetRadius( radius ) self.Radius = radius end
-	function ENT:GetRadius() return self.Radius end
+	ENT.Damage = 5
+	function ENT:SetDamage( damage ) self.Damage = damage end
+	function ENT:GetDamage() return self.Damage end
 	
 	ENT.HitParticle = "projectile_fireball"
 	ENT.TrailParticle = "new_flame"
@@ -59,7 +59,7 @@ if SERVER then
 		
 		if skybox ~= true then
 			
-			if IsValid( ent ) == true then ent:Ignite( self:GetDuration(), self:GetRadius() ) end
+			if IsValid( ent ) == true then ent:StartIgnite( self:GetDuration(), self:GetDamage(), self ) end
 			
 			self:EmitSound( self.HitSounds[ math.random( #self.HitSounds ) ], 140 )
 			ParticleEffect( self.HitParticle, self:GetPos(), self:GetAngles() )

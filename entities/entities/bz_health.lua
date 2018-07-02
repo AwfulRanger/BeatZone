@@ -42,9 +42,15 @@ if SERVER then
 			take = true
 			
 		end
-		if ent:IsOnFire() == true then
+		if ent:IsIgnited() == true then
 			
-			ent:Extinguish()
+			ent:StopIgnite()
+			take = true
+			
+		end
+		if ent:IsBleeding() == true then
+			
+			ent:StopBleed()
 			take = true
 			
 		end

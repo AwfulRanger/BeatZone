@@ -46,8 +46,8 @@ function GM:AddPerk( name, data )
 		
 	end
 	data.Cost = data.Cost or 1
-	data.OnBuy = data.OnBuy or function( self, ply ) end
-	data.OnSell = data.OnSell or function( self, ply ) end
+	data.OnBuy = data.OnBuy or function( self, ply, gm ) end
+	data.OnSell = data.OnSell or function( self, ply, gm ) end
 	if data.GetDescription == nil then
 		
 		if data.Type == "add" then
@@ -155,7 +155,7 @@ function GM:PlayerBuyPerk( ply, perk )
 	
 	if SERVER then
 		
-		perk:OnBuy( ply )
+		perk:OnBuy( ply, self )
 		
 		net.Start( "BZ_BuyPerk" )
 			
@@ -179,8 +179,11 @@ function GM:PlayerSellPerk( ply, perk )
 	local id = perk.Index
 	if count <= 0 then
 		
-		table.remove( ply.PerkNames, ply.Perks[ id ] )
+		local key = ply.Perks[ id ]
 		ply.Perks[ id ] = nil
+		table.remove( ply.PerkNames, key )
+		for _, v in pairs( ply.Perks ) do if v > key then ply.Perks[ _ ] = v - 1 end end
+		
 		self:PlayerSetPerkNum( ply, perk, nil )
 		
 	else
@@ -191,7 +194,7 @@ function GM:PlayerSellPerk( ply, perk )
 	
 	if SERVER then
 		
-		perk:OnSell( ply )
+		perk:OnSell( ply, self )
 		
 		net.Start( "BZ_SellPerk" )
 			
@@ -412,6 +415,9 @@ GM:AddPerk( "perk_health", {
 	Name = "Health",
 	Description = "%s max health",
 	Type = "addmult",
+	BaseAdd = 0.025,
+	OnBuy = function( self, ply, gm ) gm:SetPlayerHealth( ply ) end,
+	OnSell = function( self, ply, gm ) gm:SetPlayerHealth( ply ) end,
 	
 } )
 GM:AddPerk( "perk_shield", {
@@ -419,6 +425,9 @@ GM:AddPerk( "perk_shield", {
 	Name = "Shield",
 	Description = "%s max shield",
 	Type = "addmult",
+	BaseAdd = 0.025,
+	OnBuy = function( self, ply, gm ) gm:SetPlayerShield( ply ) end,
+	OnSell = function( self, ply, gm ) gm:SetPlayerShield( ply ) end,
 	
 } )
 GM:AddPerk( "perk_healthregen", {
@@ -438,31 +447,20 @@ GM:AddPerk( "perk_healthregenspecial_enemykilled", {
 } )
 
 --weapons
-GM:AddPerk( "perk_clipsize", {
-	
-	Name = "Clip Size",
-	Description = "%s clip size",
-	Type = "addmult",
-	
-} )
 GM:AddPerk( "perk_maxammo", {
 	
 	Name = "Max Ammo",
 	Description = "%s maximum ammo",
 	Type = "addmult",
+	BaseAdd = 0.025,
+	OnBuy = function( self, ply, gm ) for i = 1, gm:GetAmmoTypes() do ply:SetAmmo( gm:GetPlayerMaxAmmo( ply, i ), i ) end end,
+	OnSell = function( self, ply, gm ) for i = 1, gm:GetAmmoTypes() do ply:SetAmmo( gm:GetPlayerMaxAmmo( ply, i ), i ) end end,
 	
 } )
-GM:AddPerk( "perk_firerate", {
+GM:AddPerk( "perk_attackspeed", {
 	
-	Name = "Fire Rate",
-	Description = "%s faster fire rate",
-	Type = "addmult",
-	
-} )
-GM:AddPerk( "perk_reloadspeed", {
-	
-	Name = "Reload Speed",
-	Description = "%s faster reload speed",
+	Name = "Attack Speed",
+	Description = "%s faster attack speed",
 	Type = "addmult",
 	
 } )

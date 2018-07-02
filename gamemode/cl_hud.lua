@@ -1119,7 +1119,7 @@ function GM:HUDPaint()
 				local maxclip = weapon:GetMaxClip1()
 				local ammo = ply:GetAmmoCount( ammotype1 )
 				if customammo.PrimaryAmmo ~= nil then ammo = customammo.PrimaryAmmo end
-				local maxammo = game.GetAmmoMax( ammotype1 )
+				local maxammo = self:GetPlayerMaxAmmo( ply, ammotype1 )
 				if clip == -1 or ammo == -1 then
 					
 					local maxcount = maxammo
@@ -1179,7 +1179,7 @@ function GM:HUDPaint()
 				local maxclip = weapon:GetMaxClip2()
 				local ammo = ply:GetAmmoCount( ammotype2 )
 				if customammo.SecondaryAmmo ~= nil then ammo = customammo.SecondaryAmmo end
-				local maxammo = game.GetAmmoMax( ammotype2 )
+				local maxammo = self:GetPlayerMaxAmmo( ply, ammotype2 )
 				if clip == -1 or ammo == -1 then
 					
 					local maxcount = maxammo
@@ -1866,9 +1866,7 @@ function GM:DrawDamageNumbers()
 		for i = 1, #remove do
 			
 			local key = remove[ i ]
-			
 			table.remove( damagenumbers, key )
-			
 			for _, v in pairs( damagenumbersbatch ) do if v.key > key then v.key = v.key - 1 end end
 			
 		end

@@ -6,6 +6,20 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 CreateConVar( "bz_friendlyfire", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Enable friendly fire (0 = disabled, 1 = shields only, 2 = all)" )
 
+
+
+local meta = FindMetaTable( "Entity" )
+
+function meta:IsIgnited() return CurTime() < self:GetNW2Float( "BZ_IgniteTime", -1 ) end
+function meta:GetIgniteDamage() return self:GetNW2Int( "BZ_IgniteDamage" ) end
+function meta:GetIgniteAttacker() return self:GetNW2Entity( "BZ_IgniteAttacker" ) end
+
+function meta:IsBleeding() return CurTime() < self:GetNW2Float( "BZ_BleedTime", -1 ) end
+function meta:GetBleedDamage() return self:GetNW2Int( "BZ_BleedDamage" ) end
+function meta:GetBleedAttacker() return self:GetNW2Entity( "BZ_BleedAttacker" ) end
+
+
+
 GM.Name = "BeatZone"
 GM.Author = "AwfulRanger"
 GM.TeamBased = true
