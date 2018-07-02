@@ -10,6 +10,8 @@ ENT.Base = "bz_skeletonbase"
 ENT.PrintName = "#bz_skeletonexploder"
 ENT.Skin = 3
 
+ENT.ShootSounds = { Sound( "weapons/air_burster_shoot.wav" ) }
+
 function ENT:SetupDataTables()
 	
 	BaseClass.SetupDataTables( self )
@@ -30,8 +32,6 @@ if SERVER then
 	}
 	
 	ENT.MoveSpeed = 260
-	
-	ENT.ShootSounds = { Sound( "weapons/air_burster_shoot.wav" ) }
 	
 	ENT.MinRange = 256 --try to move closer to this range at least
 	ENT.MaxRange = 1024 --don't attack past this range

@@ -14,6 +14,14 @@ ENT.PrintName = "#bz_grenade"
 ENT.Model = Model( "models/weapons/w_models/w_grenade_grenadelauncher.mdl" )
 ENT.Skin = 0
 
+ENT.ExplodeSounds = {
+	
+	Sound( "weapons/explode1.wav" ),
+	Sound( "weapons/explode2.wav" ),
+	Sound( "weapons/explode3.wav" ),
+	
+}
+
 function ENT:Initialize()
 	
 	self:SetModel( self.Model )
@@ -49,13 +57,6 @@ if SERVER then
 	function ENT:SetDamage( damage ) self.Damage = damage end
 	function ENT:GetDamage() return self.Damage end
 	
-	ENT.ExplodeSounds = {
-		
-		Sound( "weapons/explode1.wav" ),
-		Sound( "weapons/explode2.wav" ),
-		Sound( "weapons/explode3.wav" ),
-		
-	}
 	ENT.ExplodeParticle = "explosioncore_midair"
 	
 	function ENT:OnCollide( skybox )

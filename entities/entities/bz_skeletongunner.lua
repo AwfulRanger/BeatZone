@@ -10,6 +10,8 @@ ENT.Base = "bz_skeletonbase"
 ENT.PrintName = "#bz_skeletongunner"
 ENT.Skin = 1
 
+ENT.ShootSounds = { Sound( "weapons/sniper_rifle_classic_shoot.wav" ) }
+
 function ENT:SetupDataTables()
 	
 	BaseClass.SetupDataTables( self )
@@ -31,8 +33,6 @@ if SERVER then
 	}
 	
 	ENT.MoveSpeed = 280
-	
-	ENT.ShootSounds = { Sound( "weapons/sniper_rifle_classic_shoot.wav" ) }
 	
 	ENT.MinRange = 256 --try to stay at least this far away
 	ENT.MaxRange = 512 --don't attack past this range

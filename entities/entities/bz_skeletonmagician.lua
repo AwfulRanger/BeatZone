@@ -14,6 +14,8 @@ ENT.Base = "bz_skeletonbase"
 ENT.PrintName = "#bz_skeletonmagician"
 ENT.Skin = 0
 
+ENT.ShootSounds = { Sound( "weapons/iceaxe/iceaxe_swing1.wav" ) }
+
 function ENT:SetupDataTables()
 	
 	BaseClass.SetupDataTables( self )
@@ -34,8 +36,6 @@ if SERVER then
 	}
 	
 	ENT.MoveSpeed = 300
-	
-	ENT.ShootSounds = { Sound( "weapons/iceaxe/iceaxe_swing1.wav" ) }
 	
 	ENT.MinRange = 512 --try to move closer to this range at least
 	ENT.MaxRange = 1024 --don't attack past this range

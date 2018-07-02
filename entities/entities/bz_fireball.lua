@@ -13,6 +13,8 @@ ENT.Base = "base_anim"
 ENT.PrintName = "#bz_fireball"
 ENT.Model = Model( "models/weapons/w_models/w_grenade_grenadelauncher.mdl" )
 
+ENT.HitSounds = { Sound( "misc/flame_engulf.wav" ) }
+
 function ENT:Initialize()
 	
 	self:SetModel( self.Model )
@@ -47,11 +49,6 @@ if SERVER then
 	function ENT:SetRadius( radius ) self.Radius = radius end
 	function ENT:GetRadius() return self.Radius end
 	
-	ENT.HitSounds = {
-		
-		Sound( "misc/flame_engulf.wav" ),
-		
-	}
 	ENT.HitParticle = "projectile_fireball"
 	ENT.TrailParticle = "new_flame"
 	

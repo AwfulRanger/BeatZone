@@ -10,6 +10,14 @@ ENT.Base = "bz_skeletonbase"
 ENT.PrintName = "#bz_skeletonlad"
 ENT.Skin = 2
 
+ENT.SwingSounds = { Sound( "weapons/iceaxe/iceaxe_swing1.wav" ) }
+ENT.HitSounds = {
+	
+	Sound( "weapons/fist_hit_world1.wav" ),
+	Sound( "weapons/fist_hit_world2.wav" ),
+	
+}
+
 function ENT:SetupDataTables()
 	
 	BaseClass.SetupDataTables( self )
@@ -51,9 +59,6 @@ if SERVER then
 		return tr.Entity:IsPlayer(), tr.Entity, tr
 		
 	end
-	
-	ENT.SwingSounds = { Sound( "weapons/iceaxe/iceaxe_swing1.wav" ) }
-	ENT.HitSounds = { Sound( "weapons/fist_hit_world1.wav" ), Sound( "weapons/fist_hit_world2.wav" ) }
 	
 	ENT.SwingCooldown = 1.5
 	ENT.SwingTime = 0.25
