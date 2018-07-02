@@ -109,6 +109,7 @@ function GM:EntityTakeDamage( ent, dmg )
 		
 		if ent:Crouching() == true then dores( self, dmg, ent, "perk_resistspecial_crouch" ) end
 		if ent:GetVelocity():LengthSqr() == 0 then dores( self, dmg, ent, "perk_resistspecial_immobile" ) end
+		if ent.LastEnemyKilled ~= nil and CurTime() < ent.LastEnemyKilled + 1 then print( "ENEMY KILLED NOW" ) dores( self, dmg, ent, "perk_resistspecial_enemykilled" ) end
 		
 	end
 	

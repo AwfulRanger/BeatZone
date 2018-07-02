@@ -397,13 +397,6 @@ GM:AddPerk( "perk_movespeed", {
 	Type = "addmult",
 	
 } )
-GM:AddPerk( "perk_jumpheight", {
-	
-	Name = "Jump Height",
-	Description = "%s jump height",
-	Type = "addmult",
-	
-} )
 
 GM:AddPerk( "perk_movespeedspecial_damagetaken", {
 	
@@ -421,10 +414,10 @@ GM:AddPerk( "perk_health", {
 	Type = "addmult",
 	
 } )
-GM:AddPerk( "perk_armor", {
+GM:AddPerk( "perk_shield", {
 	
-	Name = "Armor",
-	Description = "%s max armor",
+	Name = "Shield",
+	Description = "%s max shield",
 	Type = "addmult",
 	
 } )

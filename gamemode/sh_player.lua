@@ -105,3 +105,19 @@ function GM:GetPlayerCrit( ply )
 	return math.Rand( 0, 1 ) < self:GetPlayerCritChance( ply )
 	
 end
+
+local function dospeed( gm, mv, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return end
+	local mult = 1 + gm:GetPerkTotal( ply, perk )
+	mv:SetMaxClientSpeed( mv:GetMaxClientSpeed() * mult )
+	mv:SetMaxSpeed( mv:GetMaxSpeed() * mult )
+	
+end
+function GM:Move( ply, mv )
+	
+	dospeed( self, mv, ply, "perk_movespeed" )
+	if CurTime() < ply:GetDamagedTime() + 5 then dospeed( self, mv, ply, "perk_movespeedspecial_damagetaken" ) end
+	
+end
