@@ -1711,13 +1711,15 @@ local dmgnumtime = CreateClientConVar( "bz_damagenumberstime", 3 )
 local damagenumbers = {}
 local damagenumbersbatch = {}
 
-function GM:AddDamageNumber( ent, dmg, pos )
+function GM:AddDamageNumber( ent, dmg, pos, crit )
 	
 	local snd = hitsound:GetString()
 	local vol = hitsoundvolume:GetFloat()
 	if snd ~= "" and vol > 0 then sound.PlayFile( snd, "noplay", function( channel ) channel:SetVolume( vol ) channel:Play() end ) end
 	
 	if enabledmgnum:GetBool() ~= true then return end
+	
+	crit = crit or false
 	
 	if dmgnumbatch:GetBool() == true then
 		
@@ -1732,7 +1734,8 @@ function GM:AddDamageNumber( ent, dmg, pos )
 				time = CurTime(),
 				ent = ent,
 				dmg = dmgnum.dmg + dmg,
-				pos = pos
+				pos = pos,
+				crit = crit,
 				
 			}
 			
@@ -1746,6 +1749,7 @@ function GM:AddDamageNumber( ent, dmg, pos )
 				ent = ent,
 				dmg = dmg,
 				pos = pos,
+				crit = crit,
 				
 			} )
 			
@@ -1766,6 +1770,7 @@ function GM:AddDamageNumber( ent, dmg, pos )
 			ent = ent,
 			dmg = dmg,
 			pos = pos,
+			crit = crit,
 			
 		} )
 		
@@ -1775,10 +1780,11 @@ end
 
 net.Receive( "BZ_EntityDamaged", function()
 	
-	gmod.GetGamemode():AddDamageNumber( net.ReadEntity(), net.ReadInt( 32 ), net.ReadVector() )
+	gmod.GetGamemode():AddDamageNumber( net.ReadEntity(), net.ReadInt( 32 ), net.ReadVector(), net.ReadBool() )
 	
 end )
 
+local dmgcritcolor = Color( 0, 100, 255, 255 )
 local dmgstartcolor = Color( 0, 255, 0, 255 )
 local dmgendcolor = Color( 255, 0, 0, 0 )
 local colorval = { "r", "g", "b", "a" }
@@ -1823,6 +1829,7 @@ function GM:DrawDamageNumbers()
 				cam.Start3D2D( pos, ang, scale )
 					
 					local sc = dmgstartcolor
+					if dmgnum.crit == true then sc = dmgcritcolor end
 					local ec = dmgendcolor
 					local color = Color( sc.r, sc.b, sc.g, sc.a )
 					for i = 1, #colorval do

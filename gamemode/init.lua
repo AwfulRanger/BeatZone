@@ -120,6 +120,14 @@ function GM:EntityTakeDamage( ent, dmg )
 		local dmgperk = dmgperks[ dmg:GetDamageType() ]
 		if dmgperk ~= nil then dodmg( self, dmg, attacker, dmgperk ) end
 		
+		local crit = self:GetPlayerCrit( attacker )
+		if crit == true then
+			
+			dmg:ScaleDamage( 2 )
+			dodmg( self, dmg, attacker, "perk_damage_critical" )
+			
+		end
+		
 		if ent:IsPlayer() ~= true or self:PlayerShouldTakeDamage( ent, attacker ) == true then
 			
 			net.Start( "BZ_EntityDamaged" )
@@ -127,6 +135,7 @@ function GM:EntityTakeDamage( ent, dmg )
 				net.WriteEntity( ent )
 				net.WriteInt( dmg:GetDamage(), 32 )
 				net.WriteVector( dmg:GetDamagePosition() )
+				net.WriteBool( crit )
 				
 			net.Send( attacker )
 			
@@ -137,6 +146,7 @@ function GM:EntityTakeDamage( ent, dmg )
 				net.WriteEntity( ent )
 				net.WriteInt( math.min( dmg:GetDamage(), ent:GetShield() ), 32 )
 				net.WriteVector( dmg:GetDamagePosition() )
+				net.WriteBool( crit )
 				
 			net.Send( attacker )
 			

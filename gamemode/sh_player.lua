@@ -93,3 +93,15 @@ function GM:HandlePlayerShield( ply )
 	end
 	
 end
+
+function GM:GetPlayerCritChance( ply )
+	
+	return 0.05
+	
+end
+
+function GM:GetPlayerCrit( ply )
+	
+	return math.Rand( 0, 1 ) < self:GetPlayerCritChance( ply )
+	
+end
