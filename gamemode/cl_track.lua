@@ -4,6 +4,10 @@ include( "sh_track.lua" )
 
 
 
+local musicvolume = GetConVar( "snd_musicvolume" )
+
+
+
 function GM:PlayTrack( track, time )
 	
 	self:StopTrack()
@@ -19,6 +23,7 @@ function GM:PlayTrack( track, time )
 		
 		if IsValid( channel ) == true and self.CurrentTrack ~= nil and self.CurrentTrack.Sound == nil then
 			
+			channel:SetVolume( musicvolume:GetFloat() )
 			channel:SetTime( CurTime() - time )
 			channel:Play()
 			
@@ -51,7 +56,6 @@ function GM:StopTrack( fade )
 	
 end
 
-local musicvolume = GetConVar( "snd_musicvolume" )
 GM.TrackFadeLength = 5
 function GM:HandleTrack()
 	
