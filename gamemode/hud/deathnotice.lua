@@ -111,7 +111,7 @@ function GM:DrawDeathNotice( dx, dy )
 				local alpha = time - CurTime()
 				local t = self.HUD.Color.textcolor
 				local ts = self.HUD.Color.textshadowcolor
-				tcolor = Color( tr, t.g, t.b, 255 * alpha )
+				tcolor = Color( t.r, t.g, t.b, 255 * alpha )
 				scolor = Color( ts.r, ts.g, ts.b, 255 * alpha )
 				
 			end
