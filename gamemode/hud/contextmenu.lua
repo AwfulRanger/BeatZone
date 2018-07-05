@@ -64,6 +64,36 @@ function GM:OnContextMenuOpen()
 			
 		end
 		
+		local voting = self:IsVote() == true and self:CanVote( LocalPlayer() ) == true
+		if panel.voting ~= voting then
+			
+			panel.voting = voting
+			
+			if voting == true then
+				
+				local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.05 )
+				local w = math.Round( ScrW() * 0.1 )
+				local h = math.Round( ScrH() * 0.1 )
+				local y = math.Round( ScrH() * 0.5 )
+				local ys = math.Round( spacing * 0.5 )
+				
+				panel.voteyes = self.HUD:CreateButton( panel, "Vote yes", function() self:SendVote( true ) end )
+				panel.voteyes:SetPos( ScrW() - w - spacing, y - h - ys )
+				panel.voteyes:SetSize( w, h )
+				
+				panel.voteno = self.HUD:CreateButton( panel, "Vote no", function() self:SendVote( false ) end )
+				panel.voteno:SetPos( ScrW() - w - spacing, y + ys )
+				panel.voteno:SetSize( w, h )
+				
+			else
+				
+				if IsValid( panel.voteyes ) == true then panel.voteyes:Remove() end
+				if IsValid( panel.voteno ) == true then panel.voteno:Remove() end
+				
+			end
+			
+		end
+		
 	end
 	
 end

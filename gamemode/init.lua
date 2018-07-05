@@ -8,6 +8,7 @@ AddCSLuaFile( "hud/deathnotice.lua" )
 AddCSLuaFile( "hud/targetid.lua" )
 AddCSLuaFile( "hud/gamemenu.lua" )
 AddCSLuaFile( "hud/gamemenu_character.lua" )
+AddCSLuaFile( "hud/gamemenu_vote.lua" )
 AddCSLuaFile( "hud/editplayer.lua" )
 AddCSLuaFile( "hud/contextmenu.lua" )
 AddCSLuaFile( "hud/scoreboard.lua" )
@@ -17,6 +18,7 @@ include( "sv_round.lua" )
 include( "sv_player.lua" )
 include( "sv_enemy.lua" )
 include( "sv_track.lua" )
+include( "sv_vote.lua" )
 
 
 
@@ -313,6 +315,8 @@ function GM:Think()
 	
 	local plys = player.GetAll()
 	for i = 1, #plys do self:HandlePlayer( plys[ i ] ) end
+	
+	self:HandleVote()
 	
 end
 

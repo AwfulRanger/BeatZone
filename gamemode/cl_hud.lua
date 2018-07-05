@@ -111,6 +111,9 @@ GM.HUD.Color = {
 	
 	deadcolor = Color( 255, 0, 0, 255 ),
 	
+	voteyescolor = Color( 0, 255, 0, 255 ),
+	votenocolor = Color( 255, 0, 0, 255 ),
+	
 }
 
 

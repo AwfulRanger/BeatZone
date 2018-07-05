@@ -5,6 +5,7 @@ include( "cl_round.lua" )
 include( "cl_player.lua" )
 include( "cl_hud.lua" )
 include( "cl_track.lua" )
+include( "cl_vote.lua" )
 
 
 
@@ -69,5 +70,7 @@ function GM:Think()
 	
 	local plys = player.GetAll()
 	for i = 1, #plys do self:HandlePlayer( plys[ i ] ) end
+	
+	self:HandleVote()
 	
 end

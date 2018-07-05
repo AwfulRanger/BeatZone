@@ -164,6 +164,7 @@ local function createcharsheet( gm, charmenu )
 	charsheet:SetParent( charmenu )
 	charsheet:Dock( FILL )
 	charsheet:SetPadding( spacing )
+	charsheet:SetFadeTime( 0 )
 	function charsheet:Paint( w, h ) end
 	
 	

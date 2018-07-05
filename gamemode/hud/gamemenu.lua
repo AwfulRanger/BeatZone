@@ -1,6 +1,7 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
 include( "gamemenu_character.lua" )
+include( "gamemenu_vote.lua" )
 
 
 
@@ -57,6 +58,7 @@ function GM:CreateMenu( tab )
 	local sheet = vgui.Create( "DPropertySheet" )
 	sheet:SetParent( frame )
 	sheet:Dock( FILL )
+	sheet:SetFadeTime( 0 )
 	function sheet:Paint( w, h ) end
 	
 	local tabs = {}
@@ -76,10 +78,7 @@ function GM:CreateMenu( tab )
 	
 	
 	--vote
-	local votemenu = vgui.Create( "DPanel" )
-	votemenu.Paint = function( ... ) return self.HUD:PaintPanel( ... ) end
-	
-	table.insert( tabs, sheet:AddSheet( "Vote", votemenu ) )
+	table.insert( tabs, sheet:AddSheet( "Vote", self:CreateVoteMenu() ) )
 	
 	
 	--settings
