@@ -3,6 +3,7 @@ DEFINE_BASECLASS( "gamemode_base" )
 include( "gamemenu_help.lua" )
 include( "gamemenu_character.lua" )
 include( "gamemenu_vote.lua" )
+include( "gamemenu_settings.lua" )
 
 
 
@@ -80,10 +81,7 @@ function GM:CreateMenu( tab )
 	
 	
 	--settings
-	local settingsmenu = vgui.Create( "DPanel" )
-	settingsmenu.Paint = function( ... ) return self.HUD:PaintPanel( ... ) end
-	
-	table.insert( tabs, sheet:AddSheet( "Settings", settingsmenu ) )
+	table.insert( tabs, sheet:AddSheet( "Settings", self:CreateSettingsMenu() ) )
 	
 	
 	for i = 1, #tabs do

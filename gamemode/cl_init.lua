@@ -1,5 +1,6 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
+include( "cl_settings.lua" )
 include( "shared.lua" )
 include( "cl_round.lua" )
 include( "cl_player.lua" )
@@ -53,6 +54,8 @@ function GM:EntityRemoved( ent )
 end
 
 function GM:InitPostEntity()
+	
+	for i = 1, self:GetSettingsDataCount() do self:GetSettingsData( i ):Load( self ) end
 	
 	self:ResetPlayerCharacter( LocalPlayer() )
 	

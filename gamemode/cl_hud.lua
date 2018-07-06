@@ -89,36 +89,44 @@ GM.HUD:CreateFonts()
 
 
 
-GM.HUD.Color = {
+function GM.HUD:CreateColors( colors )
 	
-	bgcolor = Color( 47, 4, 70, 250 ),
-	detailcolor = Color( 53, 19, 161, 255 ),
-	buttoncolor = Color( 121, 6, 71, 255 ),
-	buttonactivecolor = Color( 188, 1, 107, 255 ),
-	buttoninactivecolor = Color( 85, 0, 48, 255 ),
-	buttonspecialcolor = Color( 149, 9, 88, 255 ),
-	textcolor = Color( 255, 255, 255, 255 ),
-	textshadowcolor = Color( 0, 0, 0, 255 ),
-	hudbgcolor = Color( 47, 4, 70, 100 ),
+	self.Color = {
+		
+		bgcolor = Color( 47, 4, 70, 250 ),
+		detailcolor = Color( 53, 19, 161, 255 ),
+		buttoncolor = Color( 121, 6, 71, 255 ),
+		buttonactivecolor = Color( 188, 1, 107, 255 ),
+		buttoninactivecolor = Color( 85, 0, 48, 255 ),
+		buttonspecialcolor = Color( 149, 9, 88, 255 ),
+		textcolor = Color( 255, 255, 255, 255 ),
+		textshadowcolor = Color( 0, 0, 0, 255 ),
+		hudbgcolor = Color( 47, 4, 70, 100 ),
+		
+		plyreadycolor = Color( 0, 255, 0, 255 ),
+		plyunreadycolor = Color( 255, 0, 0, 255 ),
+		
+		dmgcritcolor = Color( 0, 100, 255, 255 ),
+		dmgstartcolor = Color( 0, 255, 0, 255 ),
+		dmgendcolor = Color( 255, 0, 0, 0 ),
+		
+		healthcolor = Color( 227, 24, 139, 200 ),
+		shieldcolor = Color( 41, 92, 209, 200 ),
+		clipcolor = Color( 146, 32, 209, 200 ),
+		ammocolor = Color( 69, 10, 101, 200 ),
+		
+		deadcolor = Color( 255, 0, 0, 255 ),
+		
+		voteyescolor = Color( 0, 255, 0, 255 ),
+		votenocolor = Color( 255, 0, 0, 255 ),
+		
+	}
 	
-	plyreadycolor = Color( 0, 255, 0, 255 ),
-	plyunreadycolor = Color( 255, 0, 0, 255 ),
+	if colors ~= nil then for _, v in pairs( colors ) do self.Color[ _ ] = v end end
 	
-	dmgcritcolor = Color( 0, 100, 255, 255 ),
-	dmgstartcolor = Color( 0, 255, 0, 255 ),
-	dmgendcolor = Color( 255, 0, 0, 0 ),
-	
-	healthcolor = Color( 227, 24, 139, 200 ),
-	shieldcolor = Color( 41, 92, 209, 200 ),
-	clipcolor = Color( 146, 32, 209, 200 ),
-	ammocolor = Color( 69, 10, 101, 200 ),
-	
-	deadcolor = Color( 255, 0, 0, 255 ),
-	
-	voteyescolor = Color( 0, 255, 0, 255 ),
-	votenocolor = Color( 255, 0, 0, 255 ),
-	
-}
+end
+
+GM.HUD:CreateColors()
 
 
 
