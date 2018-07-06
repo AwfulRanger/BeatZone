@@ -27,7 +27,7 @@ local function createperkmenu( gm, perkmenu )
 	perkdesc:Dock( TOP )
 	function perkdesc:PerformLayout( w, h )
 		
-		self:SetFontInternal( "BZ_Label" )
+		self:SetFontInternal( "BZ_LabelBold" )
 		self:SetFGColor( gm.HUD.Color.textcolor )
 		
 	end
@@ -185,7 +185,7 @@ local function createcharsheet( gm, charmenu )
 	classdesc:Dock( TOP )
 	function classdesc:PerformLayout( w, h )
 		
-		self:SetFontInternal( "BZ_Label" )
+		self:SetFontInternal( "BZ_LabelBold" )
 		self:SetFGColor( gm.HUD.Color.textcolor )
 		
 	end
@@ -330,7 +330,7 @@ local function createcharsheet( gm, charmenu )
 	loadoutdesc:Dock( TOP )
 	function loadoutdesc:PerformLayout( w, h )
 		
-		self:SetFontInternal( "BZ_Label" )
+		self:SetFontInternal( "BZ_LabelBold" )
 		self:SetFGColor( gm.HUD.Color.textcolor )
 		
 	end

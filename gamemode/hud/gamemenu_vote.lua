@@ -40,7 +40,7 @@ function GM:CreateVoteMenu()
 	votedesc:Dock( TOP )
 	function votedesc.PerformLayout( panel, w, h )
 		
-		panel:SetFontInternal( "BZ_Label" )
+		panel:SetFontInternal( "BZ_LabelBold" )
 		panel:SetFGColor( self.HUD.Color.textcolor )
 		
 	end
