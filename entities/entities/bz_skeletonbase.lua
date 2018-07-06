@@ -64,13 +64,13 @@ function ENT:GetShootPos()
 	
 end
 
-if SERVER then
+ENT.Activity = {
 	
-	ENT.Activity = {
-		
-		Spawn = ACT_TRANSITION,
-		
-	}
+	Spawn = ACT_TRANSITION,
+	
+}
+
+if SERVER then
 	
 	function ENT:FollowEntity( ent, options )
 		

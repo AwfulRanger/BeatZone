@@ -8,6 +8,7 @@ if CLIENT then language.Add( "bz_skeletonexploder", "Skeleton Exploder" ) end
 
 ENT.Base = "bz_skeletonbase"
 ENT.PrintName = "#bz_skeletonexploder"
+ENT.Description = [[Blasts people with their explosive launcher.]]
 ENT.Skin = 3
 
 ENT.ShootSounds = { Sound( "weapons/air_burster_shoot.wav" ) }
@@ -20,16 +21,16 @@ function ENT:SetupDataTables()
 	
 end
 
-if SERVER then
+ENT.Activity = {
 	
-	ENT.Activity = {
-		
-		Spawn = ACT_TRANSITION,
-		Stand = ACT_MP_STAND_SECONDARY,
-		Run = ACT_MP_RUN_SECONDARY,
-		Attack = ACT_MP_ATTACK_STAND_SECONDARY,
-		
-	}
+	Spawn = ACT_TRANSITION,
+	Stand = ACT_MP_STAND_SECONDARY,
+	Run = ACT_MP_RUN_SECONDARY,
+	Attack = ACT_MP_ATTACK_STAND_SECONDARY,
+	
+}
+
+if SERVER then
 	
 	ENT.MoveSpeed = 260
 	

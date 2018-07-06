@@ -8,6 +8,7 @@ if CLIENT then language.Add( "bz_skeletongunner", "Skeleton Gunner" ) end
 
 ENT.Base = "bz_skeletonbase"
 ENT.PrintName = "#bz_skeletongunner"
+ENT.Description = [[Shoots people with their gun.]]
 ENT.Skin = 1
 
 ENT.ShootSounds = { Sound( "weapons/sniper_rifle_classic_shoot.wav" ) }
@@ -20,17 +21,17 @@ function ENT:SetupDataTables()
 	
 end
 
-if SERVER then
+ENT.Activity = {
 	
-	ENT.Activity = {
-		
-		Spawn = ACT_TRANSITION,
-		Stand = ACT_MP_STAND_PRIMARY,
-		Run = ACT_MP_RUN_PRIMARY,
-		Crouch = ACT_MP_CROUCH_PRIMARY,
-		Attack = ACT_MP_ATTACK_STAND_PRIMARY,
-		
-	}
+	Spawn = ACT_TRANSITION,
+	Stand = ACT_MP_STAND_PRIMARY,
+	Run = ACT_MP_RUN_PRIMARY,
+	Crouch = ACT_MP_CROUCH_PRIMARY,
+	Attack = ACT_MP_ATTACK_STAND_PRIMARY,
+	
+}
+
+if SERVER then
 	
 	ENT.MoveSpeed = 280
 	

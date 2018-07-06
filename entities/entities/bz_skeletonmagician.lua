@@ -12,6 +12,7 @@ if CLIENT then language.Add( "bz_skeletonmagician", "Skeleton Magician" ) end
 
 ENT.Base = "bz_skeletonbase"
 ENT.PrintName = "#bz_skeletonmagician"
+ENT.Description = [[Immolates people with their fireballs.]]
 ENT.Skin = 0
 
 ENT.ShootSounds = { Sound( "weapons/iceaxe/iceaxe_swing1.wav" ) }
@@ -24,16 +25,16 @@ function ENT:SetupDataTables()
 	
 end
 
-if SERVER then
+ENT.Activity = {
 	
-	ENT.Activity = {
-		
-		Spawn = ACT_TRANSITION,
-		Stand = ACT_MP_STAND_ITEM1,
-		Run = ACT_MP_RUN_ITEM1,
-		Attack = ACT_MP_ATTACK_STAND_ITEM1,
-		
-	}
+	Spawn = ACT_TRANSITION,
+	Stand = ACT_MP_STAND_ITEM1,
+	Run = ACT_MP_RUN_ITEM1,
+	Attack = ACT_MP_ATTACK_STAND_ITEM1,
+	
+}
+
+if SERVER then
 	
 	ENT.MoveSpeed = 300
 	

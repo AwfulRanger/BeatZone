@@ -1,5 +1,6 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
+include( "gamemenu_help.lua" )
 include( "gamemenu_character.lua" )
 include( "gamemenu_vote.lua" )
 
@@ -67,10 +68,7 @@ function GM:CreateMenu( tab )
 	
 	
 	--help
-	local helpmenu = vgui.Create( "DPanel" )
-	helpmenu.Paint = function( ... ) return self.HUD:PaintPanel( ... ) end
-	
-	table.insert( tabs, sheet:AddSheet( "Help", helpmenu ) )
+	table.insert( tabs, sheet:AddSheet( "Help", self:CreateHelpMenu() ) )
 	
 	
 	--character

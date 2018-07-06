@@ -2,6 +2,10 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 
 
+include( "cl_help.lua" )
+
+
+
 GM.HUD = {}
 
 function GM.HUD:CreateFonts()

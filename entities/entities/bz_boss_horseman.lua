@@ -12,6 +12,7 @@ if CLIENT then language.Add( "bz_boss_horseman", "Horseman" ) end
 
 ENT.Base = "bz_skeletonlad"
 ENT.PrintName = "#bz_boss_horseman"
+ENT.Description = [[Chops people with their large axe.]]
 ENT.Model = Model( "models/bots/headless_hatman.mdl" )
 ENT.Skin = 0
 ENT.StartHealth = 3000
@@ -63,16 +64,16 @@ function ENT:Initialize()
 	
 end
 
-if SERVER then
+ENT.Activity = {
 	
-	ENT.Activity = {
-		
-		Spawn = ACT_TRANSITION,
-		Stand = ACT_MP_STAND_ITEM1,
-		Run = ACT_MP_RUN_ITEM1,
-		Attack = ACT_MP_ATTACK_STAND_ITEM1,
-		
-	}
+	Spawn = ACT_TRANSITION,
+	Stand = ACT_MP_STAND_ITEM1,
+	Run = ACT_MP_RUN_ITEM1,
+	Attack = ACT_MP_ATTACK_STAND_ITEM1,
+	
+}
+
+if SERVER then
 	
 	ENT.MoveSpeed = 340
 	
