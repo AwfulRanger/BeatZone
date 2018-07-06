@@ -36,7 +36,7 @@ function GM:AddVoteData( name, data )
 		
 		gm = gm or gmod.GetGamemode()
 		
-		if gm:CanCallVote( LocalPlayer(), self, data, gm ) ~= true then return end
+		if gm:CanCallVote( LocalPlayer(), self, data ) ~= true then return end
 		
 		gm:SendStartVote( self, data )
 		
@@ -107,6 +107,9 @@ function GM:FinishVote( yes )
 	local vote = self:GetVote()
 	vote:Finished( yes, self.VoteOptions, self )
 	
+	local ply = self.VotePlayer
+	if IsValid( ply ) == true then ply:SetNW2Float( "BZ_LastVote", CurTime() ) end
+	
 	if SERVER then
 		
 		net.Start( "BZ_FinishVote" )
@@ -166,11 +169,23 @@ function GM:IsVote()
 	
 end
 
-function GM:CanCallVote( ply, vote )
+function GM:CanCallVote( ply, vote, data )
 	
 	if self:IsVote() == true then return false end
 	
-	return vote:CanCallVote( ply, self.VoteOptions, self ) or true
+	if IsValid( ply ) == true then
+		
+		local lastvote = ply:GetNW2Float( "BZ_LastVote", -1 )
+		if lastvote ~= -1 and CurTime() < lastvote + 5 then return false end
+		
+	end
+	
+	data = data or self.VoteOptions
+	
+	local cancallvote = vote:CanCallVote( ply, data, self )
+	if cancallvote == nil then cancallvote = true end
+	
+	return cancallvote
 	
 end
 

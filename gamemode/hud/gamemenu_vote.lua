@@ -6,6 +6,7 @@ local curvote
 function GM:CreateVoteMenu()
 	
 	local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.0075 )
+	local ply = LocalPlayer()
 	
 	local votemenu = vgui.Create( "DPanel" )
 	function votemenu.Paint( panel, w, h, ... )

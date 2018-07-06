@@ -246,6 +246,37 @@ function GM:PlayerSendInfo( ply )
 		
 	net.Send( ply )
 	
+	--send vote
+	local vote = self:GetVote()
+	if vote ~= nil then
+		
+		net.Start( "BZ_StartVote" )
+			
+			net.WriteUInt( vote.Index, 32 )
+			net.WriteEntity( self.VotePlayer )
+			vote:NetSend( self.VoteOptions )
+			net.WriteFloat( self.VoteTime )
+			
+		net.Send( ply )
+		
+	end
+	
+	--send voting players
+	for i = 1, self.VotingPlayers.Count do
+		
+		local vply = self.VotingPlayers.Players[ i ]
+		local vote = self.VotingPlayers.PlayerVotes[ vply ]
+		
+		net.Start( "BZ_PlayerVote" )
+			
+			net.WriteEntity( vply )
+			net.WriteBool( vote == nil )
+			if vote ~= nil then net.WriteBool( vote ) end
+			
+		net.Send( ply )
+		
+	end
+	
 end
 
 function GM:PlayerInitialSpawn( ply )
