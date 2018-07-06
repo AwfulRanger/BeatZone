@@ -166,6 +166,12 @@ GM:AddSettingsData( "hudcolors", {
 					gm.HUD.Color[ color.id ] = colortbl
 					
 				end
+				function colormixer:Think()
+					
+					local c = gm.HUD.Color[ color.id ]
+					if self:GetColor() ~= c then self:SetColor( c ) end
+					
+				end
 				colormixer:SetColor( gm.HUD.Color[ color.id ] )
 				
 			end )
