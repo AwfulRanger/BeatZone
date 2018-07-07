@@ -88,6 +88,9 @@ GM.Config = {
 	--Base critical chance (0 = no crits, 1 = guaranteed crits)
 	BaseCritChance = 0.05,
 	
+	--How many seconds to add to the ready timer for each unready player
+	ReadyTime = 30,
+	
 }
 
 
