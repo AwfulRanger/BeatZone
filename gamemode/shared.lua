@@ -2,6 +2,8 @@ DeriveGamemode( "base" )
 
 DEFINE_BASECLASS( "gamemode_base" )
 
+include( "sh_mapcustom.lua" )
+
 
 
 CreateConVar( "bz_friendlyfire", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Enable friendly fire (0 = disabled, 1 = shields only, 2 = all)" )
@@ -29,6 +31,21 @@ TEAM_BEAT = 1
 function GM:CreateTeams()
 	
 	team.SetUp( TEAM_BEAT, "Beat", Color( 200, 0, 255 ) )
+	
+end
+
+
+
+function GM:InitPostEntity()
+	
+	if CLIENT then self:FullUpdate() end
+	self:SetupMapCustom()
+	
+end
+
+function GM:PostCleanupMap()
+	
+	self:SetupMapCustom()
 	
 end
 

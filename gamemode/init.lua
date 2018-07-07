@@ -1,6 +1,7 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
 AddCSLuaFile( "cl_settings.lua" )
+AddCSLuaFile( "sh_mapcustom.lua" )
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_help.lua" )
 AddCSLuaFile( "cl_hud.lua" )

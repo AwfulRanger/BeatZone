@@ -53,7 +53,7 @@ function GM:EntityRemoved( ent )
 	
 end
 
-function GM:InitPostEntity()
+function GM:FullUpdate()
 	
 	for i = 1, self:GetSettingsDataCount() do self:GetSettingsData( i ):Load( self ) end
 	

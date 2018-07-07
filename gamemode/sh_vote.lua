@@ -445,6 +445,11 @@ GM.MapList = {
 	
 	"mvm_ghost_town",
 	"mvm_coaltown",
+	"mvm_bigrock",
+	"mvm_decoy",
+	"mvm_mannhattan",
+	"mvm_mannworks",
+	"mvm_rottenburg",
 	
 }
 GM.IsValidMap = {}
