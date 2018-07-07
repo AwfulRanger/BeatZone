@@ -81,15 +81,7 @@ When they come back, however, they will be stronger.]] )
 	
 } )
 
-local enemies = {
-	
-	"bz_skeletonlad",
-	"bz_skeletongunner",
-	"bz_skeletonmagician",
-	"bz_skeletonexploder",
-	"bz_boss_horseman",
-	
-}
+local enemies
 GM:AddHelpData( "enemies", {
 	
 	Name = "Enemies",
@@ -169,12 +161,20 @@ GM:AddHelpData( "enemies", {
 		
 		local enemybuttontall = math.Round( ScrH() * 0.05 )
 		
-		for i = 1, #enemies do
+		local e = gm:GetConfig( "EnemyClass" )
+		local b = gm:GetConfig( "BossClass" )
+		local ec = #e
+		local bc = #b
+		
+		for i = 1, ec + bc do
 			
-			local ent = baseclass.Get( enemies[ i ] )
+			local class = e[ i ]
+			if i > ec then class = b[ i - ec ] end
+			
+			local ent = baseclass.Get( class )
 			if ent ~= nil then
 				
-				local name = ent.PrintName or enemies[ i ]
+				local name = ent.PrintName or class
 				local enemybutton = gm.HUD:CreateButton( enemyscroll, name, function( button )
 					
 					enemyname:SetText( name )

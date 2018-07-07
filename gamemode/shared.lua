@@ -2,6 +2,7 @@ DeriveGamemode( "base" )
 
 DEFINE_BASECLASS( "gamemode_base" )
 
+include( "sh_config.lua" )
 include( "sh_mapcustom.lua" )
 
 

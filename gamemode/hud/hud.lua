@@ -82,7 +82,7 @@ function GM:HUDPaint()
 			local readytime = self.FirstReadyTime
 			if readytime ~= nil then
 				
-				local basetime = 30 * ( plycount - readycount )
+				local basetime = self:GetConfig( "ReadyTime" ) * ( plycount - readycount )
 				local time = math.Round( basetime - ( CurTime() - readytime ), 1 )
 				
 				if time > 0 then

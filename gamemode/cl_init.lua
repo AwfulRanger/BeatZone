@@ -27,29 +27,16 @@ end )
 
 
 
-local bossclass = {
-	
-	[ "bz_boss_horseman" ] = true,
-	
-}
 GM.Skeletons = GM.Skeletons or {}
-local skeletonclass = {
-	
-	[ "bz_skeletonlad" ] = true,
-	[ "bz_skeletonmagician" ] = true,
-	[ "bz_skeletonexploder" ] = true,
-	[ "bz_skeletongunner" ] = true,
-	
-}
 function GM:OnEntityCreated( ent )
 	
-	if self.EnemyBoss == NULL and bossclass[ ent:GetClass() ] == true then self.EnemyBoss = ent end
-	if skeletonclass[ ent:GetClass() ] == true then table.insert( self.Skeletons, ent ) end
+	if self.EnemyBoss == NULL and self:GetConfig( "IsBossClass" )[ ent:GetClass() ] == true then self.EnemyBoss = ent end
+	if self:GetConfig( "IsEnemyClass" )[ ent:GetClass() ] == true then table.insert( self.Skeletons, ent ) end
 	
 end
 function GM:EntityRemoved( ent )
 
-	if skeletonclass[ ent:GetClass() ] == true then table.RemoveByValue( self.Skeletons, ent ) end
+	if self:GetConfig( "IsEnemyClass" )[ ent:GetClass() ] == true then table.RemoveByValue( self.Skeletons, ent ) end
 	
 end
 

@@ -52,7 +52,7 @@ function GM:HandleTrack()
 	local curtrack = self.CurrentTrack
 	local state = self:GetRoundState()
 	
-	if state == ROUND_ENDING and ( self.IsRoundLost == true or self:GetRound() % 6 == 0 ) then
+	if state == ROUND_ENDING and ( self.IsRoundLost == true or self:GetRound() % self:GetConfig( "BossWave" ) == 0 ) then
 		
 		if curtrack ~= nil and self.TrackFaded ~= true then
 			

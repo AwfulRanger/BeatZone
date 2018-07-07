@@ -109,19 +109,12 @@ function GM:SpawnEnemy( class, pos )
 end
 
 GM.Skeletons = GM.Skeletons or {}
-local skeletonclass = {
-	
-	"bz_skeletonlad",
-	"bz_skeletonmagician",
-	"bz_skeletonexploder",
-	"bz_skeletongunner",
-	
-}
 function GM:SpawnSkeleton( class )
 	
 	local pos = self:EnemySpawnPos()
 	if pos == nil then return end
 	
+	local skeletonclass = self:GetConfig( "EnemyClass" )
 	class = class or skeletonclass[ math.random( #skeletonclass ) ]
 	
 	local skel = self:SpawnEnemy( class, pos )
@@ -132,10 +125,8 @@ function GM:SpawnSkeleton( class )
 	
 end
 
-local isskeleton = {}
-for i = 1, #skeletonclass do isskeleton[ skeletonclass[ i ] ] = true end
 function GM:EntityRemoved( ent )
 
-	if isskeleton[ ent:GetClass() ] == true then table.RemoveByValue( self.Skeletons, ent ) end
+	if self:GetConfig( "IsEnemyClass" )[ ent:GetClass() ] == true then table.RemoveByValue( self.Skeletons, ent ) end
 	
 end

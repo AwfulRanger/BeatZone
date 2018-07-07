@@ -3,34 +3,6 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 
 local deathtime = GetConVar( "hud_deathnotice_time" )
-local deathmsg = {
-	
-	[ "bz_skeletongunner" ] = {
-		
-		"%s2 filled %s1 with lead",
-		"%s2 gunned %s1 down",
-		
-	},
-	[ "bz_skeletonexploder" ] = {
-		
-		"%s2 obliterated %s1",
-		"%s2 blew %s1 up",
-		
-	},
-	[ "bz_skeletonwizard" ] = {
-		
-		"%s2 immolated %s1",
-		"%s2 charred %s1",
-		
-	},
-	[ "bz_skeletonlad" ] = {
-		
-		"%s2 beat %s1 to death",
-		"%s2 smacked %s1",
-		
-	},
-	
-}
 local deaths = {}
 function GM:AddBZDeathNotice( victim, attacker, msg )
 	
@@ -70,7 +42,7 @@ net.Receive( "BZ_PlayerDeath", function()
 	if IsValid( victim ) ~= true or IsValid( attacker ) ~= true then return end
 	
 	local msg
-	local msgtbl = deathmsg[ attacker:GetClass() ]
+	local msgtbl = self:GetConfig( "DeathMessage" )[ attacker:GetClass() ]
 	if msgtbl ~= nil then msg = msgtbl[ math.random( #msgtbl ) ] end
 	
 	hook.Run( "AddBZDeathNotice", victim, attacker, msg )

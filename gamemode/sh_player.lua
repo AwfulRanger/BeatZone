@@ -201,7 +201,7 @@ end
 
 function GM:GetPlayerCritChance( ply )
 	
-	return 0.05
+	return self:GetConfig( "BaseCritChance" )
 	
 end
 

@@ -24,15 +24,14 @@ end )
 
 
 
-GM.MaxEnemies = 20
 GM.EnemiesKilled = 0
 GM.EnemyCount = 20
 function GM:GetRoundEnemyCount( round )
 	
 	round = round or self:GetRound()
 	
-	local base = 20
-	if round % 6 == 0 then base = 5 end
+	local base = self:GetConfig( "EnemyCount" )
+	if round % self:GetConfig( "BossWave" ) == 0 then base = self:GetConfig( "BossEnemyCount" ) end
 	
 	return math.floor( base + ( round * 0.2 ) )
 	
@@ -159,7 +158,7 @@ function GM:HandleRound()
 				
 			end
 			
-			local basetime = 30 * ( #self:GetPlayers() - self.ReadyPlayers.Count )
+			local basetime = self:GetConfig( "ReadyTime" ) * ( #self:GetPlayers() - self.ReadyPlayers.Count )
 			if CurTime() > self.FirstReadyTime + basetime then self:StartRound() end
 			
 		end
@@ -182,11 +181,12 @@ function GM:HandleRound()
 		for i = 1, #plys do if plys[ i ]:Alive() == true then alive = true break end end
 		if alive ~= true then self:LoseRound() return end
 		
-		if self:GetRound() % 6 == 0 then
+		if self:GetRound() % self:GetConfig( "BossWave" ) == 0 then
 			
 			if self.EnemyBoss == nil then
 				
-				self.EnemyBoss = self:SpawnEnemy( "bz_boss_horseman" )
+				local boss = self:GetConfig( "BossClass" )
+				self.EnemyBoss = self:SpawnEnemy( boss[ math.random( #boss ) ] )
 				net.Start( "BZ_SetBoss" )
 					
 					net.WriteBool( true )
@@ -206,7 +206,7 @@ function GM:HandleRound()
 			end
 			
 			local skel = NULL
-			while #self.Skeletons < math.min( self.MaxEnemies, self.EnemyCount ) and skel ~= nil do
+			while #self.Skeletons < math.min( self:GetConfig( "MaxEnemies" ), self.EnemyCount ) and skel ~= nil do
 				
 				skel = self:SpawnSkeleton()
 				
@@ -217,7 +217,7 @@ function GM:HandleRound()
 			if self.EnemiesKilled >= self.EnemyCount then self:EndRound() return end
 			
 			local skel = NULL
-			while #self.Skeletons < math.min( self.MaxEnemies, self.EnemyCount - self.EnemiesKilled ) and skel ~= nil do
+			while #self.Skeletons < math.min( self:GetConfig( "MaxEnemies" ), self.EnemyCount - self.EnemiesKilled ) and skel ~= nil do
 				
 				skel = self:SpawnSkeleton()
 				
@@ -245,7 +245,7 @@ function GM:HandleRound()
 				local plys = player.GetAll()
 				for i = 1, #plys do self:ResetPlayerCharacter( plys[ i ] ) end
 				
-			elseif self:GetRound() % 6 == 0 then
+			elseif self:GetRound() % self:GetConfig( "BossWave" ) == 0 then
 				
 				local plys = self:GetPlayers()
 				for i = 1, #plys do plys[ i ]:AddPerkPoints( 10 ) end

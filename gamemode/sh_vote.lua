@@ -441,19 +441,6 @@ GM:AddVoteData( "restart", {
 	
 } )
 
-GM.MapList = {
-	
-	"mvm_ghost_town",
-	"mvm_coaltown",
-	"mvm_bigrock",
-	"mvm_decoy",
-	"mvm_mannhattan",
-	"mvm_mannworks",
-	"mvm_rottenburg",
-	
-}
-GM.IsValidMap = {}
-for i = 1, #GM.MapList do GM.IsValidMap[ GM.MapList[ i ] ] = true end
 GM:AddVoteData( "changemap", {
 	
 	Name = "Change map",
@@ -466,7 +453,7 @@ GM:AddVoteData( "changemap", {
 		return "Change map to \"" .. ( data.map or "" ) .. "\""
 		
 	end,
-	CanCallVote = function( self, ply, data, gm ) if data ~= nil and ( data.map == nil or game.GetMap() == data.map or gm.IsValidMap[ data.map ] ~= true ) then return false end end,
+	CanCallVote = function( self, ply, data, gm ) if data ~= nil and ( data.map == nil or game.GetMap() == data.map or gm:GetConfig( "IsValidMap" )[ data.map ] ~= true ) then return false end end,
 	CreatePanel = function( self, gm )
 		
 		local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.0075 )
@@ -482,7 +469,7 @@ GM:AddVoteData( "changemap", {
 		
 		local mapbuttontall = math.Round( ScrH() * 0.05 )
 		
-		local maps = gm.MapList
+		local maps = gm:GetConfig( "MapList" )
 		local curmap = maps[ 1 ]
 		local clicked = false
 		for i = 1, #maps do
