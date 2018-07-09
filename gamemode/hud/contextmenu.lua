@@ -2,6 +2,16 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 
 
+local statestr = {
+	
+	[ ROUND_INITIALIZING ] = "Initializing",
+	[ ROUND_INTERMISSION ] = "Intermission",
+	[ ROUND_STARTING ] = "Starting",
+	[ ROUND_ONGOING ] = "Ongoing",
+	[ ROUND_ENDING ] = "Ending",
+	
+}
+
 GM.CMenuDrawn = false
 local cmenu
 function GM:OnContextMenuOpen()
@@ -19,9 +29,15 @@ function GM:OnContextMenuOpen()
 	cmenu:SetKeyboardInputEnabled( false )
 	function cmenu.Paint( panel, w, h )
 		
+		local state = self:GetRoundState()
+		
 		surface.SetFont( "BZ_HUDSmall" )
 		
-		if self:GetRoundState() == ROUND_INTERMISSION then
+		local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
+		local sw, sh = surface.GetTextSize( statetext )
+		self.HUD:ShadowText( statetext, ( w - sw ) * 0.5, math.Round( math.min( w, h ) * 0.05 ) )
+		
+		if state == ROUND_INTERMISSION then
 			
 			local x = math.Round( w * 0.15 )
 			local y = math.Round( h * 0.5 )

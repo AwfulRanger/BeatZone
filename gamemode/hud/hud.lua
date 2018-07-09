@@ -23,15 +23,6 @@ function GM:HUDShouldDraw( hud )
 	
 end
 
-local statestr = {
-	
-	[ ROUND_INITIALIZING ] = "Initializing",
-	[ ROUND_INTERMISSION ] = "Intermission",
-	[ ROUND_STARTING ] = "Starting",
-	[ ROUND_ONGOING ] = "Ongoing",
-	[ ROUND_ENDING ] = "Ending",
-	
-}
 function GM:HUDPaint()
 	
 	local scrw = ScrW()
@@ -60,11 +51,6 @@ function GM:HUDPaint()
 		
 		local state = self:GetRoundState()
 		
-		surface.SetFont( "BZ_HUDSmall" )
-		local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
-		local sw, sh = surface.GetTextSize( statetext )
-		self.HUD:ShadowText( statetext, ( scrw - sw ) * 0.5, ( scrh * 0.05 ) - sh )
-		
 		if ply:Team() == TEAM_BEAT and state == ROUND_INTERMISSION then
 			
 			local readycount = self.ReadyPlayers.Count
@@ -75,7 +61,7 @@ function GM:HUDPaint()
 			if bind ~= nil then readytext = "Press " .. string.upper( bind ) .. " to toggle ready" end
 			readytext = readytext .. " (" .. readycount .. "/" .. plycount .. ")"
 			
-			surface.SetFont( "BZ_HUD" )
+			surface.SetFont( "BZ_HUDSmall" )
 			
 			local rw, rh = surface.GetTextSize( readytext )
 			
@@ -95,13 +81,13 @@ function GM:HUDPaint()
 					local timetext = "Starting in " .. timestr .. " seconds"
 					local tw, th = surface.GetTextSize( timetext )
 					
-					self.HUD:ShadowText( timetext, ( scrw - tw ) * 0.5, scrh * 0.2 )
+					self.HUD:ShadowText( timetext, ( scrw - tw ) * 0.5, spacing + rh )
 					
 				end
 				
 			end
 			
-			self.HUD:ShadowText( readytext, ( scrw - rw ) * 0.5, ( scrh * 0.2 ) - rh )
+			self.HUD:ShadowText( readytext, ( scrw - rw ) * 0.5, spacing )
 			
 		end
 		
