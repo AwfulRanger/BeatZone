@@ -1,7 +1,7 @@
 DEFINE_BASECLASS( "gamemode_base" )
 
 include( "damagenumber.lua" )
-include( "deathnotice.lua" )
+include( "notification.lua" )
 include( "targetid.lua" )
 
 
@@ -121,6 +121,7 @@ function GM:HUDPaint()
 	end
 	
 	BaseClass.HUDPaint( self )
+	self:DrawNotifications()
 	
 	local obs = ply:GetObserverTarget()
 	if IsValid( obs ) == true then ply = obs end

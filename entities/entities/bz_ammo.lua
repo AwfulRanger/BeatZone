@@ -4,9 +4,10 @@ AddCSLuaFile()
 
 
 
-ENT.Base = "base_anim"
+if CLIENT then language.Add( "bz_ammo", "Ammo" ) end
 
-ENT.PrintName = "Ammo"
+ENT.Base = "base_anim"
+ENT.PrintName = "#bz_ammo"
 ENT.Model = Model( "models/items/ammopack_medium.mdl" )
 
 ENT.UseCooldown = 30
@@ -54,6 +55,12 @@ if SERVER then
 			net.Start( "BZ_UISound" )
 				
 				net.WriteString( "items/ammo_pickup.wav" )
+				
+			net.Send( ent )
+			
+			net.Start( "BZ_ItemPickup" )
+				
+				net.WriteString( self:GetClass() )
 				
 			net.Send( ent )
 			

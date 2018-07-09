@@ -8,7 +8,7 @@ AddCSLuaFile( "cl_help.lua" )
 AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "hud/hud.lua" )
 AddCSLuaFile( "hud/damagenumber.lua" )
-AddCSLuaFile( "hud/deathnotice.lua" )
+AddCSLuaFile( "hud/notification.lua" )
 AddCSLuaFile( "hud/targetid.lua" )
 AddCSLuaFile( "hud/gamemenu.lua" )
 AddCSLuaFile( "hud/gamemenu_help.lua" )
@@ -30,6 +30,7 @@ include( "sv_vote.lua" )
 
 util.AddNetworkString( "BZ_UISound" )
 util.AddNetworkString( "BZ_EntityDamaged" )
+util.AddNetworkString( "BZ_ItemPickup" )
 
 
 

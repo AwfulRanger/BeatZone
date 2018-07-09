@@ -4,9 +4,10 @@ AddCSLuaFile()
 
 
 
-ENT.Base = "base_anim"
+if CLIENT then language.Add( "bz_health", "Health" ) end
 
-ENT.PrintName = "Health"
+ENT.Base = "base_anim"
+ENT.PrintName = "#bz_health"
 ENT.Model = Model( "models/items/medkit_medium.mdl" )
 
 ENT.UseCooldown = 30
@@ -60,6 +61,12 @@ if SERVER then
 			net.Start( "BZ_UISound" )
 				
 				net.WriteString( "items/smallmedkit1.wav" )
+				
+			net.Send( ent )
+			
+			net.Start( "BZ_ItemPickup" )
+				
+				net.WriteString( self:GetClass() )
 				
 			net.Send( ent )
 			
