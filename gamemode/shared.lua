@@ -39,7 +39,21 @@ end
 
 function GM:InitPostEntity()
 	
-	if CLIENT then self:FullUpdate() end
+	if CLIENT then
+		
+		self:FullUpdate()
+		
+		local voice = g_VoicePanelList
+		if IsValid( voice ) == true then
+			
+			local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.05 )
+			local w = math.Round( ScrW() * 0.15 )
+			voice:SetPos( ScrW() - w - spacing, spacing )
+			voice:SetSize( w, ( ScrH() * 0.9 ) - ( spacing * 3 ) )
+			
+		end
+		
+	end
 	self:SetupMapCustom()
 	
 end
