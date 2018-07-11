@@ -111,20 +111,21 @@ end
 
 function GM:RoundLost()
 	
-	self:SetRound( 0 )
-	self:StartIntermission()
-	
-	local skels = self.Skeletons
-	for i = 1, #skels do skels[ i ]:Remove() end
-	
 	local plys = player.GetAll()
 	for i = 1, #plys do
 		
 		local ply = plys[ i ]
 		ply:SetFrags( 0 )
 		ply:SetDeaths( 0 )
+		self:ResetPlayerCharacter( ply )
 		
 	end
+	
+	self:SetRound( 0 )
+	self:StartIntermission()
+	
+	local skels = self.Skeletons
+	for i = 1, #skels do skels[ i ]:Remove() end
 	
 end
 
@@ -247,8 +248,6 @@ function GM:HandleRound()
 			if self.IsRoundLost == true then
 				
 				self:RoundLost()
-				local plys = player.GetAll()
-				for i = 1, #plys do self:ResetPlayerCharacter( plys[ i ] ) end
 				
 			elseif self:GetRound() % self:GetConfig( "BossWave" ) == 0 then
 				
