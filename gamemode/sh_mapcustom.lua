@@ -48,13 +48,24 @@ local doors = {
 	[ "func_door" ] = true,
 	
 }
-local function removedoors()
+local models = {
+	
+	[ "models/props_mvm/robot_hologram.mdl" ] = true,
+	
+}
+local function mvminit()
 	
 	local entlist = ents.GetAll()
 	for i = 1, #entlist do
 		
 		local ent = entlist[ i ]
-		if doors[ ent:GetClass() ] == true then ent:Remove() end
+		
+		local remove = false
+		
+		if doors[ ent:GetClass() ] == true then remove = true end
+		if models[ ent:GetModel() ] == true then remove = true end
+		
+		if remove == true then ent:Remove() end
 		
 	end
 	
@@ -110,8 +121,8 @@ local townentity = {
 	{ Class = "bz_enemyspawn", Pos = Vector( 5, -2615, 520 ), Ang = Angle( 0, 90, 0 ) },
 	
 }
-GM:AddMapCustom( "mvm_ghost_town", { Entity = townentity, MapInit = removedoors } )
-GM:AddMapCustom( "mvm_coaltown", { Entity = townentity, MapInit = removedoors } )
+GM:AddMapCustom( "mvm_ghost_town", { Entity = townentity, MapInit = mvminit } )
+GM:AddMapCustom( "mvm_coaltown", { Entity = townentity, MapInit = mvminit } )
 
 GM:AddMapCustom( "mvm_bigrock", {
 	
@@ -169,7 +180,7 @@ GM:AddMapCustom( "mvm_bigrock", {
 		{ Class = "bz_enemyspawn", Pos = Vector( -976, -1410, 520 ), Ang = Angle( 0, 0, 0 ) },
 		
 	},
-	MapInit = removedoors,
+	MapInit = mvminit,
 	
 } )
 
@@ -217,7 +228,7 @@ GM:AddMapCustom( "mvm_decoy", {
 		{ Class = "bz_enemyspawn", Pos = Vector( 900, -555, 554 ), Ang = Angle( 0, 90, 0 ) },
 		
 	},
-	MapInit = removedoors,
+	MapInit = mvminit,
 	
 } )
 
@@ -272,7 +283,7 @@ GM:AddMapCustom( "mvm_mannhattan", {
 		{ Class = "bz_enemyspawn", Pos = Vector( -476, -3079, -232 ), Ang = Angle( 0, 45, 0 ) },
 		
 	},
-	MapInit = removedoors,
+	MapInit = mvminit,
 	
 } )
 
@@ -320,7 +331,7 @@ GM:AddMapCustom( "mvm_mannworks", {
 		{ Class = "bz_enemyspawn", Pos = Vector( 435, -834, 390 ), Ang = Angle( 0, -90, 0 ) },
 		
 	},
-	MapInit = removedoors,
+	MapInit = mvminit,
 	
 } )
 
@@ -370,6 +381,6 @@ GM:AddMapCustom( "mvm_rottenburg", {
 		{ Class = "bz_enemyspawn", Pos = Vector( -235, 1632, -517 ), Ang = Angle( 0, 0, 0 ) },
 		
 	},
-	MapInit = removedoors,
+	MapInit = mvminit,
 	
 } )
