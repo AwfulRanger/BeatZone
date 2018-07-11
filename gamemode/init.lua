@@ -483,6 +483,13 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 		end
 		
+	elseif ent.IsBZEnemy == true then
+		
+		--mess with damage so force isn't so high
+		local olddamage = math.Round( dmg:GetDamage() * 0.01 )
+		ent:SetHealth( ent:Health() - dmg:GetDamage() + olddamage )
+		dmg:SetDamage( olddamage )
+		
 	end
 	
 end
