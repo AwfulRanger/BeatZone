@@ -55,23 +55,20 @@ function GM:HUDPaint()
 	local spacing = math.Round( size * 0.05 )
 	local hudspacing = math.Round( size * 0.005 )
 	
+	local sh = 0
+	
 	--state/round
 	do
 		
 		local state = self:GetRoundState()
 		
-		local sh = 0
-		if state ~= ROUND_ONGOING then
+		surface.SetFont( "BZ_HUDSmall" )
 			
-			surface.SetFont( "BZ_HUDSmall" )
-			
-			local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
-			local tw, th = surface.GetTextSize( statetext )
-			self.HUD:ShadowText( statetext, ( scrw - tw ) * 0.5, spacing )
-			
-			sh = th
-			
-		end
+		local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
+		local tw, th = surface.GetTextSize( statetext )
+		sh = th
+		
+		if state ~= ROUND_ONGOING then self.HUD:ShadowText( statetext, ( scrw - tw ) * 0.5, spacing ) end
 		
 		if ply:Team() == TEAM_BEAT and state == ROUND_INTERMISSION then
 			
@@ -122,7 +119,7 @@ function GM:HUDPaint()
 		local hw = math.Round( scrw * 0.5 )
 		local hh = math.Round( scrh * 0.05 )
 		local hx = math.Round( ( scrw - hw ) * 0.5 )
-		local hy = math.Round( scrh * 0.075 )
+		local hy = spacing + sh
 		local hbarh = hh - hudspacing * 2
 		
 		surface.SetDrawColor( self.HUD.Color.hudbgcolor )
