@@ -234,6 +234,7 @@ GM:AddSettingsData( "hudcolors", {
 	Save = function( self, gm )
 		
 		local f = gm:GetSettingsFile( self, "w" )
+		if f == nil then return end
 		f:Write( util.TableToJSON( gm.HUD.Color ) )
 		f:Close()
 		
@@ -241,6 +242,7 @@ GM:AddSettingsData( "hudcolors", {
 	Load = function( self, gm )
 		
 		local f = gm:GetSettingsFile( self, "r" )
+		if f == nil then return end
 		local tbl = util.JSONToTable( f:Read( f:Size() ) )
 		f:Close()
 		
