@@ -474,10 +474,14 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 		end
 		
-		--mess with damage so force isn't so high
-		local olddamage = math.Round( dmg:GetDamage() * 0.01 )
-		ent:SetHealth( ent:Health() - dmg:GetDamage() + olddamage )
-		dmg:SetDamage( olddamage )
+		if attacker:IsPlayer() ~= true or GetConVar( "bz_friendlyfire" ):GetInt() > 1 then
+			
+			--mess with damage so force isn't so high
+			local olddamage = math.Round( dmg:GetDamage() * 0.01 )
+			ent:SetHealth( ent:Health() - dmg:GetDamage() + olddamage )
+			dmg:SetDamage( olddamage )
+			
+		end
 		
 	end
 	
