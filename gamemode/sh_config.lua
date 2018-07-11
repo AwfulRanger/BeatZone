@@ -82,6 +82,9 @@ GM.Config = {
 	--Base active enemies during a boss wave
 	BossEnemyCount = 5,
 	
+	--Base seconds between enemy spawns
+	EnemySpawnTime = 1,
+	
 	--How many waves until a boss wave
 	BossWave = 6,
 	

@@ -37,6 +37,18 @@ function GM:GetRoundEnemyCount( round )
 	
 end
 
+GM.EnemySpawnTime = 1
+function GM:GetRoundEnemySpawnTime( round )
+	
+	round = round or self:GetRound()
+	
+	local base = self:GetConfig( "EnemySpawnTime" )
+	for i = 2, round do base = base * 0.98 end
+	
+	return base
+	
+end
+
 ----
 --Control round
 ----
@@ -63,12 +75,15 @@ function GM:StartRound()
 	local plys = self:GetPlayers()
 	for i = 1, #plys do if plys[ i ]:Alive() ~= true then plys[ i ]:Spawn() end end
 	
+	self.EnemiesKilled = 0
+	self.EnemyCount = self:GetRoundEnemyCount()
+	self.EnemySpawnTime = self:GetRoundEnemySpawnTime()
+	self.NextEnemySpawnTime = nil
+	
 end
 
 function GM:RoundStarted()
 	
-	self.EnemiesKilled = 0
-	self.EnemyCount = self:GetRoundEnemyCount()
 	self:SetRoundState( ROUND_ONGOING )
 	
 end
@@ -205,23 +220,13 @@ function GM:HandleRound()
 				
 			end
 			
-			local skel = NULL
-			while #self.Skeletons < math.min( self:GetConfig( "MaxEnemies" ), self.EnemyCount ) and skel ~= nil do
-				
-				skel = self:SpawnSkeleton()
-				
-			end
+			self:HandleEnemySpawn( math.min( self:GetConfig( "MaxEnemies" ), self.EnemyCount ) )
 			
 		else
 			
 			if self.EnemiesKilled >= self.EnemyCount then self:EndRound() return end
 			
-			local skel = NULL
-			while #self.Skeletons < math.min( self:GetConfig( "MaxEnemies" ), self.EnemyCount - self.EnemiesKilled ) and skel ~= nil do
-				
-				skel = self:SpawnSkeleton()
-				
-			end
+			self:HandleEnemySpawn( math.min( self:GetConfig( "MaxEnemies" ), self.EnemyCount - self.EnemiesKilled ) )
 			
 		end
 		

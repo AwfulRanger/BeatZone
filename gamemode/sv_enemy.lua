@@ -130,3 +130,27 @@ function GM:EntityRemoved( ent )
 	if self:GetConfig( "IsEnemyClass" )[ ent:GetClass() ] == true then table.RemoveByValue( self.Skeletons, ent ) end
 	
 end
+
+
+
+function GM:HandleEnemySpawn( max )
+	
+	max = max or self:GetConfig( "MaxEnemies" )
+	
+	if #self.Skeletons < max then
+		
+		if self.NextEnemySpawnTime == nil then self.NextEnemySpawnTime = CurTime() + self.EnemySpawnTime end
+		
+		if CurTime() > self.NextEnemySpawnTime then
+			
+			if self:SpawnSkeleton() ~= nil then self.NextEnemySpawnTime = CurTime() + self.EnemySpawnTime end
+			
+		end
+		
+	elseif self.NextEnemySpawnTime ~= nil then
+		
+		self.NextEnemySpawnTime = nil
+		
+	end
+	
+end
