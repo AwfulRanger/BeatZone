@@ -462,6 +462,15 @@ end
 
 
 
+local lastteamswitch
+local function canswitchteam( gm )
+	
+	if lastteamswitch == nil or CurTime() > lastteamswitch + gm.SecondsBetweenTeamSwitches + 1 then return true end
+	
+	return false
+	
+end
+
 function GM:CreateCharacterMenu()
 	
 	local ply = LocalPlayer()
@@ -547,27 +556,47 @@ function GM:CreateCharacterMenu()
 	end
 	function playermodel:DoClick() RunConsoleCommand( "bz_editplayer" ) end
 	
-	local charbuttonbg = vgui.Create( "DPanel" )
-	charbuttonbg:SetParent( charbg )
-	charbuttonbg:Dock( BOTTOM )
-	function charbuttonbg:Paint( w, h ) end
-	
-	local joinbeat = self.HUD:CreateButton( charbuttonbg, "Beat", function() RunConsoleCommand( "changeteam", TEAM_BEAT ) end )
-	joinbeat:Dock( LEFT )
-	local joinspec = self.HUD:CreateButton( charbuttonbg, "Spectate", function() RunConsoleCommand( "changeteam", TEAM_SPECTATOR ) end )
-	joinspec:Dock( RIGHT )
-	
-	function charbg:PerformLayout( w, h )
+	local joinspec
+	local function joinbeat( button )
 		
-		charbuttonbg:SetTall( h * 0.1 )
+		if canswitchteam( self ) ~= true then return end
+		
+		lastteamswitch = CurTime()
+		
+		RunConsoleCommand( "changeteam", TEAM_BEAT )
+		button.DoClick = joinspec
+		button:SetText( "Spectate" )
+		
+	end
+	function joinspec( button )
+		
+		if canswitchteam( self ) ~= true then return end
+		
+		lastteamswitch = CurTime()
+		
+		RunConsoleCommand( "changeteam", TEAM_SPECTATOR )
+		button.DoClick = joinbeat
+		button:SetText( "Beat" )
 		
 	end
 	
-	function charbuttonbg:PerformLayout( w, h )
+	local jointoggle = self.HUD:CreateButton( charbg, "Beat", joinbeat )
+	if ply:Team() == TEAM_BEAT then
 		
-		local buttonw = math.Round( ( w - spacing ) * 0.5 )
-		joinbeat:SetWide( buttonw )
-		joinspec:SetWide( buttonw )
+		jointoggle.DoClick = joinspec
+		jointoggle:SetText( "Spectate" )
+		
+	end
+	jointoggle:Dock( BOTTOM )
+	function jointoggle.GetButtonBGColor( button )
+		
+		if canswitchteam( self ) ~= true then return self.HUD.Color.buttoninactivecolor, true end
+		
+	end
+	
+	function charbg:PerformLayout( w, h )
+		
+		jointoggle:SetTall( h * 0.1 )
 		
 	end
 	
