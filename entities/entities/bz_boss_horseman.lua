@@ -75,7 +75,7 @@ ENT.Activity = {
 
 if SERVER then
 	
-	ENT.MoveSpeed = 340
+	ENT.MoveSpeed = 300
 	
 	ENT.SwingLength = 96
 	

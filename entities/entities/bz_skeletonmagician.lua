@@ -36,7 +36,7 @@ ENT.Activity = {
 
 if SERVER then
 	
-	ENT.MoveSpeed = 300
+	ENT.MoveSpeed = 260
 	
 	ENT.MinRange = 512 --try to move closer to this range at least
 	ENT.MaxRange = 1024 --don't attack past this range

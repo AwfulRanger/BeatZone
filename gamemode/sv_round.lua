@@ -25,7 +25,7 @@ end )
 
 
 GM.EnemiesKilled = 0
-GM.EnemyCount = 20
+GM.EnemyCount = 40
 function GM:GetRoundEnemyCount( round )
 	
 	round = round or self:GetRound()
@@ -33,7 +33,7 @@ function GM:GetRoundEnemyCount( round )
 	local base = self:GetConfig( "EnemyCount" )
 	if round % self:GetConfig( "BossWave" ) == 0 then base = self:GetConfig( "BossEnemyCount" ) end
 	
-	return math.floor( base + ( round * 0.2 ) )
+	return math.floor( base + ( round * 0.5 ) )
 	
 end
 

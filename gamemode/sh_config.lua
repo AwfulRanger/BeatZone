@@ -77,7 +77,7 @@ GM.Config = {
 	MaxEnemies = 20,
 	
 	--Base enemies per wave
-	EnemyCount = 20,
+	EnemyCount = 40,
 	
 	--Base active enemies during a boss wave
 	BossEnemyCount = 5,

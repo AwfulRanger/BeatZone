@@ -39,7 +39,7 @@ ENT.Activity = {
 
 if SERVER then
 	
-	ENT.MoveSpeed = 320
+	ENT.MoveSpeed = 280
 	
 	ENT.SwingLength = 48
 	function ENT:SwingTrace( target )

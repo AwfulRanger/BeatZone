@@ -174,7 +174,7 @@ if SERVER then
 		
 	end
 	
-	ENT.MoveSpeed = 300
+	ENT.MoveSpeed = 260
 	
 	local function domult( gm, mult, ply, perk )
 		
