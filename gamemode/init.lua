@@ -433,27 +433,31 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 		end
 		
-		if ent:IsPlayer() ~= true or self:PlayerShouldTakeDamage( ent, attacker ) == true then
+		if ent:Health() > 0 then
 			
-			net.Start( "BZ_EntityDamaged" )
+			if ent:IsPlayer() ~= true or self:PlayerShouldTakeDamage( ent, attacker ) == true then
 				
-				net.WriteEntity( ent )
-				net.WriteInt( dmg:GetDamage(), 32 )
-				net.WriteVector( dmg:GetDamagePosition() )
-				net.WriteBool( crit )
+				net.Start( "BZ_EntityDamaged" )
+					
+					net.WriteEntity( ent )
+					net.WriteInt( dmg:GetDamage(), 32 )
+					net.WriteVector( dmg:GetDamagePosition() )
+					net.WriteBool( crit )
+					
+				net.Send( attacker )
 				
-			net.Send( attacker )
-			
-		elseif GetConVar( "bz_friendlyfire" ):GetInt() == 1 and ent:GetShield() > 0 then
-			
-			net.Start( "BZ_EntityDamaged" )
+			elseif GetConVar( "bz_friendlyfire" ):GetInt() == 1 and ent:GetShield() > 0 then
 				
-				net.WriteEntity( ent )
-				net.WriteInt( math.min( dmg:GetDamage(), ent:GetShield() ), 32 )
-				net.WriteVector( dmg:GetDamagePosition() )
-				net.WriteBool( crit )
+				net.Start( "BZ_EntityDamaged" )
+					
+					net.WriteEntity( ent )
+					net.WriteInt( math.min( dmg:GetDamage(), ent:GetShield() ), 32 )
+					net.WriteVector( dmg:GetDamagePosition() )
+					net.WriteBool( crit )
+					
+				net.Send( attacker )
 				
-			net.Send( attacker )
+			end
 			
 		end
 		
