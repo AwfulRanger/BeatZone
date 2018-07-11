@@ -317,8 +317,11 @@ function GM:OnPlayerChangedTeam( ply, old, new )
 		player_manager.ClearPlayerClass( ply )
 		
 		local pos = ply:EyePos()
+		local ang = ply:EyeAngles()
+		
 		ply:Spawn()
 		ply:SetPos( pos )
+		ply:SetEyeAngles( ang )
 		
 		return
 		
