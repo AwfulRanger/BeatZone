@@ -93,6 +93,11 @@ function GM:EndRound()
 	self.IsRoundLost = false
 	self:SetRoundState( ROUND_ENDING )
 	
+	local add = 2
+	if self:GetRound() % self:GetConfig( "BossWave" ) == 0 then add = 10 end
+	local plys = self:GetPlayers()
+	for i = 1, #plys do plys[ i ]:AddPerkPoints( add ) end
+	
 end
 
 function GM:RoundEnded()
@@ -250,9 +255,6 @@ function GM:HandleRound()
 				self:RoundLost()
 				
 			elseif self:GetRound() % self:GetConfig( "BossWave" ) == 0 then
-				
-				local plys = self:GetPlayers()
-				for i = 1, #plys do plys[ i ]:AddPerkPoints( 10 ) end
 				
 				self:StartIntermission()
 				
