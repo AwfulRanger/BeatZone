@@ -170,9 +170,9 @@ end
 ----
 GM:AddItem( "weapon_stunstick", { Cost = 1, Model = "models/weapons/w_stunbaton.mdl" } )
 GM:AddItem( "weapon_357", { Cost = 3, Model = "models/weapons/w_357.mdl" } )
-GM:AddItem( "weapon_smg1", { Cost = 3, Model = "models/weapons/w_smg1.mdl" } )
+GM:AddItem( "weapon_smg1", { Cost = 4, Model = "models/weapons/w_smg1.mdl" } )
 GM:AddItem( "weapon_ar2", { Cost = 3, Model = "models/weapons/w_irifle.mdl" } )
 GM:AddItem( "weapon_shotgun", { Cost = 3, Model = "models/weapons/w_shotgun.mdl" } )
 GM:AddItem( "weapon_crossbow", { Cost = 3, Model = "models/weapons/w_crossbow.mdl" } )
 GM:AddItem( "weapon_frag", { Cost = 1, Model = "models/weapons/w_grenade.mdl" } )
-GM:AddItem( "weapon_rpg", { Cost = 5, Model = "models/weapons/w_rocket_launcher.mdl" } )
+GM:AddItem( "weapon_rpg", { Cost = 3, Model = "models/weapons/w_rocket_launcher.mdl" } )
