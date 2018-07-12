@@ -342,6 +342,7 @@ local function createcharsheet( gm, charmenu )
 	loadoutpoints:Dock( BOTTOM )
 	
 	local curitem
+	local curitembutton
 	
 	local loadoutsell
 	local function loadoutbuy( button )
@@ -353,6 +354,9 @@ local function createcharsheet( gm, charmenu )
 		
 		gm:BuyItem( curitem )
 		
+		local name = curitem.Name or ""
+		if name[ 1 ] == "#" then name = language.GetPhrase( name ) end
+		curitembutton:SetText( name .. " (owned)" )
 		button.DoClick = loadoutsell
 		function button:GetButtonBGColor()
 			
@@ -370,6 +374,9 @@ local function createcharsheet( gm, charmenu )
 		
 		gm:SellItem( curitem )
 		
+		local name = curitem.Name or ""
+		if name[ 1 ] == "#" then name = language.GetPhrase( name ) end
+		curitembutton:SetText( name )
 		button.DoClick = loadoutbuy
 		function button:GetButtonBGColor()
 			
@@ -384,9 +391,13 @@ local function createcharsheet( gm, charmenu )
 		
 		local item = gm:GetItem( i )
 		
-		local itembutton = gm.HUD:CreateButton( loadoutscroll, item.Name, function()
+		local name = item.Name or ""
+		if name[ 1 ] == "#" then name = language.GetPhrase( name ) end
+		if gm:PlayerHasItem( ply, item ) == true then name = name .. " (owned)" end
+		local itembutton = gm.HUD:CreateButton( loadoutscroll, name, function( button )
 			
 			curitem = item
+			curitembutton = button
 			
 			loadoutname:SetText( item.Name or "" )
 			loadoutmodel:SetModel( item.Model or "" )
@@ -425,10 +436,16 @@ local function createcharsheet( gm, charmenu )
 		itembutton:DockMargin( 0, 0, 0, spacing )
 		itembutton:SetTall( itembuttontall )
 		itembutton:SetFont( "BZ_MenuButtonSmall" )
+		itembutton:SetDoubleClickingEnabled( true )
 		function itembutton:GetButtonBGColor()
 			
 			if gm:PlayerHasItem( ply, item ) == true then return gm.HUD.Color.buttonspecialcolor end
 			if gm:PlayerCanBuyItem( ply, item ) ~= true then return gm.HUD.Color.buttoninactivecolor end
+			
+		end
+		function itembutton:DoDoubleClick()
+			
+			loadouttoggle:DoClick()
 			
 		end
 		
