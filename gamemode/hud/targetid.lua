@@ -108,7 +108,8 @@ function GM:HUDDrawTargetID()
 				local h = ( hh * 2 ) + ( spacing * 4 ) + th
 				
 				pos = pos - ( ( ang:Forward() * ( w * 0.5 ) ) * scale )
-				pos = pos - ( ( ang:Right() * h ) * scale )
+				pos = pos - ( ( ang:Right() * ( h * 0.5 ) ) * scale )
+				pos = pos + Vector( 0, 0, 8 )
 				
 				cam.Start3D2D( pos, ang, scale )
 					
