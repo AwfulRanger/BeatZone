@@ -66,7 +66,7 @@ if SERVER then
 			
 		end
 		
-		SafeRemoveEntityDelayed( self, 0 )
+		self:Remove()
 		
 	end
 	
