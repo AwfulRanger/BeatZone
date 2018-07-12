@@ -341,6 +341,14 @@ function GM:EntityKeyValue( ent, key, value )
 	
 end
 
+local dmgtypes = {
+	
+	DMG_BULLET,
+	DMG_BLAST,
+	DMG_BURN,
+	DMG_CLUB,
+	
+}
 local resperks = {
 	
 	[ DMG_BULLET ] = "perk_resist_bullet",
@@ -386,8 +394,12 @@ function GM:EntityTakeDamage( ent, dmg )
 	if ent:IsPlayer() == true then
 		
 		dores( self, dmg, ent, "perk_resist_all" )
-		local resperk = resperks[ dmg:GetDamageType() ]
-		if resperk ~= nil then dores( self, dmg, ent, resperk ) end
+		for i = 1, #dmgtypes do
+			
+			local d = dmgtypes[ i ]
+			if dmg:IsDamageType( d ) == true and resperks[ d ] ~= nil then dores( self, dmg, ent, resperks[ d ] ) end
+			
+		end
 		
 		if ent:Crouching() == true then dores( self, dmg, ent, "perk_resistspecial_crouch" ) end
 		if ent:GetVelocity():LengthSqr() == 0 then dores( self, dmg, ent, "perk_resistspecial_immobile" ) end
@@ -400,8 +412,12 @@ function GM:EntityTakeDamage( ent, dmg )
 	if attacker:IsPlayer() == true then
 		
 		dodmg( self, dmg, attacker, "perk_damage_all" )
-		local dmgperk = dmgperks[ dmg:GetDamageType() ]
-		if dmgperk ~= nil then dodmg( self, dmg, attacker, dmgperk ) end
+		for i = 1, #dmgtypes do
+			
+			local d = dmgtypes[ i ]
+			if dmg:IsDamageType( d ) == true and dmgperks[ d ] ~= nil then dodmg( self, dmg, attacker, dmgperks[ d ] ) end
+			
+		end
 		
 		local crit = self:GetPlayerCrit( attacker )
 		if crit == true then
