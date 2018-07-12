@@ -75,12 +75,7 @@ function GM:HUDPaint()
 			local readycount = self.ReadyPlayers.Count
 			local plycount = #self:GetPlayers()
 			
-			local readytext = "Hold " .. string.upper( input.LookupBinding( "+menu_context", true ) or "(UNBOUND)" ) .. " to toggle ready"
-			local bind = input.LookupBinding( "bz_toggleready" )
-			if bind ~= nil then readytext = "Press " .. string.upper( bind ) .. " to toggle ready" end
-			readytext = readytext .. " (" .. readycount .. "/" .. plycount .. ")"
-			
-			local rw, rh = surface.GetTextSize( readytext )
+			local tw, th = surface.GetTextSize( "Starting in 0 seconds" )
 			
 			local readytime = self.FirstReadyTime
 			if readytime ~= nil then
@@ -96,15 +91,21 @@ function GM:HUDPaint()
 					if #timestr == 1 then timestr = timestr .. ".0" end
 					
 					local timetext = "Starting in " .. timestr .. " seconds"
-					local tw, th = surface.GetTextSize( timetext )
+					tw, th = surface.GetTextSize( timetext )
 					
-					self.HUD:ShadowText( timetext, ( scrw - tw ) * 0.5, ( spacing * 2 ) + sh + rh )
+					self.HUD:ShadowText( timetext, ( scrw - tw ) * 0.5, ( spacing * 2 ) + sh )
 					
 				end
 				
 			end
 			
-			self.HUD:ShadowText( readytext, ( scrw - rw ) * 0.5, ( spacing * 2 ) + sh )
+			local readytext = "Hold " .. string.upper( input.LookupBinding( "+menu_context", true ) or "(UNBOUND)" ) .. " to toggle ready"
+			local bind = input.LookupBinding( "bz_toggleready" )
+			if bind ~= nil then readytext = "Press " .. string.upper( bind ) .. " to toggle ready" end
+			readytext = readytext .. " (" .. readycount .. "/" .. plycount .. ")"
+			
+			local rw, rh = surface.GetTextSize( readytext )
+			self.HUD:ShadowText( readytext, ( scrw - rw ) * 0.5, ( spacing * 2 ) + sh + th )
 			
 		end
 		

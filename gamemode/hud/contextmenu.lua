@@ -29,13 +29,15 @@ function GM:OnContextMenuOpen()
 	cmenu:SetKeyboardInputEnabled( false )
 	function cmenu.Paint( panel, w, h )
 		
+		local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.05 )
+		
 		local state = self:GetRoundState()
 		
 		surface.SetFont( "BZ_HUDSmall" )
 		
 		local statetext = statestr[ state ] .. " (Round " .. self:GetRound() .. ")"
 		local sw, sh = surface.GetTextSize( statetext )
-		self.HUD:ShadowText( statetext, ( w - sw ) * 0.5, math.Round( math.min( w, h ) * 0.05 ) )
+		self.HUD:ShadowText( statetext, ( w - sw ) * 0.5, spacing )
 		
 		if state == ROUND_INTERMISSION then
 			
@@ -53,6 +55,32 @@ function GM:OnContextMenuOpen()
 				if self:PlayerIsReady( ply ) == true then color = self.HUD.Color.plyreadycolor end
 				
 				self.HUD:ShadowText( ply:Name(), x, y + ( th * ( ( i - 1 ) - ( count * 0.5 ) ) ), color )
+				
+			end
+			
+			
+			local readycount = self.ReadyPlayers.Count
+			local plycount = #self:GetPlayers()
+			
+			local readytime = self.FirstReadyTime
+			if readytime ~= nil then
+				
+				local basetime = self:GetConfig( "ReadyTime" ) * ( plycount - readycount )
+				local time = math.Round( basetime - ( CurTime() - readytime ), 1 )
+				
+				if time > 0 then
+					
+					if #tostring( time ) > 3 then time = math.floor( time ) end
+					
+					local timestr = tostring( time )
+					if #timestr == 1 then timestr = timestr .. ".0" end
+					
+					local timetext = "Starting in " .. timestr .. " seconds"
+					local tw, th = surface.GetTextSize( timetext )
+					
+					self.HUD:ShadowText( timetext, ( ScrW() - tw ) * 0.5, ( spacing * 2 ) + sh )
+					
+				end
 				
 			end
 			
