@@ -453,7 +453,7 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 		end
 		
-		if ent:Health() > 0 then
+		if ent ~= attacker and ent:Health() > 0 then
 			
 			if ent:IsPlayer() ~= true or self:PlayerShouldTakeDamage( ent, attacker ) == true then
 				
