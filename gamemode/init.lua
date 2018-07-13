@@ -76,11 +76,12 @@ function GM:HandleEntityIgnite()
 				if ent.BZ_CurIgniteDamage < ent.BZ_MaxIgniteDamage then
 					
 					local attacker = ent:GetIgniteAttacker()
+					if IsValid( attacker ) ~= true then attacker = game.GetWorld() end
 					
 					local dmg = DamageInfo()
 					dmg:SetDamage( ent.BZ_MaxIgniteDamage - ent.BZ_CurIgniteDamage )
 					dmg:SetDamageType( DMG_BURN )
-					if IsValid( attacker ) == true then dmg:SetAttacker( attacker ) end
+					dmg:SetAttacker( attacker )
 					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
 					
 					ent:TakeDamageInfo( dmg )
@@ -103,11 +104,12 @@ function GM:HandleEntityIgnite()
 					ent.BZ_CurIgniteDamage = ent.BZ_CurIgniteDamage + fdamage
 					
 					local attacker = ent:GetIgniteAttacker()
+					if IsValid( attacker ) ~= true then attacker = game.GetWorld() end
 					
 					local dmg = DamageInfo()
 					dmg:SetDamage( fdamage )
 					dmg:SetDamageType( DMG_BURN )
-					if IsValid( attacker ) == true then dmg:SetAttacker( attacker ) end
+					dmg:SetAttacker( attacker )
 					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
 					
 					ent:TakeDamageInfo( dmg )
@@ -154,11 +156,12 @@ function GM:HandleEntityBleed()
 				if ent.BZ_CurBleedDamage < ent.BZ_MaxBleedDamage then
 					
 					local attacker = ent:GetBleedAttacker()
+					if IsValid( attacker ) ~= true then attacker = game.GetWorld() end
 					
 					local dmg = DamageInfo()
 					dmg:SetDamage( ent.BZ_MaxBleedDamage - ent.BZ_CurBleedDamage )
 					dmg:SetDamageType( DMG_SLASH )
-					if IsValid( attacker ) == true then dmg:SetAttacker( attacker ) end
+					dmg:SetAttacker( attacker )
 					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
 					
 					ent:TakeDamageInfo( dmg )
@@ -181,11 +184,12 @@ function GM:HandleEntityBleed()
 					ent.BZ_CurBleedDamage = ent.BZ_CurBleedDamage + fdamage
 					
 					local attacker = ent:GetBleedAttacker()
+					if IsValid( attacker ) ~= true then attacker = game.GetWorld() end
 					
 					local dmg = DamageInfo()
 					dmg:SetDamage( fdamage )
 					dmg:SetDamageType( DMG_SLASH )
-					if IsValid( attacker ) == true then dmg:SetAttacker( attacker ) end
+					dmg:SetAttacker( attacker )
 					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
 					
 					ent:TakeDamageInfo( dmg )
