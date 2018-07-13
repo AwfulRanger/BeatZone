@@ -44,7 +44,7 @@ GM.BZEnemySpawnFound = false --don't add other spawns if this map has our spawns
 local spawnclass = {}
 local spawnkeyvalue = {
 	
-	[ "info_player_teamspawn" ] = { key = "TeamNum", value = "3" }
+	--[ "info_player_teamspawn" ] = { key = "TeamNum", value = "3" }
 	
 }
 function GM:ShouldAddEnemySpawn( ent, key, value )
@@ -70,28 +70,47 @@ function GM:ShouldAddEnemySpawn( ent, key, value )
 	
 end
 
-function GM:EnemySpawnPos()
+local function getspawnpos( tbl, count, func )
 	
-	if #self.EnemySpawns <= 0 then Msg( "[EnemySpawnPos] Error! No spawn points!\n" ) return end
+	local try = {}
+	for i = 1, count do try[ i ] = tbl[ i ] end
 	
-	local tryspawns = {}
-	for i = 1, #self.EnemySpawns do tryspawns[ i ] = self.EnemySpawns[ i ] end
+	local trycount = count
 	
-	for i = 1, #tryspawns do
+	for i = 1, count do
 		
-		local index = math.random( #tryspawns )
-		local spawn = tryspawns[ index ]
+		local index = math.random( trycount )
+		local spawn = try[ index ]
 		if IsValid( spawn ) == true then
 			
-			local spawnpos = spawn:GetPos()
+			local spawnpos = spawn[ func ]( spawn )
 			local tr = util.TraceHull( { start = spawnpos, endpos = spawnpos, mins = Vector( -16, -16, 0 ), maxs = Vector( 16, 16, 72 ), mask = MASK_NPCSOLID } )
 			if tr.Hit ~= true then return spawnpos end
 			
 		end
 		
-		table.remove( tryspawns, index )
+		table.remove( try, index )
+		trycount = trycount - 1
 		
 	end
+	
+end
+function GM:EnemySpawnPos()
+	
+	local enemyspawnscount = #self.EnemySpawns
+	
+	if enemyspawnscount <= 0 then
+		
+		local navs = navmesh.GetAllNavAreas()
+		local navscount = #navs
+		
+		if navscount <= 0 then Msg( "[EnemySpawnPos] Error! No spawn points!\n" ) return end
+		
+		return getspawnpos( navs, navscount, "GetCenter" )
+		
+	end
+	
+	return getspawnpos( self.EnemySpawns, enemyspawnscount, "GetPos" )
 	
 end
 
