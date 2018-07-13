@@ -76,7 +76,7 @@ function GM:HandleEntityIgnite()
 				if ent.BZ_CurIgniteDamage < ent.BZ_MaxIgniteDamage then
 					
 					local attacker = ent:GetIgniteAttacker()
-					if IsValid( attacker ) ~= true then attacker = game.GetWorld() end
+					if IsValid( attacker ) ~= true then attacker = ent end
 					
 					local dmg = DamageInfo()
 					dmg:SetDamage( ent.BZ_MaxIgniteDamage - ent.BZ_CurIgniteDamage )
@@ -104,7 +104,7 @@ function GM:HandleEntityIgnite()
 					ent.BZ_CurIgniteDamage = ent.BZ_CurIgniteDamage + fdamage
 					
 					local attacker = ent:GetIgniteAttacker()
-					if IsValid( attacker ) ~= true then attacker = game.GetWorld() end
+					if IsValid( attacker ) ~= true then attacker = ent end
 					
 					local dmg = DamageInfo()
 					dmg:SetDamage( fdamage )
@@ -156,7 +156,7 @@ function GM:HandleEntityBleed()
 				if ent.BZ_CurBleedDamage < ent.BZ_MaxBleedDamage then
 					
 					local attacker = ent:GetBleedAttacker()
-					if IsValid( attacker ) ~= true then attacker = game.GetWorld() end
+					if IsValid( attacker ) ~= true then attacker = ent end
 					
 					local dmg = DamageInfo()
 					dmg:SetDamage( ent.BZ_MaxBleedDamage - ent.BZ_CurBleedDamage )
@@ -184,7 +184,7 @@ function GM:HandleEntityBleed()
 					ent.BZ_CurBleedDamage = ent.BZ_CurBleedDamage + fdamage
 					
 					local attacker = ent:GetBleedAttacker()
-					if IsValid( attacker ) ~= true then attacker = game.GetWorld() end
+					if IsValid( attacker ) ~= true then attacker = ent end
 					
 					local dmg = DamageInfo()
 					dmg:SetDamage( fdamage )
