@@ -315,6 +315,17 @@ if SERVER then
 		
 	end
 	
+	function ENT:OnOtherKilled( ent, dmg )
+		
+		if ent == self:GetTarget() then
+			
+			self.LastTargetRefresh = CurTime()
+			self:RefreshTarget()
+			
+		end
+		
+	end
+	
 end
 
 if CLIENT then
