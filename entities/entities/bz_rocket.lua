@@ -14,6 +14,9 @@ ENT.PrintName = "#bz_rocket"
 ENT.Model = Model( "models/weapons/w_models/w_rocket.mdl" )
 ENT.Skin = 0
 
+ENT.ExplodeParticle = "explosioncore_midair"
+ENT.TrailParticle = "rockettrail"
+
 ENT.ExplodeSounds = {
 	
 	Sound( "weapons/explode1.wav" ),
@@ -59,9 +62,6 @@ if SERVER then
 	ENT.Damage = 25
 	function ENT:SetDamage( damage ) self.Damage = damage end
 	function ENT:GetDamage() return self.Damage end
-	
-	ENT.ExplodeParticle = "explosioncore_midair"
-	ENT.TrailParticle = "rockettrail"
 	
 	function ENT:OnCollide( skybox )
 		

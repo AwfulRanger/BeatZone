@@ -13,6 +13,9 @@ ENT.Base = "base_anim"
 ENT.PrintName = "#bz_fireball"
 ENT.Model = Model( "models/weapons/w_models/w_grenade_grenadelauncher.mdl" )
 
+ENT.HitParticle = "projectile_fireball"
+ENT.TrailParticle = "new_flame"
+
 ENT.HitSounds = { Sound( "misc/flame_engulf.wav" ) }
 
 function ENT:Initialize()
@@ -28,12 +31,9 @@ function ENT:Initialize()
 		
 		self:SetTrigger( true )
 		
-		if self.TrailParticle ~= nil then
-			
-			local attach = self:LookupAttachment( "trail" )
-			ParticleEffectAttach( self.TrailParticle, PATTACH_POINT_FOLLOW, self, attach )
-			
-		end
+	elseif CLIENT then
+		
+		if self.TrailParticle ~= nil then self:CreateParticleEffect( self.TrailParticle, -1, { { attachtype = PATTACH_ABSORIGIN_FOLLOW, entity = self } } ) end
 		
 	end
 	
@@ -48,9 +48,6 @@ if SERVER then
 	ENT.Damage = 5
 	function ENT:SetDamage( damage ) self.Damage = damage end
 	function ENT:GetDamage() return self.Damage end
-	
-	ENT.HitParticle = "projectile_fireball"
-	ENT.TrailParticle = "new_flame"
 	
 	function ENT:OnCollide( skybox, ent )
 		
