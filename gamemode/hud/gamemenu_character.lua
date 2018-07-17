@@ -250,9 +250,15 @@ local function createcharsheet( gm, charmenu )
 		classbutton:DockMargin( 0, 0, 0, spacing )
 		classbutton:SetTall( classbuttontall )
 		classbutton:SetFont( "BZ_MenuButtonSmall" )
+		classbutton:SetDoubleClickingEnabled( true )
 		function classbutton:GetButtonBGColor()
 			
 			if player_manager.GetPlayerClass( ply ) == classid then return gm.HUD.Color.buttonspecialcolor end
+			
+		end
+		function classbutton:DoDoubleClick()
+			
+			classtoggle:DoClick()
 			
 		end
 		
