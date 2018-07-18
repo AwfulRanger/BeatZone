@@ -153,172 +153,15 @@ local function createperkmenu( gm, perkmenu )
 	
 end
 
-local function createcharsheet( gm, charmenu )
+local function createloadoutmenu( gm, loadoutmenu )
 	
 	local ply = LocalPlayer()
 	if IsValid( ply ) ~= true then return end
 	
 	local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.0075 )
 	
-	local charsheet = vgui.Create( "DPropertySheet" )
-	charsheet:SetParent( charmenu )
-	charsheet:Dock( FILL )
-	charsheet:SetPadding( spacing )
-	charsheet:SetFadeTime( 0 )
-	function charsheet:Paint( w, h ) end
-	
-	
-	--class menu
-	local classmenu = vgui.Create( "DPanel" )
-	function classmenu:Paint( w, h ) end
-	
-	local classscroll = vgui.Create( "DScrollPanel" )
-	classscroll:SetParent( classmenu )
-	classscroll:Dock( LEFT )
-	classscroll:DockMargin( 0, 0, spacing, 0 )
-	
-	local classname = gm.HUD:CreateLabel( classmenu, "", "BZ_LabelLarge" )
-	classname:Dock( TOP )
-	
-	local classdesc = vgui.Create( "RichText" )
-	classdesc:SetParent( classmenu )
-	classdesc:Dock( TOP )
-	function classdesc:PerformLayout( w, h )
-		
-		self:SetFontInternal( "BZ_LabelBold" )
-		self:SetFGColor( gm.HUD.Color.text )
-		
-	end
-	
-	local classtoggle = gm.HUD:CreateButton( classmenu, "Select class" )
-	classtoggle:Dock( BOTTOM )
-	
-	local curclass
-	local respec = false
-	
-	local function classrespec( button )
-		
-		gm:ResetPlayerCharacter( ply )
-		respec = true
-		
-		net.Start( "BZ_ResetPlayer" )
-		net.SendToServer()
-		
-	end
-	local function classselect( button )
-		
-		button:SetText( "Respec class" )
-		
-		net.Start( "BZ_SetClass" )
-			
-			net.WriteUInt( curclass, 32 )
-			
-		net.SendToServer()
-		
-		button.DoClick = classrespec
-		
-	end
-	
-	local classbuttontall = math.Round( ScrH() * 0.05 )
-	for i = 1, gm:GetClassCount() do
-		
-		local classid = gm:GetClass( i )
-		local class = baseclass.Get( classid )
-		
-		local classbutton = gm.HUD:CreateButton( classscroll, class.DisplayName, function()
-			
-			curclass = i
-			
-			classname:SetText( class.DisplayName or "" )
-			class:InitializePerks()
-			class:InitializeAbilities()
-			classdesc:SetText( class:GetDescription( ply ) )
-			
-			if player_manager.GetPlayerClass( ply ) == classid then
-				
-				classtoggle:SetText( "Respec class" )
-				classtoggle.DoClick = classrespec
-				
-			else
-				
-				classtoggle:SetText( "Select class" )
-				classtoggle.DoClick = classselect
-				
-			end
-			
-		end )
-		classbutton:Dock( TOP )
-		classbutton:DockMargin( 0, 0, 0, spacing )
-		classbutton:SetTall( classbuttontall )
-		classbutton:SetFont( "BZ_MenuButtonSmall" )
-		classbutton:SetDoubleClickingEnabled( true )
-		function classbutton:GetButtonBGColor()
-			
-			if player_manager.GetPlayerClass( ply ) == classid then return gm.HUD.Color.buttonspecial end
-			
-		end
-		function classbutton:DoDoubleClick()
-			
-			classtoggle:DoClick()
-			
-		end
-		
-		if i == 1 or player_manager.GetPlayerClass( ply ) == classid then classbutton:DoClick() end
-		
-	end
-	
-	function classmenu:PerformLayout( w, h )
-		
-		classscroll:SetWide( w * 0.3 )
-		classname:SetTall( h * 0.05 )
-		classdesc:SetTall( h * 0.85 )
-		classtoggle:SetTall( h * 0.1 )
-		
-	end
-	
-	charsheet:AddSheet( "Class", classmenu ).Tab.Paint = function( self, w, h )
-		
-		surface.SetDrawColor( gm.HUD.Color.button )
-		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
-		surface.DrawRect( 0, 0, w, 20 )
-		
-	end
-	
-	
-	--perk menu
-	local perkmenu = vgui.Create( "DPanel" )
-	function perkmenu:Paint( w, h ) end
-	function perkmenu:Think()
-		
-		local curclass = player_manager.GetPlayerClass( ply )
-		if self.curclass ~= curclass then
-			
-			self.curclass = curclass
-			createperkmenu( gm, perkmenu )
-			
-		end
-		
-		if respec == true then
-			
-			respec = false
-			createperkmenu( gm, perkmenu )
-			
-		end
-		
-	end
-	
-	charsheet:AddSheet( "Perks", perkmenu ).Tab.Paint = function( self, w, h )
-		
-		surface.SetDrawColor( gm.HUD.Color.button )
-		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
-		surface.DrawRect( 0, 0, w, 20 )
-		
-	end
-	
-	
-	--loadout menu
-	local loadoutmenu = vgui.Create( "DPanel" )
-	function loadoutmenu:Paint( w, h ) end
+	local children = loadoutmenu:GetChildren()
+	for i = 1, #children do children[ i ]:Remove() end
 	
 	local loadoutscroll = vgui.Create( "DScrollPanel" )
 	loadoutscroll:SetParent( loadoutmenu )
@@ -471,6 +314,157 @@ local function createcharsheet( gm, charmenu )
 		
 	end
 	
+end
+
+local function createcharsheet( gm, charmenu )
+	
+	local ply = LocalPlayer()
+	if IsValid( ply ) ~= true then return end
+	
+	local spacing = math.Round( math.min( ScrW(), ScrH() ) * 0.0075 )
+	
+	local charsheet = vgui.Create( "DPropertySheet" )
+	charsheet:SetParent( charmenu )
+	charsheet:Dock( FILL )
+	charsheet:SetPadding( spacing )
+	charsheet:SetFadeTime( 0 )
+	function charsheet:Paint( w, h ) end
+	
+	
+	--class menu
+	local classmenu = vgui.Create( "DPanel" )
+	function classmenu:Paint( w, h ) end
+	
+	local classscroll = vgui.Create( "DScrollPanel" )
+	classscroll:SetParent( classmenu )
+	classscroll:Dock( LEFT )
+	classscroll:DockMargin( 0, 0, spacing, 0 )
+	
+	local classname = gm.HUD:CreateLabel( classmenu, "", "BZ_LabelLarge" )
+	classname:Dock( TOP )
+	
+	local classdesc = vgui.Create( "RichText" )
+	classdesc:SetParent( classmenu )
+	classdesc:Dock( TOP )
+	function classdesc:PerformLayout( w, h )
+		
+		self:SetFontInternal( "BZ_LabelBold" )
+		self:SetFGColor( gm.HUD.Color.text )
+		
+	end
+	
+	local classtoggle = gm.HUD:CreateButton( classmenu, "Select class" )
+	classtoggle:Dock( BOTTOM )
+	
+	local curclass
+	local respec = false
+	
+	local function classrespec( button )
+		
+		gm:ResetPlayerCharacter( ply )
+		respec = true
+		
+		net.Start( "BZ_ResetPlayer" )
+		net.SendToServer()
+		
+	end
+	local function classselect( button )
+		
+		button:SetText( "Respec class" )
+		
+		net.Start( "BZ_SetClass" )
+			
+			net.WriteUInt( curclass, 32 )
+			
+		net.SendToServer()
+		
+		button.DoClick = classrespec
+		
+	end
+	
+	local classbuttontall = math.Round( ScrH() * 0.05 )
+	for i = 1, gm:GetClassCount() do
+		
+		local classid = gm:GetClass( i )
+		local class = baseclass.Get( classid )
+		
+		local classbutton = gm.HUD:CreateButton( classscroll, class.DisplayName, function()
+			
+			curclass = i
+			
+			classname:SetText( class.DisplayName or "" )
+			class:InitializePerks()
+			class:InitializeAbilities()
+			classdesc:SetText( class:GetDescription( ply ) )
+			
+			if player_manager.GetPlayerClass( ply ) == classid then
+				
+				classtoggle:SetText( "Respec class" )
+				classtoggle.DoClick = classrespec
+				
+			else
+				
+				classtoggle:SetText( "Select class" )
+				classtoggle.DoClick = classselect
+				
+			end
+			
+		end )
+		classbutton:Dock( TOP )
+		classbutton:DockMargin( 0, 0, 0, spacing )
+		classbutton:SetTall( classbuttontall )
+		classbutton:SetFont( "BZ_MenuButtonSmall" )
+		classbutton:SetDoubleClickingEnabled( true )
+		function classbutton:GetButtonBGColor()
+			
+			if player_manager.GetPlayerClass( ply ) == classid then return gm.HUD.Color.buttonspecial end
+			
+		end
+		function classbutton:DoDoubleClick()
+			
+			classtoggle:DoClick()
+			
+		end
+		
+		if i == 1 or player_manager.GetPlayerClass( ply ) == classid then classbutton:DoClick() end
+		
+	end
+	
+	function classmenu:PerformLayout( w, h )
+		
+		classscroll:SetWide( w * 0.3 )
+		classname:SetTall( h * 0.05 )
+		classdesc:SetTall( h * 0.85 )
+		classtoggle:SetTall( h * 0.1 )
+		
+	end
+	
+	charsheet:AddSheet( "Class", classmenu ).Tab.Paint = function( self, w, h )
+		
+		surface.SetDrawColor( gm.HUD.Color.button )
+		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
+		surface.DrawRect( 0, 0, w, 20 )
+		
+	end
+	
+	
+	--perk menu
+	local perkmenu = vgui.Create( "DPanel" )
+	function perkmenu:Paint( w, h ) end
+	
+	charsheet:AddSheet( "Perks", perkmenu ).Tab.Paint = function( self, w, h )
+		
+		surface.SetDrawColor( gm.HUD.Color.button )
+		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
+		surface.DrawRect( 0, 0, w, 20 )
+		
+	end
+	
+	
+	--loadout menu
+	local loadoutmenu = vgui.Create( "DPanel" )
+	function loadoutmenu:Paint( w, h ) end
+	
 	charsheet:AddSheet( "Loadout", loadoutmenu ).Tab.Paint = function( self, w, h )
 		
 		surface.SetDrawColor( gm.HUD.Color.button )
@@ -479,6 +473,27 @@ local function createcharsheet( gm, charmenu )
 		
 	end
 	
+	
+	function charsheet:Think()
+		
+		local curclass = player_manager.GetPlayerClass( ply )
+		if self.curclass ~= curclass then
+			
+			self.curclass = curclass
+			createperkmenu( gm, perkmenu )
+			createloadoutmenu( gm, loadoutmenu )
+			
+		end
+		
+		if respec == true then
+			
+			respec = false
+			createperkmenu( gm, perkmenu )
+			createloadoutmenu( gm, loadoutmenu )
+			
+		end
+		
+	end
 	
 	return charsheet
 	
