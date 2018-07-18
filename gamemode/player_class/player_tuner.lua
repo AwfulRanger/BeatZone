@@ -114,7 +114,7 @@ function PLAYER:InitializeAbilities()
 			local tr = ply:GetEyeTrace()
 			if tr.Hit == true and tr.HitSky ~= true then
 				
-				ply:SetVelocity( ( tr.HitPos - startpos ):GetNormalized() * 256 )
+				ply:SetVelocity( ( ( tr.HitPos - startpos ):GetNormalized() * 256 ) + Vector( 0, 0, 64 ) )
 				
 			end
 			
