@@ -126,9 +126,9 @@ function GM:DrawDamageNumbers()
 				
 				cam.Start3D2D( pos, ang, scale )
 					
-					local sc = self.HUD.Color.dmgstartcolor
-					if dmgnum.crit == true then sc = self.HUD.Color.dmgcritcolor end
-					local ec = self.HUD.Color.dmgendcolor
+					local sc = self.HUD.Color.dmgstart
+					if dmgnum.crit == true then sc = self.HUD.Color.dmgcrit end
+					local ec = self.HUD.Color.dmgend
 					local color = Color( sc.r, sc.b, sc.g, sc.a )
 					for i = 1, #colorval do
 						
@@ -137,7 +137,7 @@ function GM:DrawDamageNumbers()
 						
 					end
 					
-					local ts = self.HUD.Color.textshadowcolor
+					local ts = self.HUD.Color.textshadow
 					surface.SetTextColor( ts.r, ts.g, ts.b, Lerp( delta, sc.a, ec.a ) )
 					surface.SetTextPos( 2, 2 )
 					surface.DrawText( text )

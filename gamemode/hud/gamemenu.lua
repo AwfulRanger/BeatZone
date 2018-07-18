@@ -52,7 +52,7 @@ function GM:CreateMenu( tab )
 	frame:MakePopup()
 	function frame.Paint( panel, w, h )
 		
-		surface.SetDrawColor( self.HUD.Color.bgcolor )
+		surface.SetDrawColor( self.HUD.Color.bg )
 		surface.DrawRect( 0, 0, w, h )
 		
 	end
@@ -88,8 +88,8 @@ function GM:CreateMenu( tab )
 		
 		tabs[ i ].Tab.Paint = function( panel, w, h )
 			
-			surface.SetDrawColor( self.HUD.Color.buttoncolor )
-			if panel:IsActive() then surface.SetDrawColor( self.HUD.Color.buttonactivecolor ) end
+			surface.SetDrawColor( self.HUD.Color.button )
+			if panel:IsActive() then surface.SetDrawColor( self.HUD.Color.buttonactive ) end
 			--surface.DrawRect( 0, 0, w, h )
 			surface.DrawRect( 0, 0, w, 20 )
 			

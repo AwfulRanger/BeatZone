@@ -51,8 +51,8 @@ function GM:OnContextMenuOpen()
 				
 				local ply = plys[ i ]
 				
-				local color = self.HUD.Color.plyunreadycolor
-				if self:PlayerIsReady( ply ) == true then color = self.HUD.Color.plyreadycolor end
+				local color = self.HUD.Color.plyunready
+				if self:PlayerIsReady( ply ) == true then color = self.HUD.Color.plyready end
 				
 				self.HUD:ShadowText( ply:Name(), x, y + ( th * ( ( i - 1 ) - ( count * 0.5 ) ) ), color )
 				

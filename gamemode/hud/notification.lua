@@ -50,8 +50,8 @@ function GM:DrawNotifications()
 			local x = sx - tw
 			local h = th + sh
 			
-			local tcolor = n.color or self.HUD.Color.textcolor
-			local scolor = n.scolor or self.HUD.Color.textshadowcolor
+			local tcolor = n.color or self.HUD.Color.text
+			local scolor = n.scolor or self.HUD.Color.textshadow
 			
 			local outtime = fadetime:GetFloat()
 			local intime = 0.1
@@ -118,7 +118,7 @@ function GM:AddBZDeathNotice( victim, attacker, msg )
 	msg = string.Replace( msg, "%s1", victim )
 	msg = string.Replace( msg, "%s2", attacker )
 	
-	self:AddNotification( msg, self.HUD.Color.deadcolor )
+	self:AddNotification( msg, self.HUD.Color.dead )
 	
 end
 

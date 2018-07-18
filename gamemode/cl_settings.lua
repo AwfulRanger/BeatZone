@@ -63,32 +63,35 @@ end
 ----
 local colorlist = {
 	
-	{ id = "bgcolor", name = "Menu background" },
-	{ id = "detailcolor", name = "Detail" },
-	{ id = "buttoncolor", name = "Button (default)" },
-	{ id = "buttonactivecolor", name = "Button (active)" },
-	{ id = "buttoninactivecolor", name = "Button (inactive)" },
-	{ id = "buttonspecialcolor", name = "Button (special)" },
-	{ id = "textcolor", name = "Text" },
-	{ id = "textshadowcolor", name = "Text shadow" },
-	{ id = "hudbgcolor", name = "HUD background" },
+	{ id = "bg", name = "Menu background" },
+	{ id = "detail", name = "Detail" },
+	{ id = "button", name = "Button (default)" },
+	{ id = "buttonactive", name = "Button (active)" },
+	{ id = "buttoninactive", name = "Button (inactive)" },
+	{ id = "buttonspecial", name = "Button (special)" },
+	{ id = "text", name = "Text" },
+	{ id = "textshadow", name = "Text shadow" },
+	{ id = "hudbg", name = "HUD background" },
 	
-	{ id = "plyreadycolor", name = "Ready player" },
-	{ id = "plyunreadycolor", name = "Unready player" },
+	{ id = "plyready", name = "Ready player" },
+	{ id = "plyunready", name = "Unready player" },
 	
-	{ id = "dmgcritcolor", name = "Critical damage" },
-	{ id = "dmgstartcolor", name = "Damage start" },
-	{ id = "dmgendcolor", name = "Damage end" },
+	{ id = "dmgcrit", name = "Critical damage" },
+	{ id = "dmgstart", name = "Damage start" },
+	{ id = "dmgend", name = "Damage end" },
 	
-	{ id = "healthcolor", name = "Health" },
-	{ id = "shieldcolor", name = "Shield" },
-	{ id = "clipcolor", name = "Loaded ammo" },
-	{ id = "ammocolor", name = "Reserve ammo" },
+	{ id = "health", name = "Health" },
+	{ id = "shield", name = "Shield" },
+	{ id = "clip", name = "Loaded ammo" },
+	{ id = "ammo", name = "Reserve ammo" },
 	
-	{ id = "deadcolor", name = "Dead player" },
+	{ id = "dead", name = "Dead player" },
 	
-	{ id = "voteyescolor", name = "Yes vote count" },
-	{ id = "votenocolor", name = "No vote count" },
+	{ id = "voteyes", name = "Yes vote count" },
+	{ id = "voteno", name = "No vote count" },
+	
+	{ id = "abilityunready", name = "Ability unready" },
+	{ id = "abilityready", name = "Ability ready" }
 	
 }
 GM:AddSettingsData( "hudcolors", {
@@ -182,7 +185,7 @@ GM:AddSettingsData( "hudcolors", {
 			local oldpaint = colorbutton.Paint
 			function colorbutton:Paint( w, h, ... )
 				
-				surface.SetDrawColor( gm.HUD.Color.buttoncolor )
+				surface.SetDrawColor( gm.HUD.Color.button )
 				local override = false
 				if self.GetButtonBGColor ~= nil then
 					
@@ -191,7 +194,7 @@ GM:AddSettingsData( "hudcolors", {
 					if bgcolor ~= nil then surface.SetDrawColor( bgcolor ) end
 					
 				end
-				if override ~= true and self:IsHovered() == true then surface.SetDrawColor( gm.HUD.Color.buttonactivecolor ) end
+				if override ~= true and self:IsHovered() == true then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
 				surface.DrawRect( 0, 0, w, h )
 				
 				local size = math.Round( h * 0.8 )

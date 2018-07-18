@@ -28,7 +28,7 @@ local function createperkmenu( gm, perkmenu )
 	function perkdesc:PerformLayout( w, h )
 		
 		self:SetFontInternal( "BZ_LabelBold" )
-		self:SetFGColor( gm.HUD.Color.textcolor )
+		self:SetFGColor( gm.HUD.Color.text )
 		
 	end
 	
@@ -75,7 +75,7 @@ local function createperkmenu( gm, perkmenu )
 	function perkbuy:GetButtonBGColor()
 		
 		if curperk == nil then return end
-		if gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+		if gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return gm.HUD.Color.buttoninactive, true end
 		
 	end
 	
@@ -94,7 +94,7 @@ local function createperkmenu( gm, perkmenu )
 	function perksell:GetButtonBGColor()
 		
 		if curperk == nil then return end
-		if gm:PlayerCanSellPerk( ply, curperk ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+		if gm:PlayerCanSellPerk( ply, curperk ) ~= true then return gm.HUD.Color.buttoninactive, true end
 		
 	end
 	
@@ -132,8 +132,8 @@ local function createperkmenu( gm, perkmenu )
 		perkbutton:SetFont( "BZ_MenuButtonSmall" )
 		function perkbutton:GetButtonBGColor()
 			
-			if gm:PlayerHasPerk( ply, perk ) == true then return gm.HUD.Color.buttonspecialcolor end
-			if gm:PlayerCanBuyPerk( ply, perk ) ~= true then return gm.HUD.Color.buttoninactivecolor end
+			if gm:PlayerHasPerk( ply, perk ) == true then return gm.HUD.Color.buttonspecial end
+			if gm:PlayerCanBuyPerk( ply, perk ) ~= true then return gm.HUD.Color.buttoninactive end
 			
 		end
 		
@@ -186,7 +186,7 @@ local function createcharsheet( gm, charmenu )
 	function classdesc:PerformLayout( w, h )
 		
 		self:SetFontInternal( "BZ_LabelBold" )
-		self:SetFGColor( gm.HUD.Color.textcolor )
+		self:SetFGColor( gm.HUD.Color.text )
 		
 	end
 	
@@ -254,7 +254,7 @@ local function createcharsheet( gm, charmenu )
 		classbutton:SetDoubleClickingEnabled( true )
 		function classbutton:GetButtonBGColor()
 			
-			if player_manager.GetPlayerClass( ply ) == classid then return gm.HUD.Color.buttonspecialcolor end
+			if player_manager.GetPlayerClass( ply ) == classid then return gm.HUD.Color.buttonspecial end
 			
 		end
 		function classbutton:DoDoubleClick()
@@ -278,8 +278,8 @@ local function createcharsheet( gm, charmenu )
 	
 	charsheet:AddSheet( "Class", classmenu ).Tab.Paint = function( self, w, h )
 		
-		surface.SetDrawColor( gm.HUD.Color.buttoncolor )
-		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactivecolor ) end
+		surface.SetDrawColor( gm.HUD.Color.button )
+		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
 		surface.DrawRect( 0, 0, w, 20 )
 		
 	end
@@ -309,8 +309,8 @@ local function createcharsheet( gm, charmenu )
 	
 	charsheet:AddSheet( "Perks", perkmenu ).Tab.Paint = function( self, w, h )
 		
-		surface.SetDrawColor( gm.HUD.Color.buttoncolor )
-		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactivecolor ) end
+		surface.SetDrawColor( gm.HUD.Color.button )
+		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
 		surface.DrawRect( 0, 0, w, 20 )
 		
 	end
@@ -338,7 +338,7 @@ local function createcharsheet( gm, charmenu )
 	function loadoutdesc:PerformLayout( w, h )
 		
 		self:SetFontInternal( "BZ_LabelBold" )
-		self:SetFGColor( gm.HUD.Color.textcolor )
+		self:SetFGColor( gm.HUD.Color.text )
 		
 	end
 	
@@ -367,7 +367,7 @@ local function createcharsheet( gm, charmenu )
 		button.DoClick = loadoutsell
 		function button:GetButtonBGColor()
 			
-			if gm:PlayerCanSellItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+			if gm:PlayerCanSellItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactive, true end
 			
 		end
 		
@@ -387,7 +387,7 @@ local function createcharsheet( gm, charmenu )
 		button.DoClick = loadoutbuy
 		function button:GetButtonBGColor()
 			
-			if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+			if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactive, true end
 			
 		end
 		
@@ -422,7 +422,7 @@ local function createcharsheet( gm, charmenu )
 				loadouttoggle.DoClick = loadoutsell
 				function loadouttoggle:GetButtonBGColor()
 					
-					if gm:PlayerCanSellItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+					if gm:PlayerCanSellItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactive, true end
 					
 				end
 				
@@ -432,7 +432,7 @@ local function createcharsheet( gm, charmenu )
 				loadouttoggle.DoClick = loadoutbuy
 				function loadouttoggle:GetButtonBGColor()
 					
-					if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+					if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactive, true end
 					
 				end
 				
@@ -446,8 +446,8 @@ local function createcharsheet( gm, charmenu )
 		itembutton:SetDoubleClickingEnabled( true )
 		function itembutton:GetButtonBGColor()
 			
-			if gm:PlayerHasItem( ply, item ) == true then return gm.HUD.Color.buttonspecialcolor end
-			if gm:PlayerCanBuyItem( ply, item ) ~= true then return gm.HUD.Color.buttoninactivecolor end
+			if gm:PlayerHasItem( ply, item ) == true then return gm.HUD.Color.buttonspecial end
+			if gm:PlayerCanBuyItem( ply, item ) ~= true then return gm.HUD.Color.buttoninactive end
 			
 		end
 		function itembutton:DoDoubleClick()
@@ -473,8 +473,8 @@ local function createcharsheet( gm, charmenu )
 	
 	charsheet:AddSheet( "Loadout", loadoutmenu ).Tab.Paint = function( self, w, h )
 		
-		surface.SetDrawColor( gm.HUD.Color.buttoncolor )
-		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactivecolor ) end
+		surface.SetDrawColor( gm.HUD.Color.button )
+		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
 		surface.DrawRect( 0, 0, w, 20 )
 		
 	end
@@ -509,7 +509,7 @@ function GM:CreateCharacterMenu()
 		
 		local size = math.min( w, h )
 		
-		surface.SetDrawColor( self.HUD.Color.detailcolor )
+		surface.SetDrawColor( self.HUD.Color.detail )
 		surface.DrawRect( ( size * 0.5 ) - 1, 0, 1, h )
 		
 	end
@@ -614,7 +614,7 @@ function GM:CreateCharacterMenu()
 	jointoggle:Dock( BOTTOM )
 	function jointoggle.GetButtonBGColor( button )
 		
-		if canswitchteam( self ) ~= true then return self.HUD.Color.buttoninactivecolor, true end
+		if canswitchteam( self ) ~= true then return self.HUD.Color.buttoninactive, true end
 		
 	end
 	

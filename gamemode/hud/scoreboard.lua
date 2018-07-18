@@ -19,7 +19,7 @@ local function createsbpanel( gm, parent )
 	sbpanel:SetKeyboardInputEnabled( false )
 	function sbpanel:Paint( w, h )
 		
-		surface.SetDrawColor( gm.HUD.Color.bgcolor )
+		surface.SetDrawColor( gm.HUD.Color.bg )
 		surface.DrawRect( 0, 0, w, h )
 		
 	end
@@ -195,7 +195,7 @@ local function createsbpanel( gm, parent )
 				
 				local text = "Dead"
 				local tw, th = surface.GetTextSize( text )
-				gm.HUD:ShadowText( text, ( w - tw ) * 0.5, ( h - th ) * 0.5, gm.HUD.Color.deadcolor )
+				gm.HUD:ShadowText( text, ( w - tw ) * 0.5, ( h - th ) * 0.5, gm.HUD.Color.dead )
 				
 			else
 				
@@ -206,7 +206,7 @@ local function createsbpanel( gm, parent )
 				local health = ply:Health()
 				local maxhealth = ply:GetMaxHealth()
 				local healthsize = math.Round( w * math.Clamp( health / maxhealth, 0, 1 ) )
-				surface.SetDrawColor( gm.HUD.Color.healthcolor )
+				surface.SetDrawColor( gm.HUD.Color.health )
 				surface.DrawRect( 0, 0, healthsize, hh )
 				
 				local htext = health .. "/" .. maxhealth
@@ -217,7 +217,7 @@ local function createsbpanel( gm, parent )
 				local shield = ply:GetShield()
 				local maxshield = ply:GetMaxShield()
 				local shieldsize = math.Round( w * math.Clamp( shield / maxshield, 0, 1 ) )
-				surface.SetDrawColor( gm.HUD.Color.shieldcolor )
+				surface.SetDrawColor( gm.HUD.Color.shield )
 				surface.DrawRect( 0, h - hh, shieldsize, hh )
 				
 				local stext = shield .. "/" .. maxshield

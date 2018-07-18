@@ -123,13 +123,13 @@ function GM:HUDPaint()
 		local hy = spacing + sh
 		local hbarh = hh - hudspacing * 2
 		
-		surface.SetDrawColor( self.HUD.Color.hudbgcolor )
+		surface.SetDrawColor( self.HUD.Color.hudbg )
 		surface.DrawRect( hx, hy, hw, hh )
 		
 		local health = boss:Health()
 		local maxhealth = boss:GetMaxHealth()
 		local healthsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 )
-		surface.SetDrawColor( self.HUD.Color.healthcolor )
+		surface.SetDrawColor( self.HUD.Color.health )
 		surface.DrawRect( hx + hudspacing, hy + hudspacing, healthsize, hbarh )
 		
 		local htext = health .. "/" .. maxhealth
@@ -156,13 +156,13 @@ function GM:HUDPaint()
 			local hy = scrh - hh - spacing
 			local hbarh = math.Round( hh * 0.5 ) - math.Round( hudspacing * 1.5 )
 			
-			surface.SetDrawColor( self.HUD.Color.hudbgcolor )
+			surface.SetDrawColor( self.HUD.Color.hudbg )
 			surface.DrawRect( hx, hy, hw, hh )
 			
 			local health = ply:Health()
 			local maxhealth = ply:GetMaxHealth()
 			local healthsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 )
-			surface.SetDrawColor( self.HUD.Color.healthcolor )
+			surface.SetDrawColor( self.HUD.Color.health )
 			surface.DrawRect( hx + hudspacing, hy + hudspacing, healthsize, hbarh )
 			
 			local htext = health .. "/" .. maxhealth
@@ -172,7 +172,7 @@ function GM:HUDPaint()
 			local shield = ply:GetShield()
 			local maxshield = ply:GetMaxShield()
 			local shieldsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( shield / maxshield, 0, 1 )
-			surface.SetDrawColor( self.HUD.Color.shieldcolor )
+			surface.SetDrawColor( self.HUD.Color.shield )
 			surface.DrawRect( hx + hudspacing, hy + hbarh + ( hudspacing * 2 ), shieldsize, hbarh )
 			
 			local stext = shield .. "/" .. maxshield
@@ -208,7 +208,7 @@ function GM:HUDPaint()
 				local ax = scrw - aw - spacing
 				local ay = scrh - ah - spacing
 				
-				surface.SetDrawColor( self.HUD.Color.hudbgcolor )
+				surface.SetDrawColor( self.HUD.Color.hudbg )
 				surface.DrawRect( ax, ay, aw, ah )
 				
 				--primary ammo
@@ -237,7 +237,7 @@ function GM:HUDPaint()
 						end
 						if maxcount ~= -1 then
 							
-							surface.SetDrawColor( self.HUD.Color.clipcolor )
+							surface.SetDrawColor( self.HUD.Color.clip )
 							local csize = math.Round( ach * math.Clamp( count / maxcount, 0, 1 ) )
 							surface.DrawRect( acx, acy + ( ach - csize ), acw, csize )
 							
@@ -252,7 +252,7 @@ function GM:HUDPaint()
 						local cspacing = math.Round( hudspacing * 0.5 )
 						
 						--clip
-						surface.SetDrawColor( self.HUD.Color.clipcolor )
+						surface.SetDrawColor( self.HUD.Color.clip )
 						local clipsize = math.Round( ach * math.Clamp( clip / maxclip, 0, 1 ) )
 						surface.DrawRect( acx, acy + ( ach - clipsize ), cw - cspacing, clipsize )
 						
@@ -260,7 +260,7 @@ function GM:HUDPaint()
 						self.HUD:ShadowText( clip, acx + math.Round( ( cw - cspacing - ctw ) * 0.5 ), acy + math.Round( ( ach - cth ) * 0.5 ) )
 						
 						--ammo
-						surface.SetDrawColor( self.HUD.Color.ammocolor )
+						surface.SetDrawColor( self.HUD.Color.ammo )
 						local ammosize = math.Round( ach * math.Clamp( ammo / maxammo, 0, 1 ) )
 						surface.DrawRect( acx + cw + cspacing, acy + ( ach - ammosize ), cw, ammosize )
 						
@@ -297,7 +297,7 @@ function GM:HUDPaint()
 						end
 						if maxcount ~= -1 then
 							
-							surface.SetDrawColor( self.HUD.Color.clipcolor )
+							surface.SetDrawColor( self.HUD.Color.clip )
 							local csize = math.Round( ach * math.Clamp( count / maxcount, 0, 1 ) )
 							surface.DrawRect( acx, acy + ( ach - csize ), acw, csize )
 							
@@ -312,7 +312,7 @@ function GM:HUDPaint()
 						local cspacing = math.Round( hudspacing * 0.5 )
 						
 						--clip
-						surface.SetDrawColor( self.HUD.Color.clipcolor )
+						surface.SetDrawColor( self.HUD.Color.clip )
 						local clipsize = math.Round( ach * math.Clamp( clip / maxclip, 0, 1 ) )
 						surface.DrawRect( acx, acy + ( ach - clipsize ), cw - cspacing, clipsize )
 						
@@ -320,7 +320,7 @@ function GM:HUDPaint()
 						self.HUD:ShadowText( clip, acx + math.Round( ( cw - cspacing - ctw ) * 0.5 ), acy + math.Round( ( ach - cth ) * 0.5 ) )
 						
 						--ammo
-						surface.SetDrawColor( self.HUD.Color.ammocolor )
+						surface.SetDrawColor( self.HUD.Color.ammo )
 						local ammosize = math.Round( ach * math.Clamp( ammo / maxammo, 0, 1 ) )
 						surface.DrawRect( acx + cw + cspacing, acy + ( ach - ammosize ), cw, ammosize )
 						
@@ -343,7 +343,7 @@ function GM:HUDPaint()
 			local abx = math.Round( ( scrw - ( as * acount ) - ( hudspacing * ( acount - 1 ) ) ) * 0.5 )
 			local ay = scrh - as - spacing - hudspacing
 			
-			surface.SetDrawColor( self.HUD.Color.hudbgcolor )
+			surface.SetDrawColor( self.HUD.Color.hudbg )
 			surface.DrawRect( abx - hudspacing, ay - hudspacing, ( as * acount ) + ( hudspacing * ( acount + 1 ) ), as + ( hudspacing * 2 ) )
 			
 			local atimetbl = ply.AbilityTime or {}
@@ -356,7 +356,7 @@ function GM:HUDPaint()
 				local ability = self:PlayerGetAbility( ply, i )
 				if self:PlayerCanActivateAbility( ply, ability ) == true then
 					
-					surface.SetDrawColor( self.HUD.Color.abilityreadycolor )
+					surface.SetDrawColor( self.HUD.Color.abilityready )
 					surface.DrawRect( ax, ay, as, as )
 					
 					text = string.upper( input.LookupBinding( "bz_ability " .. ability.IDName, true ) or input.LookupBinding( "bz_ability " .. ability.Index, true ) or input.LookupBinding( ability.Bind, true ) or "(UNBOUND)" )
@@ -369,7 +369,7 @@ function GM:HUDPaint()
 					
 					local ads = math.Round( as * delta )
 					
-					surface.SetDrawColor( self.HUD.Color.abilityunreadycolor )
+					surface.SetDrawColor( self.HUD.Color.abilityunready )
 					surface.DrawRect( ax, ay + ( as - ads ), as, ads )
 					
 					local time = math.max( math.Round( atime.Next - CurTime(), 1 ), 0 )
@@ -444,7 +444,7 @@ function GM:HUDPaint()
 		local vx = ScrW() - vw - spacing
 		local vy = math.Round( ( ScrH() - vh ) * 0.5 )
 		
-		surface.SetDrawColor( self.HUD.Color.bgcolor )
+		surface.SetDrawColor( self.HUD.Color.bg )
 		surface.DrawRect( vx, vy, vw, vh )
 		
 		surface.SetFont( "BZ_HUDSmall" )
@@ -456,8 +456,8 @@ function GM:HUDPaint()
 		self.HUD:ShadowText( timetext, vx + ( ( vw - ttw ) * 0.5 ), vy + nth + pth + vth + spacing + ( hudspacing * 4 ) )
 		
 		surface.SetFont( "BZ_HUDSmall" )
-		self.HUD:ShadowText( yestext, vx + spacing, vy + nth + pth + vth + tth + spacing + ( hudspacing * 12 ), self.HUD.Color.voteyescolor )
-		self.HUD:ShadowText( notext, vx + vw - spacing - notw, vy + nth + pth + vth + tth + spacing + ( hudspacing * 12 ), self.HUD.Color.votenocolor )
+		self.HUD:ShadowText( yestext, vx + spacing, vy + nth + pth + vth + tth + spacing + ( hudspacing * 12 ), self.HUD.Color.voteyes )
+		self.HUD:ShadowText( notext, vx + vw - spacing - notw, vy + nth + pth + vth + tth + spacing + ( hudspacing * 12 ), self.HUD.Color.voteno )
 		
 	end
 	

@@ -15,7 +15,7 @@ function GM:CreateVoteMenu()
 		
 		local size = math.min( w, h )
 		
-		surface.SetDrawColor( self.HUD.Color.detailcolor )
+		surface.SetDrawColor( self.HUD.Color.detail )
 		surface.DrawRect( ( size * 0.5 ) - 1, 0, 1, h )
 		
 	end
@@ -41,7 +41,7 @@ function GM:CreateVoteMenu()
 	function votedesc.PerformLayout( panel, w, h )
 		
 		panel:SetFontInternal( "BZ_LabelBold" )
-		panel:SetFGColor( self.HUD.Color.textcolor )
+		panel:SetFGColor( self.HUD.Color.text )
 		
 	end
 	
@@ -83,7 +83,7 @@ function GM:CreateVoteMenu()
 		votebutton:SetFont( "BZ_MenuButtonSmall" )
 		function votebutton.GetButtonBGColor( panel )
 			
-			if self:CanCallVote( ply, vote ) ~= true then return self.HUD.Color.buttoninactivecolor end
+			if self:CanCallVote( ply, vote ) ~= true then return self.HUD.Color.buttoninactive end
 			
 		end
 		

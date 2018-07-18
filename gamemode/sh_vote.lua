@@ -364,7 +364,7 @@ GM:AddVoteData( "kick", {
 				plybutton:SetFont( "BZ_MenuButtonSmall" )
 				function plybutton:GetButtonBGColor()
 					
-					if curply == ply then return gm.HUD.Color.buttonspecialcolor end
+					if curply == ply then return gm.HUD.Color.buttonspecial end
 					
 				end
 				
@@ -384,7 +384,7 @@ GM:AddVoteData( "kick", {
 		callvote:SetTall( ScrH() * 0.1 )
 		function callvote.GetButtonBGColor( button )
 			
-			if gm:CanCallVote( LocalPlayer(), self, { player = curply } ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+			if gm:CanCallVote( LocalPlayer(), self, { player = curply } ) ~= true then return gm.HUD.Color.buttoninactive, true end
 			
 		end
 		
@@ -424,7 +424,7 @@ GM:AddVoteData( "restart", {
 		callvote:SetTall( ScrH() * 0.1 )
 		function callvote.GetButtonBGColor( button )
 			
-			if gm:CanCallVote( LocalPlayer(), self ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+			if gm:CanCallVote( LocalPlayer(), self ) ~= true then return gm.HUD.Color.buttoninactive, true end
 			
 		end
 		
@@ -484,7 +484,7 @@ GM:AddVoteData( "changemap", {
 				mapbutton:SetFont( "BZ_MenuButtonSmall" )
 				function mapbutton:GetButtonBGColor()
 					
-					if curmap == map then return gm.HUD.Color.buttonspecialcolor end
+					if curmap == map then return gm.HUD.Color.buttonspecial end
 					
 				end
 				
@@ -504,7 +504,7 @@ GM:AddVoteData( "changemap", {
 		callvote:SetTall( ScrH() * 0.1 )
 		function callvote.GetButtonBGColor( button )
 			
-			if gm:CanCallVote( LocalPlayer(), self, { map = curmap } ) ~= true then return gm.HUD.Color.buttoninactivecolor, true end
+			if gm:CanCallVote( LocalPlayer(), self, { map = curmap } ) ~= true then return gm.HUD.Color.buttoninactive, true end
 			
 		end
 		

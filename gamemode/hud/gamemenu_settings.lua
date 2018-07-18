@@ -14,7 +14,7 @@ function GM:CreateSettingsMenu()
 		
 		local size = math.min( w, h )
 		
-		surface.SetDrawColor( self.HUD.Color.detailcolor )
+		surface.SetDrawColor( self.HUD.Color.detail )
 		surface.DrawRect( ( size * 0.5 ) - 1, 0, 1, h )
 		
 	end

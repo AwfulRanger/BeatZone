@@ -93,35 +93,35 @@ function GM.HUD:CreateColors( colors )
 	
 	self.Color = {
 		
-		bgcolor = Color( 47, 4, 70, 250 ),
-		detailcolor = Color( 53, 19, 161, 255 ),
-		buttoncolor = Color( 121, 6, 71, 255 ),
-		buttonactivecolor = Color( 188, 1, 107, 255 ),
-		buttoninactivecolor = Color( 85, 0, 48, 255 ),
-		buttonspecialcolor = Color( 149, 9, 88, 255 ),
-		textcolor = Color( 255, 255, 255, 255 ),
-		textshadowcolor = Color( 0, 0, 0, 255 ),
-		hudbgcolor = Color( 47, 4, 70, 100 ),
+		bg = Color( 47, 4, 70, 250 ),
+		detail = Color( 53, 19, 161, 255 ),
+		button = Color( 121, 6, 71, 255 ),
+		buttonactive = Color( 188, 1, 107, 255 ),
+		buttoninactive = Color( 85, 0, 48, 255 ),
+		buttonspecial = Color( 149, 9, 88, 255 ),
+		text = Color( 255, 255, 255, 255 ),
+		textshadow = Color( 0, 0, 0, 255 ),
+		hudbg = Color( 47, 4, 70, 100 ),
 		
-		plyreadycolor = Color( 0, 255, 0, 255 ),
-		plyunreadycolor = Color( 255, 0, 0, 255 ),
+		plyready = Color( 0, 255, 0, 255 ),
+		plyunready = Color( 255, 0, 0, 255 ),
 		
-		dmgcritcolor = Color( 0, 100, 255, 255 ),
-		dmgstartcolor = Color( 0, 255, 0, 255 ),
-		dmgendcolor = Color( 255, 0, 0, 0 ),
+		dmgcrit = Color( 0, 100, 255, 255 ),
+		dmgstart = Color( 0, 255, 0, 255 ),
+		dmgend = Color( 255, 0, 0, 0 ),
 		
-		healthcolor = Color( 227, 24, 139, 200 ),
-		shieldcolor = Color( 41, 92, 209, 200 ),
-		clipcolor = Color( 146, 32, 209, 200 ),
-		ammocolor = Color( 69, 10, 101, 200 ),
+		health = Color( 227, 24, 139, 200 ),
+		shield = Color( 41, 92, 209, 200 ),
+		clip = Color( 146, 32, 209, 200 ),
+		ammo = Color( 69, 10, 101, 200 ),
 		
-		deadcolor = Color( 255, 0, 0, 255 ),
+		dead = Color( 255, 0, 0, 255 ),
 		
-		voteyescolor = Color( 0, 255, 0, 255 ),
-		votenocolor = Color( 255, 0, 0, 255 ),
+		voteyes = Color( 0, 255, 0, 255 ),
+		voteno = Color( 255, 0, 0, 255 ),
 		
-		abilityunreadycolor = Color( 105, 105, 0, 150 ),
-		abilityreadycolor = Color( 151, 151, 8, 200 ),
+		abilityunready = Color( 105, 105, 0, 150 ),
+		abilityready = Color( 151, 151, 8, 200 ),
 		
 	}
 	
@@ -135,8 +135,8 @@ GM.HUD:CreateColors()
 
 function GM.HUD:ShadowText( text, x, y, tcolor, scolor, offset )
 	
-	tcolor = tcolor or self.Color.textcolor
-	scolor = scolor or self.Color.textshadowcolor
+	tcolor = tcolor or self.Color.text
+	scolor = scolor or self.Color.textshadow
 	offset = offset or math.Round( math.min( ScrW(), ScrH() ) * 0.002 )
 	
 	surface.SetTextPos( x + offset, y + offset )
@@ -151,7 +151,7 @@ end
 
 function GM.HUD:PaintButton( panel, w, h )
 	
-	surface.SetDrawColor( self.Color.buttoncolor )
+	surface.SetDrawColor( self.Color.button )
 	local override = false
 	if panel.GetButtonBGColor ~= nil then
 		
@@ -160,7 +160,7 @@ function GM.HUD:PaintButton( panel, w, h )
 		if bgcolor ~= nil then surface.SetDrawColor( bgcolor ) end
 		
 	end
-	if override ~= true and panel:IsHovered() == true then surface.SetDrawColor( self.Color.buttonactivecolor ) end
+	if override ~= true and panel:IsHovered() == true then surface.SetDrawColor( self.Color.buttonactive ) end
 	surface.DrawRect( 0, 0, w, h )
 	
 	surface.SetFont( panel:GetFont() )
@@ -174,7 +174,7 @@ end
 
 function GM.HUD:PaintPanel( panel, w, h )
 	
-	surface.SetDrawColor( self.Color.detailcolor )
+	surface.SetDrawColor( self.Color.detail )
 	
 	surface.DrawRect( 0, 0, w, 1 ) --top
 	surface.DrawRect( 0, h - 1, w, 1 ) --bottom

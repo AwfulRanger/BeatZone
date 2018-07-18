@@ -71,7 +71,7 @@ When they come back, however, they will be stronger.]] )
 		function panel:PerformLayout( w, h )
 			
 			self:SetFontInternal( "BZ_LabelBold" )
-			self:SetFGColor( gm.HUD.Color.textcolor )
+			self:SetFGColor( gm.HUD.Color.text )
 			
 		end
 		
@@ -149,7 +149,7 @@ GM:AddHelpData( "enemies", {
 		function enemydesc:PerformLayout( w, h )
 			
 			self:SetFontInternal( "BZ_LabelBold" )
-			self:SetFGColor( gm.HUD.Color.textcolor )
+			self:SetFGColor( gm.HUD.Color.text )
 			
 		end
 		

@@ -40,7 +40,7 @@ function GM:HUDDrawTargetID()
 		
 		if isshield == true then h = h + hh + spacing end
 		
-		surface.SetDrawColor( self.HUD.Color.hudbgcolor )
+		surface.SetDrawColor( self.HUD.Color.hudbg )
 		surface.DrawRect( x, y, w, h )
 		
 		self.HUD:ShadowText( name, x + math.Round( ( w - tw ) * 0.5 ), y + spacing )
@@ -48,7 +48,7 @@ function GM:HUDDrawTargetID()
 		local health = ent:Health()
 		local maxhealth = ent:GetMaxHealth()
 		local healthsize = math.Round( w * math.Clamp( health / maxhealth, 0, 1 ) ) - ( spacing * 2 )
-		surface.SetDrawColor( self.HUD.Color.healthcolor )
+		surface.SetDrawColor( self.HUD.Color.health )
 		surface.DrawRect( x + spacing, y + th + ( spacing * 2 ), healthsize, hh )
 		
 		local htext = health .. "/" .. maxhealth
@@ -59,7 +59,7 @@ function GM:HUDDrawTargetID()
 		if isshield == true then
 			
 			local shieldsize = math.Round( w * math.Clamp( shield / maxshield, 0, 1 ) ) - ( spacing * 2 )
-			surface.SetDrawColor( self.HUD.Color.shieldcolor )
+			surface.SetDrawColor( self.HUD.Color.shield )
 			surface.DrawRect( x + spacing, y + h - hh - spacing, shieldsize, hh )
 			
 			local stext = shield .. "/" .. maxshield
@@ -113,7 +113,7 @@ function GM:HUDDrawTargetID()
 				
 				cam.Start3D2D( pos, ang, scale )
 					
-					surface.SetDrawColor( self.HUD.Color.hudbgcolor )
+					surface.SetDrawColor( self.HUD.Color.hudbg )
 					surface.DrawRect( 0, 0, w, h )
 					
 					self.HUD:ShadowText( name, math.Round( ( w - tw ) * 0.5 ), spacing, nil, nil, 4 )
@@ -121,7 +121,7 @@ function GM:HUDDrawTargetID()
 					local health = ply:Health()
 					local maxhealth = ply:GetMaxHealth()
 					local healthsize = math.Round( w * math.Clamp( health / maxhealth, 0, 1 ) ) - ( spacing * 2 )
-					surface.SetDrawColor( self.HUD.Color.healthcolor )
+					surface.SetDrawColor( self.HUD.Color.health )
 					surface.DrawRect( spacing, th + ( spacing * 2 ), healthsize, hh )
 					
 					local htext = health .. "/" .. maxhealth
@@ -132,7 +132,7 @@ function GM:HUDDrawTargetID()
 					local shield = ply:GetShield()
 					local maxshield = ply:GetMaxShield()
 					local shieldsize = math.Round( w * math.Clamp( shield / maxshield, 0, 1 ) ) - ( spacing * 2 )
-					surface.SetDrawColor( self.HUD.Color.shieldcolor )
+					surface.SetDrawColor( self.HUD.Color.shield )
 					surface.DrawRect( spacing, h - hh - spacing, shieldsize, hh )
 					
 					local stext = shield .. "/" .. maxshield
@@ -182,13 +182,13 @@ function GM:HUDDrawTargetID()
 				
 				cam.Start3D2D( pos, ang, scale )
 					
-					surface.SetDrawColor( self.HUD.Color.hudbgcolor )
+					surface.SetDrawColor( self.HUD.Color.hudbg )
 					surface.DrawRect( 0, 0, w, h )
 					
 					local health = skel:Health()
 					local maxhealth = skel:GetMaxHealth()
 					local healthsize = math.Round( w * math.Clamp( health / maxhealth, 0, 1 ) ) - ( spacing * 2 )
-					surface.SetDrawColor( self.HUD.Color.healthcolor )
+					surface.SetDrawColor( self.HUD.Color.health )
 					surface.DrawRect( spacing, spacing, healthsize, hh )
 					
 					local htext = health .. "/" .. maxhealth
