@@ -56,6 +56,7 @@ function GM:SetPlayerClass( ply, class )
 	
 	player_manager.SetPlayerClass( ply, class )
 	player_manager.RunClass( ply, "InitializePerks" )
+	player_manager.RunClass( ply, "InitializeAbilities" )
 	
 	if SERVER then
 		

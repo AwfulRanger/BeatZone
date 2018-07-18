@@ -335,6 +335,69 @@ function GM:HUDPaint()
 			
 		end
 		
+		--abilities
+		local acount = self:PlayerGetAbilityCount( ply )
+		if acount > 0 then
+			
+			local as = math.Round( size * 0.1 ) - ( hudspacing * 2 )
+			local abx = math.Round( ( scrw - ( as * acount ) - ( hudspacing * ( acount - 1 ) ) ) * 0.5 )
+			local ay = scrh - as - spacing - hudspacing
+			
+			surface.SetDrawColor( self.HUD.Color.hudbgcolor )
+			surface.DrawRect( abx - hudspacing, ay - hudspacing, ( as * acount ) + ( hudspacing * ( acount + 1 ) ), as + ( hudspacing * 2 ) )
+			
+			local atimetbl = ply.AbilityTime or {}
+			for i = 1, acount do
+				
+				local ax = abx + ( ( as + hudspacing ) * ( i - 1 ) )
+				
+				local text
+				
+				local ability = self:PlayerGetAbility( ply, i )
+				if self:PlayerCanActivateAbility( ply, ability ) == true then
+					
+					surface.SetDrawColor( self.HUD.Color.abilityreadycolor )
+					surface.DrawRect( ax, ay, as, as )
+					
+					text = string.upper( input.LookupBinding( "bz_ability " .. ability.IDName, true ) or input.LookupBinding( "bz_ability " .. ability.Index, true ) or input.LookupBinding( ability.Bind, true ) or "(UNBOUND)" )
+					
+				else
+					
+					local delta = 0
+					local atime = atimetbl[ ability.Index ]
+					if atime ~= nil then delta = math.Clamp( ( CurTime() - atime.Last ) / ability.Cooldown, 0, 1 ) end
+					
+					local ads = math.Round( as * delta )
+					
+					surface.SetDrawColor( self.HUD.Color.abilityunreadycolor )
+					surface.DrawRect( ax, ay + ( as - ads ), as, ads )
+					
+					local time = math.max( math.Round( atime.Next - CurTime(), 1 ), 0 )
+					if #tostring( time ) > 3 then time = math.floor( time ) end
+					text = tostring( time )
+					if #text == 1 then text = text .. ".0" end
+					
+				end
+				
+				local name = ability.Name or ""
+				surface.SetFont( "BZ_HUDSmaller" )
+				local nw, nh = surface.GetTextSize( name )
+				self.HUD:ShadowText( name, ax + ( ( as - nw ) * 0.5 ), ay )
+				
+				surface.SetFont( "BZ_HUD" )
+				local tw, th = surface.GetTextSize( text )
+				if tw > as or th > as then
+					
+					surface.SetFont( "BZ_HUDSmaller" )
+					tw, th = surface.GetTextSize( text )
+					
+				end
+				self.HUD:ShadowText( text, ax + ( ( as - tw ) * 0.5 ), ay + ( ( as - th ) * 0.5 ) )
+				
+			end
+			
+		end
+		
 		self:DrawDamageNumbers()
 		
 	end

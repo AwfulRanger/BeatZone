@@ -120,6 +120,9 @@ function GM.HUD:CreateColors( colors )
 		voteyescolor = Color( 0, 255, 0, 255 ),
 		votenocolor = Color( 255, 0, 0, 255 ),
 		
+		abilityunreadycolor = Color( 105, 105, 0, 150 ),
+		abilityreadycolor = Color( 151, 151, 8, 200 ),
+		
 	}
 	
 	if colors ~= nil then for _, v in pairs( colors ) do self.Color[ _ ] = v end end

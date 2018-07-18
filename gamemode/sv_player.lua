@@ -3,6 +3,7 @@ DEFINE_BASECLASS( "gamemode_base" )
 AddCSLuaFile( "sh_item.lua" )
 AddCSLuaFile( "sh_perk.lua" )
 AddCSLuaFile( "sh_class.lua" )
+AddCSLuaFile( "sh_ability.lua" )
 AddCSLuaFile( "sh_player.lua" )
 AddCSLuaFile( "cl_player.lua" )
 
@@ -17,6 +18,7 @@ util.AddNetworkString( "BZ_BuyItem" )
 util.AddNetworkString( "BZ_SellItem" )
 util.AddNetworkString( "BZ_BuyPerk" )
 util.AddNetworkString( "BZ_SellPerk" )
+util.AddNetworkString( "BZ_ActivateAbility" )
 util.AddNetworkString( "BZ_PlayerDeath" )
 
 net.Receive( "BZ_FullUpdate", function( len, ply )
@@ -85,6 +87,16 @@ net.Receive( "BZ_SellPerk", function( len, ply )
 	if perk == nil then return end
 	
 	if gm:PlayerCanSellPerk( ply, perk ) == true then gm:PlayerSellPerk( ply, perk ) end
+	
+end )
+
+net.Receive( "BZ_ActivateAbility", function( len, ply )
+	
+	local gm = gmod.GetGamemode()
+	local ability = gm:PlayerGetAbility( ply, net.ReadUInt( 32 ) )
+	if ability == nil then return end
+	
+	if gm:PlayerCanActivateAbility( ply, ability ) == true then gm:PlayerActivateAbility( ply, ability ) end
 	
 end )
 

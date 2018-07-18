@@ -8,6 +8,8 @@ local PLAYER = {}
 PLAYER.WalkSpeed = 320
 PLAYER.RunSpeed = 320
 
+
+
 PLAYER.PerkList = {}
 PLAYER.PerkNameList = {}
 function PLAYER:AddPerk( name )
@@ -22,7 +24,9 @@ function PLAYER:GetPerkCount()
 end
 function PLAYER:GetPerk( id )
 	
-	return self.PerkNameList[ id ]
+	if isnumber( id ) == true then return self.PerkNameList[ id ] end
+	
+	return self.PerkList[ id ]
 	
 end
 function PLAYER:HasPerk( perk )
@@ -38,14 +42,77 @@ function PLAYER:InitializePerks()
 	
 end
 
+
+
+PLAYER.AbilityList = {}
+PLAYER.AbilityNameList = {}
+function PLAYER:AddAbility( name, data )
+	
+	data = data or {}
+	
+	name = tostring( name )
+	
+	local index
+	if self.AbilityList[ name ] == nil then
+		
+		index = table.insert( self.AbilityNameList, name )
+		
+	else
+		
+		index = self.AbilityList[ name ].Index
+		
+	end
+	
+	data.IDName = name
+	data.Index = index
+	data.Name = data.Name or ( "#" .. name )
+	data.Cooldown = data.Cooldown or 5
+	data.Bind = data.Bind or "+menu"
+	data.OnActivate = data.OnActivate or function( self, ply ) end
+	data.GetDescription = data.GetDescription or function( self, ply ) return self.Description or "" end
+	
+	self.AbilityList[ name ] = data
+	
+end
+
+function PLAYER:GetAbilityCount()
+	
+	return #self.AbilityNameList
+	
+end
+
+function PLAYER:GetAbility( id )
+	
+	if isnumber( id ) == true then return self.AbilityList[ self.AbilityNameList[ id ] ] end
+	
+	return self.AbilityList[ id ]
+	
+end
+
+function PLAYER:InitializeAbilities()
+	
+	self.AbilityList = {}
+	self.AbilityNameList = {}
+	
+end
+
+
+
 function PLAYER:GetDescription( ply )
 	
 	local desc = self.Description or ""
 	
-	desc = desc .. "\n\n\nPerks:\n"
-	local count = self:GetPerkCount()
+	desc = desc .. "\n\n\n\nAbilities:"
+	for i = 1, self:GetAbilityCount() do
+		
+		local ability = self:GetAbility( i )
+		desc = desc .. "\n\n" .. ( ability.Name or "" ) .. "\n" .. ability:GetDescription( ply ) .. "\n(" .. ability.Cooldown .. " second cooldown)"
+		
+	end
+	
+	desc = desc .. "\n\n\n\nPerks:\n"
 	local gm = gmod.GetGamemode()
-	for i = 1, count do
+	for i = 1, self:GetPerkCount() do
 		
 		local perkname = self:GetPerk( i )
 		local perk = gm:GetPerk( perkname )

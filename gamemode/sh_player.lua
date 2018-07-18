@@ -3,6 +3,7 @@ DEFINE_BASECLASS( "gamemode_base" )
 include( "sh_item.lua" )
 include( "sh_perk.lua" )
 include( "sh_class.lua" )
+include( "sh_ability.lua" )
 
 
 
@@ -179,6 +180,7 @@ function GM:ResetPlayerCharacter( ply )
 	ply.PerkNames = {}
 	ply.PerkNum = {}
 	ply:SetPerkPoints( self:GetPerkPoints( ply ) )
+	ply.AbilityTime = {}
 	
 	if SERVER then
 		
@@ -205,7 +207,9 @@ function GM:GetPlayerCritChance( ply )
 	
 end
 
-function GM:GetPlayerCrit( ply )
+function GM:GetPlayerCrit( ply, dmg )
+	
+	if dmg ~= nil and bit.band( dmg:GetDamageCustom(), DMGCUSTOM_CRIT ) == DMGCUSTOM_CRIT then return true end
 	
 	return math.Rand( 0, 1 ) < self:GetPlayerCritChance( ply )
 	

@@ -55,6 +55,12 @@ net.Receive( "BZ_SellPerk", function()
 	
 end )
 
+net.Receive( "BZ_ActivateAbility", function()
+	
+	gmod.GetGamemode():PlayerActivateAbility( net.ReadEntity(), net.ReadUInt( 32 ) )
+	
+end )
+
 
 
 function GM:BuyItem( item )
@@ -128,3 +134,42 @@ concommand.Add( "bz_sellperk", function( ply, cmd, args, arg )
 	if perk ~= nil then gm:SellPerk( perk ) end
 	
 end )
+
+
+
+function GM:ActivateAbility( ability )
+	
+	net.Start( "BZ_ActivateAbility" )
+		
+		net.WriteUInt( ability.Index, 32 )
+		
+	net.SendToServer()
+	
+end
+
+concommand.Add( "bz_ability", function( ply, cmd, args, arg )
+	
+	local id = tonumber( arg ) or arg
+	
+	local gm = gmod.GetGamemode()
+	local ability = gm:PlayerGetAbility( LocalPlayer(), id )
+	if ability ~= nil then gm:ActivateAbility( ability ) end
+	
+end )
+
+function GM:PlayerBindPress( ply, bind, pressed )
+	
+	if ply == LocalPlayer() and IsValid( ply ) == true and ply:Alive() == true and ply:Team() == TEAM_BEAT then
+		
+		for i = 1, self:PlayerGetAbilityCount( ply ) do
+			
+			local ability = self:PlayerGetAbility( ply, i )
+			if ability ~= nil and bind == ability.Bind and self:PlayerCanActivateAbility( ply, ability ) == true then self:ActivateAbility( ability ) end
+			
+		end
+		
+	end
+	
+	return BaseClass.PlayerBindPress( self, ply, bind, pressed )
+	
+end

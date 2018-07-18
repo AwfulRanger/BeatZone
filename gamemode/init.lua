@@ -345,6 +345,8 @@ function GM:EntityKeyValue( ent, key, value )
 	
 end
 
+
+
 local dmgtypes = {
 	
 	DMG_BULLET,
@@ -393,7 +395,18 @@ local function doadd( gm, add, ply, perk )
 end
 function GM:EntityTakeDamage( ent, dmg )
 	
+	local attacker = dmg:GetAttacker()
+	if IsValid( attacker ) == true and attacker:IsPlayer() ~= true then attacker = attacker:GetOwner() end
+	
+	if IsValid( attacker ) == true and attacker.BZ_AbilityFragTime ~= nil and CurTime() < attacker.BZ_AbilityFragTime then
+		
+		dmg:SetDamageType( bit.bor( dmg:GetDamageType(), DMG_BLAST ) )
+		
+	end
+	
 	if ent:IsPlayer() == true or ent.IsBZEnemy == true then dmg:ScaleDamage( 100 ) end
+	
+	dmg:AddDamage( dmg:GetDamageBonus() )
 	
 	if ent:IsPlayer() == true then
 		
@@ -411,8 +424,6 @@ function GM:EntityTakeDamage( ent, dmg )
 		
 	end
 	
-	local attacker = dmg:GetAttacker()
-	if IsValid( attacker ) == true and attacker:IsPlayer() ~= true then attacker = attacker:GetOwner() end
 	if attacker:IsPlayer() == true then
 		
 		dodmg( self, dmg, attacker, "perk_damage_all" )
@@ -423,7 +434,7 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 		end
 		
-		local crit = self:GetPlayerCrit( attacker )
+		local crit = self:GetPlayerCrit( attacker, dmg )
 		if crit == true then
 			
 			dmg:ScaleDamage( 2 )

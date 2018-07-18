@@ -11,6 +11,10 @@ CreateConVar( "bz_friendlyfire", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Enable
 
 
 
+DMGCUSTOM_CRIT = 1
+
+
+
 local meta = FindMetaTable( "Entity" )
 
 function meta:IsIgnited() return CurTime() < self:GetNW2Float( "BZ_IgniteTime", -1 ) end

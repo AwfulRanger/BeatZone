@@ -231,6 +231,7 @@ local function createcharsheet( gm, charmenu )
 			
 			classname:SetText( class.DisplayName or "" )
 			class:InitializePerks()
+			class:InitializeAbilities()
 			classdesc:SetText( class:GetDescription( ply ) )
 			
 			if player_manager.GetPlayerClass( ply ) == classid then
