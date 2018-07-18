@@ -63,7 +63,54 @@ end )
 
 
 
+function GM:SetClass( id )
+	
+	if id == nil then return end
+	
+	local gm = gmod.GetGamemode()
+	local ply = LocalPlayer()
+	
+	local class = gm:GetClass( id )
+	if class == nil or player_manager.GetPlayerClass( ply ) == class then return end
+	
+	if gm:CanChangeClass( ply, class ) ~= true then return end
+	
+	gm:SetPlayerClass( ply, class )
+	
+	net.Start( "BZ_SetClass" )
+		
+		net.WriteUInt( id, 32 )
+		
+	net.SendToServer()
+	
+end
+
+function GM:ResetCharacter()
+	
+	local gm = gmod.GetGamemode()
+	local ply = LocalPlayer()
+	
+	if gm:CanChangeClass( ply, player_manager.GetPlayerClass( ply ) ) ~= true then return end
+	
+	gm:ResetPlayerCharacter( ply )
+	
+	net.Start( "BZ_ResetPlayer" )
+	net.SendToServer()
+	
+end
+
+
+
 function GM:BuyItem( item )
+	
+	if item == nil then return end
+	
+	local gm = gmod.GetGamemode()
+	local ply = LocalPlayer()
+	
+	if gm:PlayerCanBuyItem( ply, item ) ~= true then return end
+	
+	gm:PlayerBuyItem( ply, item )
 	
 	net.Start( "BZ_BuyItem" )
 		
@@ -83,6 +130,15 @@ end )
 
 function GM:SellItem( item )
 	
+	if item == nil then return end
+	
+	local gm = gmod.GetGamemode()
+	local ply = LocalPlayer()
+	
+	if gm:PlayerCanSellItem( ply, item ) ~= true then return end
+	
+	gmod.GetGamemode():PlayerSellItem( ply, item )
+	
 	net.Start( "BZ_SellItem" )
 		
 		net.WriteUInt( item.Index, 32 )
@@ -101,6 +157,15 @@ end )
 
 function GM:BuyPerk( perk )
 	
+	if perk == nil then return end
+	
+	local gm = gmod.GetGamemode()
+	local ply = LocalPlayer()
+	
+	if gm:PlayerCanBuyPerk( ply, perk ) ~= true then return end
+	
+	gmod.GetGamemode():PlayerBuyPerk( ply, perk )
+	
 	net.Start( "BZ_BuyPerk" )
 		
 		net.WriteUInt( perk.Index, 32 )
@@ -118,6 +183,15 @@ concommand.Add( "bz_buyperk", function( ply, cmd, args, arg )
 end )
 
 function GM:SellPerk( perk )
+	
+	if perk == nil then return end
+	
+	local gm = gmod.GetGamemode()
+	local ply = LocalPlayer()
+	
+	if gm:PlayerCanSellPerk( ply, perk ) ~= true then return end
+	
+	gmod.GetGamemode():PlayerSellPerk( ply, perk )
 	
 	net.Start( "BZ_SellPerk" )
 		
@@ -139,6 +213,8 @@ end )
 
 function GM:ActivateAbility( ability )
 	
+	if ability == nil then return end
+	
 	net.Start( "BZ_ActivateAbility" )
 		
 		net.WriteUInt( ability.Index, 32 )
@@ -157,14 +233,35 @@ concommand.Add( "bz_ability", function( ply, cmd, args, arg )
 	
 end )
 
+local menubuttons = {
+	
+	[ "gm_showhelp" ] = 1,
+	[ "gm_showteam" ] = 2,
+	[ "gm_showspare1" ] = 3,
+	[ "gm_showspare2" ] = 4,
+	
+}
 function GM:PlayerBindPress( ply, bind, pressed )
 	
-	if ply == LocalPlayer() and IsValid( ply ) == true and ply:Alive() == true and ply:Team() == TEAM_BEAT then
+	if pressed == true then
 		
-		for i = 1, self:PlayerGetAbilityCount( ply ) do
+		if ply == LocalPlayer() and IsValid( ply ) == true and ply:Alive() == true and ply:Team() == TEAM_BEAT then
 			
-			local ability = self:PlayerGetAbility( ply, i )
-			if ability ~= nil and bind == ability.Bind and self:PlayerCanActivateAbility( ply, ability ) == true then self:ActivateAbility( ability ) end
+			for i = 1, self:PlayerGetAbilityCount( ply ) do
+				
+				local ability = self:PlayerGetAbility( ply, i )
+				if ability ~= nil and bind == ability.Bind and self:PlayerCanActivateAbility( ply, ability ) == true then self:ActivateAbility( ability ) end
+				
+			end
+			
+		end
+		
+		local menutab = menubuttons[ bind ]
+		if menutab ~= nil then
+			
+			self:CreateMenu( menutab )
+			
+			return true
 			
 		end
 		

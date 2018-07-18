@@ -14,6 +14,8 @@ local function createperkmenu( gm, perkmenu )
 	local children = perkmenu:GetChildren()
 	for i = 1, #children do children[ i ]:Remove() end
 	
+	local curperkpoints = ply:GetPerkPoints()
+	
 	local perkscroll = vgui.Create( "DScrollPanel" )
 	perkscroll:SetParent( perkmenu )
 	perkscroll:Dock( LEFT )
@@ -40,20 +42,19 @@ local function createperkmenu( gm, perkmenu )
 	perkbuttonbg:Dock( BOTTOM )
 	function perkbuttonbg:Paint( w, h ) end
 	
-	local perkpoints = gm.HUD:CreateLabel( perkmenu, ply:GetPerkPoints() .. " perk points", "BZ_LabelLarge" )
+	local perkpoints = gm.HUD:CreateLabel( perkmenu, curperkpoints .. " perk points", "BZ_LabelLarge" )
 	perkpoints:Dock( BOTTOM )
 	
 	local perkbuy
 	local perksell
-	local function updateperkmenu( points, count )
+	local function updateperkmenu()
 		
-		points = points or ply:GetPerkPoints()
-		count = count or gm:PlayerGetPerkNum( ply, curperk )
+		local count = gm:PlayerGetPerkNum( ply, curperk )
 		
 		local cost = "(" .. curperk.Cost .. " point" .. ( ( curperk.Cost ~= 1 and "s" ) or "" ) .. ")"
 		perkbuy:SetText( "Buy " .. cost )
 		perksell:SetText( "Sell " .. cost )
-		perkpoints:SetText( points .. " perk points" )
+		perkpoints:SetText( curperkpoints .. " perk points" )
 		
 		local name = curperk.Name or ""
 		if count ~= 0 then name = name .. " (" .. count .. ")" end
@@ -62,20 +63,20 @@ local function createperkmenu( gm, perkmenu )
 	end
 	perkbuy = gm.HUD:CreateButton( perkbuttonbg, "", function( self )
 		
-		if curperk == nil or gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return end
+		if curperk == nil or gm:PlayerCanBuyPerk( ply, curperk, curperkpoints ) ~= true then return end
 		
-		local count = gm:PlayerGetPerkNum( ply, curperk ) + 1
-		updateperkmenu( ply:GetPerkPoints() - curperk.Cost, count )
-		perkdesc:SetText( curperk:GetDescription( ply, count ) )
-		
+		curperkpoints = curperkpoints - curperk.Cost
 		gm:BuyPerk( curperk )
+		
+		updateperkmenu()
+		perkdesc:SetText( curperk:GetDescription( ply, gm:PlayerGetPerkNum( ply, curperk ) ) )
 		
 	end )
 	perkbuy:Dock( LEFT )
 	function perkbuy:GetButtonBGColor()
 		
 		if curperk == nil then return end
-		if gm:PlayerCanBuyPerk( ply, curperk ) ~= true then return gm.HUD.Color.buttoninactive, true end
+		if gm:PlayerCanBuyPerk( ply, curperk, curperkpoints ) ~= true then return gm.HUD.Color.buttoninactive, true end
 		
 	end
 	
@@ -83,11 +84,11 @@ local function createperkmenu( gm, perkmenu )
 		
 		if curperk == nil or gm:PlayerCanSellPerk( ply, curperk ) ~= true then return end
 		
-		local count = gm:PlayerGetPerkNum( ply, curperk ) - 1
-		updateperkmenu( ply:GetPerkPoints() + curperk.Cost, count )
-		perkdesc:SetText( curperk:GetDescription( ply, count ) )
-		
+		curperkpoints = curperkpoints + curperk.Cost
 		gm:SellPerk( curperk )
+		
+		updateperkmenu()
+		perkdesc:SetText( curperk:GetDescription( ply, gm:PlayerGetPerkNum( ply, curperk ) ) )
 		
 	end )
 	perksell:Dock( RIGHT )
@@ -133,7 +134,7 @@ local function createperkmenu( gm, perkmenu )
 		function perkbutton:GetButtonBGColor()
 			
 			if gm:PlayerHasPerk( ply, perk ) == true then return gm.HUD.Color.buttonspecial end
-			if gm:PlayerCanBuyPerk( ply, perk ) ~= true then return gm.HUD.Color.buttoninactive end
+			if gm:PlayerCanBuyPerk( ply, perk, curperkpoints ) ~= true then return gm.HUD.Color.buttoninactive end
 			
 		end
 		
@@ -163,6 +164,8 @@ local function createloadoutmenu( gm, loadoutmenu )
 	local children = loadoutmenu:GetChildren()
 	for i = 1, #children do children[ i ]:Remove() end
 	
+	local curloadoutpoints = ply:GetLoadoutPoints()
+	
 	local loadoutscroll = vgui.Create( "DScrollPanel" )
 	loadoutscroll:SetParent( loadoutmenu )
 	loadoutscroll:Dock( LEFT )
@@ -188,7 +191,7 @@ local function createloadoutmenu( gm, loadoutmenu )
 	local loadouttoggle = gm.HUD:CreateButton( loadoutmenu )
 	loadouttoggle:Dock( BOTTOM )
 	
-	local loadoutpoints = gm.HUD:CreateLabel( loadoutmenu, ply:GetLoadoutPoints() .. " loadout points", "BZ_LabelLarge" )
+	local loadoutpoints = gm.HUD:CreateLabel( loadoutmenu, curloadoutpoints .. " loadout points", "BZ_LabelLarge" )
 	loadoutpoints:Dock( BOTTOM )
 	
 	local curitem
@@ -197,12 +200,13 @@ local function createloadoutmenu( gm, loadoutmenu )
 	local loadoutsell
 	local function loadoutbuy( button )
 		
-		if curitem == nil or gm:PlayerCanBuyItem( ply, curitem ) ~= true then return end
+		if curitem == nil or gm:PlayerCanBuyItem( ply, curitem, curloadoutpoints ) ~= true then return end
+		
+		curloadoutpoints = curloadoutpoints - curitem.Cost
+		gm:BuyItem( curitem )
 		
 		button:SetText( "Sell (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
-		loadoutpoints:SetText( ( ply:GetLoadoutPoints() - curitem.Cost ) .. " loadout points" )
-		
-		gm:BuyItem( curitem )
+		loadoutpoints:SetText( curloadoutpoints .. " loadout points" )
 		
 		local name = curitem.Name or ""
 		if name[ 1 ] == "#" then name = language.GetPhrase( name ) end
@@ -219,10 +223,11 @@ local function createloadoutmenu( gm, loadoutmenu )
 		
 		if curitem == nil or gm:PlayerCanSellItem( ply, curitem ) ~= true then return end
 		
-		button:SetText( "Buy (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
-		loadoutpoints:SetText( ( ply:GetLoadoutPoints() + curitem.Cost ) .. " loadout points" )
-		
+		curloadoutpoints = curloadoutpoints + curitem.Cost
 		gm:SellItem( curitem )
+		
+		button:SetText( "Buy (" .. curitem.Cost .. " point" .. ( ( curitem.Cost ~= 1 and "s" ) or "" ) .. ")" )
+		loadoutpoints:SetText( curloadoutpoints .. " loadout points" )
 		
 		local name = curitem.Name or ""
 		if name[ 1 ] == "#" then name = language.GetPhrase( name ) end
@@ -230,7 +235,7 @@ local function createloadoutmenu( gm, loadoutmenu )
 		button.DoClick = loadoutbuy
 		function button:GetButtonBGColor()
 			
-			if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactive, true end
+			if gm:PlayerCanBuyItem( ply, curitem, curloadoutpoints ) ~= true then return gm.HUD.Color.buttoninactive, true end
 			
 		end
 		
@@ -275,7 +280,7 @@ local function createloadoutmenu( gm, loadoutmenu )
 				loadouttoggle.DoClick = loadoutbuy
 				function loadouttoggle:GetButtonBGColor()
 					
-					if gm:PlayerCanBuyItem( ply, curitem ) ~= true then return gm.HUD.Color.buttoninactive, true end
+					if gm:PlayerCanBuyItem( ply, curitem, curloadoutpoints ) ~= true then return gm.HUD.Color.buttoninactive, true end
 					
 				end
 				
@@ -290,7 +295,7 @@ local function createloadoutmenu( gm, loadoutmenu )
 		function itembutton:GetButtonBGColor()
 			
 			if gm:PlayerHasItem( ply, item ) == true then return gm.HUD.Color.buttonspecial end
-			if gm:PlayerCanBuyItem( ply, item ) ~= true then return gm.HUD.Color.buttoninactive end
+			if gm:PlayerCanBuyItem( ply, item, curloadoutpoints ) ~= true then return gm.HUD.Color.buttoninactive end
 			
 		end
 		function itembutton:DoDoubleClick()
@@ -361,22 +366,15 @@ local function createcharsheet( gm, charmenu )
 	
 	local function classrespec( button )
 		
-		gm:ResetPlayerCharacter( ply )
+		gm:ResetCharacter()
 		respec = true
-		
-		net.Start( "BZ_ResetPlayer" )
-		net.SendToServer()
 		
 	end
 	local function classselect( button )
 		
 		button:SetText( "Respec class" )
 		
-		net.Start( "BZ_SetClass" )
-			
-			net.WriteUInt( curclass, 32 )
-			
-		net.SendToServer()
+		gm:SetClass( curclass )
 		
 		button.DoClick = classrespec
 		

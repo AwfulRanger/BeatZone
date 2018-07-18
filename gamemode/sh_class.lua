@@ -49,7 +49,7 @@ function GM:CanChangeClass( ply, class )
 	
 end
 
-function GM:SetPlayerClass( ply, class )
+function GM:SetPlayerClass( ply, class, omit )
 	
 	if IsValid( ply ) ~= true then return end
 	if isnumber( class ) == true then class = self:GetClass( class ) end
@@ -67,7 +67,15 @@ function GM:SetPlayerClass( ply, class )
 			net.WriteEntity( ply )
 			net.WriteUInt( self:GetClass( class ), 32 )
 			
-		net.Broadcast()
+		if omit == true then
+			
+			net.SendOmit( ply )
+			
+		else
+			
+			net.Broadcast()
+			
+		end
 		
 	end
 	

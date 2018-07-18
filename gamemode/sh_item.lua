@@ -66,7 +66,7 @@ end
 
 
 
-function GM:PlayerBuyItem( ply, item )
+function GM:PlayerBuyItem( ply, item, omit )
 	
 	if IsValid( ply ) ~= true then return end
 	
@@ -83,13 +83,21 @@ function GM:PlayerBuyItem( ply, item )
 			net.WriteEntity( ply )
 			net.WriteUInt( id, 32 )
 			
-		net.Broadcast()
+		if omit == true then
+			
+			net.SendOmit( ply )
+			
+		else
+			
+			net.Broadcast()
+			
+		end
 		
 	end
 	
 end
 
-function GM:PlayerSellItem( ply, item )
+function GM:PlayerSellItem( ply, item, omit )
 	
 	if IsValid( ply ) ~= true then return end
 	
@@ -110,7 +118,15 @@ function GM:PlayerSellItem( ply, item )
 			net.WriteEntity( ply )
 			net.WriteUInt( id, 32 )
 			
-		net.Broadcast()
+		if omit == true then
+			
+			net.SendOmit( ply )
+			
+		else
+			
+			net.Broadcast()
+			
+		end
 		
 	end
 	
@@ -140,12 +156,12 @@ function GM:PlayerHasItem( ply, item )
 	
 end
 
-function GM:PlayerCanBuyItem( ply, item )
+function GM:PlayerCanBuyItem( ply, item, points )
 	
 	if ply:Team() ~= TEAM_BEAT then return false end
 	if ply:Alive() ~= true then return false end
 	if self:GetRoundState() == ROUND_ONGOING then return false end
-	if ply:GetLoadoutPoints() < item.Cost then return false end
+	if ( points or ply:GetLoadoutPoints() ) < item.Cost then return false end
 	if self:PlayerHasItem( ply, item ) == true then return false end
 	
 	return true

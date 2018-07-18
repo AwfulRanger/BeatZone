@@ -38,7 +38,7 @@ net.Receive( "BZ_SetClass", function( len, ply )
 	local class = gm:GetClass( net.ReadUInt( 32 ) )
 	if class == nil or player_manager.GetPlayerClass( ply ) == class then return end
 	
-	if gm:CanChangeClass( ply, class ) == true then gm:SetPlayerClass( ply, class ) end
+	if gm:CanChangeClass( ply, class ) == true then gm:SetPlayerClass( ply, class, true ) end
 	
 end )
 
@@ -46,7 +46,7 @@ net.Receive( "BZ_ResetPlayer", function( len, ply )
 	
 	local gm = gmod.GetGamemode()
 	
-	if gm:CanChangeClass( ply, player_manager.GetPlayerClass( ply ) ) == true then gm:ResetPlayerCharacter( ply ) end
+	if gm:CanChangeClass( ply, player_manager.GetPlayerClass( ply ) ) == true then gm:ResetPlayerCharacter( ply, true ) end
 	
 end )
 
@@ -56,7 +56,7 @@ net.Receive( "BZ_BuyItem", function( len, ply )
 	local item = gm:GetItem( net.ReadUInt( 32 ) )
 	if item == nil then return end
 	
-	if gm:PlayerCanBuyItem( ply, item ) == true then gm:PlayerBuyItem( ply, item ) end
+	if gm:PlayerCanBuyItem( ply, item ) == true then gm:PlayerBuyItem( ply, item, true ) end
 	
 end )
 
@@ -66,7 +66,7 @@ net.Receive( "BZ_SellItem", function( len, ply )
 	local item = gm:GetItem( net.ReadUInt( 32 ) )
 	if item == nil then return end
 	
-	if gm:PlayerCanSellItem( ply, item ) == true then gm:PlayerSellItem( ply, item ) end
+	if gm:PlayerCanSellItem( ply, item ) == true then gm:PlayerSellItem( ply, item, true ) end
 	
 end )
 
@@ -76,7 +76,7 @@ net.Receive( "BZ_BuyPerk", function( len, ply )
 	local perk = gm:GetPerk( net.ReadUInt( 32 ) )
 	if perk == nil then return end
 	
-	if gm:PlayerCanBuyPerk( ply, perk ) == true then gm:PlayerBuyPerk( ply, perk ) end
+	if gm:PlayerCanBuyPerk( ply, perk ) == true then gm:PlayerBuyPerk( ply, perk, true ) end
 	
 end )
 
@@ -86,7 +86,7 @@ net.Receive( "BZ_SellPerk", function( len, ply )
 	local perk = gm:GetPerk( net.ReadUInt( 32 ) )
 	if perk == nil then return end
 	
-	if gm:PlayerCanSellPerk( ply, perk ) == true then gm:PlayerSellPerk( ply, perk ) end
+	if gm:PlayerCanSellPerk( ply, perk ) == true then gm:PlayerSellPerk( ply, perk, true ) end
 	
 end )
 

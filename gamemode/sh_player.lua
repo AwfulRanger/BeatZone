@@ -169,7 +169,7 @@ function GM:GetPerkPoints( ply )
 	
 end
 
-function GM:ResetPlayerCharacter( ply )
+function GM:ResetPlayerCharacter( ply, omit )
 	
 	if IsValid( ply ) ~= true then return end
 	
@@ -188,7 +188,15 @@ function GM:ResetPlayerCharacter( ply )
 			
 			net.WriteEntity( ply )
 			
-		net.Broadcast()
+		if omit == true then
+			
+			net.SendOmit( ply )
+			
+		else
+			
+			net.Broadcast()
+			
+		end
 		
 	end
 	

@@ -144,7 +144,7 @@ function GM:PlayerSetPerkNum( ply, perk, num )
 	
 end
 
-function GM:PlayerBuyPerk( ply, perk )
+function GM:PlayerBuyPerk( ply, perk, omit )
 	
 	if IsValid( ply ) ~= true then return end
 	
@@ -163,13 +163,21 @@ function GM:PlayerBuyPerk( ply, perk )
 			net.WriteUInt( id, 32 )
 			net.WriteUInt( 1, 32 )
 			
-		net.Broadcast()
+		if omit == true then
+			
+			net.SendOmit( ply )
+			
+		else
+			
+			net.Broadcast()
+			
+		end
 		
 	end
 	
 end
 
-function GM:PlayerSellPerk( ply, perk )
+function GM:PlayerSellPerk( ply, perk, omit )
 	
 	if IsValid( ply ) ~= true then return end
 	
@@ -202,7 +210,15 @@ function GM:PlayerSellPerk( ply, perk )
 			net.WriteUInt( id, 32 )
 			net.WriteUInt( 1, 32 )
 			
-		net.Broadcast()
+		if omit == true then
+			
+			net.SendOmit( ply )
+			
+		else
+			
+			net.Broadcast()
+			
+		end
 		
 	end
 	
@@ -232,12 +248,12 @@ function GM:PlayerHasPerk( ply, perk )
 	
 end
 
-function GM:PlayerCanBuyPerk( ply, perk )
+function GM:PlayerCanBuyPerk( ply, perk, points )
 	
 	if ply:Team() ~= TEAM_BEAT then return false end
 	if ply:Alive() ~= true then return false end
 	if self:GetRoundState() == ROUND_ONGOING then return false end
-	if ply:GetPerkPoints() < perk.Cost then return false end
+	if ( points or ply:GetPerkPoints() ) < perk.Cost then return false end
 	if self:GetClassHasPerk( ply, perk ) ~= true then return false end
 	if self:GetPerkAdd( ply, perk ) <= 0 then return false end
 	
