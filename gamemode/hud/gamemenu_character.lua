@@ -321,6 +321,13 @@ local function createloadoutmenu( gm, loadoutmenu )
 	
 end
 
+local function colorarg( color ) return color.r, color.g, color.b, color.a end
+local function append( richtext, text, color )
+	
+	if color ~= nil then richtext:InsertColorChange( colorarg( color ) ) end
+	if text ~= nil then richtext:AppendText( text ) end
+	
+end
 local function createcharsheet( gm, charmenu )
 	
 	local ply = LocalPlayer()
@@ -393,7 +400,34 @@ local function createcharsheet( gm, charmenu )
 			classname:SetText( class.DisplayName or "" )
 			class:InitializePerks()
 			class:InitializeAbilities()
-			classdesc:SetText( class:GetDescription( ply ) )
+			
+			
+			classdesc:SetText( "" )
+			append( classdesc, class:GetDescription( ply ) .. "\n\n\n\n", gm.HUD.Color.text )
+			append( classdesc, "Abilities:", gm.HUD.Color.textheader )
+			for i = 1, class:GetAbilityCount() do
+				
+				local ability = class:GetAbility( i )
+				
+				append( classdesc, "\n\t\n\t", gm.HUD.Color.text )
+				append( classdesc, ability.Name or "", gm.HUD.Color.texthighlight )
+				append( classdesc, "\n\t" .. ability:GetDescription( ply ) .. "\n\t(" .. ability.Cooldown .. " second cooldown)", gm.HUD.Color.text )
+				
+			end
+			append( classdesc, "\n\n\n\n", gm.HUD.Color.text )
+			append( classdesc, "Perks:", gm.HUD.Color.textheader )
+			append( classdesc, "\n\t", gm.HUD.Color.text )
+			for i = 1, class:GetPerkCount() do
+				
+				local perkname = class:GetPerk( i )
+				local perk = gm:GetPerk( perkname )
+				if perk ~= nil then perkname = perk.Name end
+				
+				append( classdesc, "\n\t", gm.HUD.Color.text )
+				append( classdesc, perkname, gm.HUD.Color.texthighlight )
+				
+			end
+			
 			
 			if player_manager.GetPlayerClass( ply ) == classid then
 				

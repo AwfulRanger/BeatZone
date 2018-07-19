@@ -103,6 +103,17 @@ function GM.HUD:CreateColors( colors )
 		textshadow = Color( 0, 0, 0, 255 ),
 		hudbg = Color( 47, 4, 70, 100 ),
 		
+		textheader = Color( 255, 150, 0, 255 ),
+		texthighlight = Color( 255, 255, 100, 255 ),
+		
+		health = Color( 227, 24, 139, 200 ),
+		shield = Color( 41, 92, 209, 200 ),
+		clip = Color( 146, 32, 209, 200 ),
+		ammo = Color( 69, 10, 101, 200 ),
+		
+		abilityunready = Color( 105, 105, 0, 150 ),
+		abilityready = Color( 151, 151, 8, 200 ),
+		
 		plyready = Color( 0, 255, 0, 255 ),
 		plyunready = Color( 255, 0, 0, 255 ),
 		
@@ -110,18 +121,10 @@ function GM.HUD:CreateColors( colors )
 		dmgstart = Color( 0, 255, 0, 255 ),
 		dmgend = Color( 255, 0, 0, 0 ),
 		
-		health = Color( 227, 24, 139, 200 ),
-		shield = Color( 41, 92, 209, 200 ),
-		clip = Color( 146, 32, 209, 200 ),
-		ammo = Color( 69, 10, 101, 200 ),
-		
 		dead = Color( 255, 0, 0, 255 ),
 		
 		voteyes = Color( 0, 255, 0, 255 ),
 		voteno = Color( 255, 0, 0, 255 ),
-		
-		abilityunready = Color( 105, 105, 0, 150 ),
-		abilityready = Color( 151, 151, 8, 200 ),
 		
 	}
 	

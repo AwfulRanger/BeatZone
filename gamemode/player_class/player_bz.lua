@@ -100,28 +100,7 @@ end
 
 function PLAYER:GetDescription( ply )
 	
-	local desc = self.Description or ""
-	
-	desc = desc .. "\n\n\n\nAbilities:"
-	for i = 1, self:GetAbilityCount() do
-		
-		local ability = self:GetAbility( i )
-		desc = desc .. "\n\n" .. ( ability.Name or "" ) .. "\n" .. ability:GetDescription( ply ) .. "\n(" .. ability.Cooldown .. " second cooldown)"
-		
-	end
-	
-	desc = desc .. "\n\n\n\nPerks:\n"
-	local gm = gmod.GetGamemode()
-	for i = 1, self:GetPerkCount() do
-		
-		local perkname = self:GetPerk( i )
-		local perk = gm:GetPerk( perkname )
-		if perk ~= nil then perkname = perk.Name end
-		desc = desc .. "\n" .. perkname
-		
-	end
-	
-	return desc
+	return self.Description or ""
 	
 end
 

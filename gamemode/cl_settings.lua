@@ -73,6 +73,17 @@ local colorlist = {
 	{ id = "textshadow", name = "Text shadow" },
 	{ id = "hudbg", name = "HUD background" },
 	
+	{ id = "textheader", name = "Text header" },
+	{ id = "texthighlight", name = "Text highlight" },
+	
+	{ id = "health", name = "Health" },
+	{ id = "shield", name = "Shield" },
+	{ id = "clip", name = "Loaded ammo" },
+	{ id = "ammo", name = "Reserve ammo" },
+	
+	{ id = "abilityunready", name = "Ability unready" },
+	{ id = "abilityready", name = "Ability ready" },
+	
 	{ id = "plyready", name = "Ready player" },
 	{ id = "plyunready", name = "Unready player" },
 	
@@ -80,18 +91,10 @@ local colorlist = {
 	{ id = "dmgstart", name = "Damage start" },
 	{ id = "dmgend", name = "Damage end" },
 	
-	{ id = "health", name = "Health" },
-	{ id = "shield", name = "Shield" },
-	{ id = "clip", name = "Loaded ammo" },
-	{ id = "ammo", name = "Reserve ammo" },
-	
 	{ id = "dead", name = "Dead player" },
 	
 	{ id = "voteyes", name = "Yes vote count" },
 	{ id = "voteno", name = "No vote count" },
-	
-	{ id = "abilityunready", name = "Ability unready" },
-	{ id = "abilityready", name = "Ability ready" }
 	
 }
 GM:AddSettingsData( "hudcolors", {
