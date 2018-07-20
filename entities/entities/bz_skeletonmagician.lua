@@ -114,6 +114,8 @@ if SERVER then
 		
 		BaseClass.HandleAI( self )
 		
+		self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
+		
 		local target = self:GetTarget()
 		if IsValid( target ) == true then
 			
@@ -122,6 +124,8 @@ if SERVER then
 				self:StartActivity( self.Activity.Run or ACT_MP_RUN_ITEM1 )
 				
 				self:FollowEntity( target, { maxage = 0.1, think = function()
+					
+					self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
 					
 					if self:ShouldChase( target ) ~= true then return "ok" end
 					

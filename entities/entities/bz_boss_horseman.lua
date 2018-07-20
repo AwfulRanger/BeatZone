@@ -1,4 +1,4 @@
-DEFINE_BASECLASS( "bz_skeletonlad" )
+DEFINE_BASECLASS( "bz_skeletonbase" )
 
 AddCSLuaFile()
 
@@ -75,7 +75,7 @@ ENT.Activity = {
 
 if SERVER then
 	
-	ENT.MoveSpeed = 300
+	ENT.MoveSpeed = 320
 	
 	ENT.SwingLength = 96
 	
@@ -86,12 +86,16 @@ if SERVER then
 		
 		BaseClass.HandleAI( self )
 		
+		self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
+		
 		local target = self:GetTarget()
 		if IsValid( target ) == true then
 			
 			self:StartActivity( self.Activity.Run or ACT_MP_RUN_MELEE )
 			
 			self:FollowEntity( target, { maxage = 0.1, think = function()
+				
+				self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
 				
 				local hit, ent = self:SwingTrace( target )
 				
@@ -142,6 +146,25 @@ if SERVER then
 			self:StartActivity( self.Activity.Stand or ACT_MP_STAND_MELEE )
 			
 		end
+		
+	end
+	
+	function ENT:GetMoveSpeed()
+		
+		local speed = BaseClass.GetMoveSpeed( self )
+		
+		if self.LastPlayerDamage ~= nil and CurTime() < self.LastPlayerDamage + 1 then speed = speed * 0.925 end
+		
+		return speed
+		
+	end
+	
+	function ENT:OnInjured( dmg )
+		
+		BaseClass.OnInjured( self, dmg )
+		
+		local attacker = dmg:GetAttacker()
+		if IsValid( attacker ) == true and attacker:IsPlayer() == true then self.LastPlayerDamage = CurTime() end
 		
 	end
 	

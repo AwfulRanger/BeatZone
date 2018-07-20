@@ -68,12 +68,16 @@ if SERVER then
 		
 		BaseClass.HandleAI( self )
 		
+		self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
+		
 		local target = self:GetTarget()
 		if IsValid( target ) == true then
 			
 			self:StartActivity( self.Activity.Run or ACT_MP_RUN_MELEE )
 			
 			self:FollowEntity( target, { maxage = 0.1, think = function()
+				
+				self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
 				
 				local hit, ent = self:SwingTrace( target )
 				
