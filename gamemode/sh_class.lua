@@ -58,9 +58,9 @@ function GM:SetPlayerClass( ply, class, omit )
 	player_manager.RunClass( ply, "InitializePerks" )
 	player_manager.RunClass( ply, "InitializeAbilities" )
 	
+	self:ResetPlayerCharacter( ply, omit )
+	
 	if SERVER then
-		
-		self:ResetPlayerCharacter( ply )
 		
 		net.Start( "BZ_SetClass" )
 			
