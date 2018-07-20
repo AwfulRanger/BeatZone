@@ -47,6 +47,8 @@ function ENT:Initialize()
 		self.loco:SetAcceleration( 1000 )
 		self.loco:SetDeceleration( 1000 )
 		
+		self:SetLagCompensated( true )
+		
 	end
 	
 	self:SetCollisionBounds( Vector( -16, -16, 0 ), Vector( 16, 16, 72 ) )
