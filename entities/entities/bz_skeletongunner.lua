@@ -120,7 +120,7 @@ if SERVER then
 		local target = self:GetTarget()
 		if IsValid( target ) == true then
 			
-			if self:ShouldChase( target ) == true then
+			if self:ShouldChase( target ) == true and self:CanShoot() == true then
 				
 				self:StartActivity( self.Activity.Run or ACT_MP_RUN_PRIMARY )
 				
@@ -138,7 +138,7 @@ if SERVER then
 				local dir = -( target:GetPos() - self:GetPos() ):Angle():Forward()
 				local tr = util.TraceLine( { start = pos, endpos = pos + ( dir * ( self.MaxRange - self.MinRange ) ), filter = self } )
 				
-				if pos:Distance( tr.HitPos ) < 32 then
+				if pos:Distance( tr.HitPos ) < 64 then
 					
 					self:StartActivity( self.Activity.Crouch or ACT_MP_CROUCH_PRIMARY )
 					
@@ -148,7 +148,7 @@ if SERVER then
 					
 					self:StartActivity( self.Activity.Run or ACT_MP_RUN_PRIMARY )
 					
-					self:MoveToPos( tr.HitPos, { tolerance = 32 } )
+					self:MoveToPos( tr.HitPos, { tolerance = 64 } )
 					
 				end
 				
