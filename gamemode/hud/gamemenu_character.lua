@@ -321,6 +321,7 @@ local function createloadoutmenu( gm, loadoutmenu )
 	
 end
 
+local lasttab = 1
 local function colorarg( color ) return color.r, color.g, color.b, color.a end
 local function append( richtext, text, color )
 	
@@ -341,6 +342,9 @@ local function createcharsheet( gm, charmenu )
 	charsheet:SetPadding( spacing )
 	charsheet:SetFadeTime( 0 )
 	function charsheet:Paint( w, h ) end
+	
+	local tabs = {}
+	local tabids = {}
 	
 	
 	--class menu
@@ -471,40 +475,47 @@ local function createcharsheet( gm, charmenu )
 		
 	end
 	
-	charsheet:AddSheet( "Class", classmenu ).Tab.Paint = function( self, w, h )
-		
-		surface.SetDrawColor( gm.HUD.Color.button )
-		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
-		surface.DrawRect( 0, 0, w, 20 )
-		
-	end
+	table.insert( tabs, charsheet:AddSheet( "Class", classmenu ) )
 	
 	
 	--perk menu
 	local perkmenu = vgui.Create( "DPanel" )
 	function perkmenu:Paint( w, h ) end
 	
-	charsheet:AddSheet( "Perks", perkmenu ).Tab.Paint = function( self, w, h )
-		
-		surface.SetDrawColor( gm.HUD.Color.button )
-		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
-		surface.DrawRect( 0, 0, w, 20 )
-		
-	end
+	table.insert( tabs, charsheet:AddSheet( "Perks", perkmenu ) )
 	
 	
 	--loadout menu
 	local loadoutmenu = vgui.Create( "DPanel" )
 	function loadoutmenu:Paint( w, h ) end
 	
-	charsheet:AddSheet( "Loadout", loadoutmenu ).Tab.Paint = function( self, w, h )
+	table.insert( tabs, charsheet:AddSheet( "Loadout", loadoutmenu ) )
+	
+	
+	for i = 1, #tabs do
 		
-		surface.SetDrawColor( gm.HUD.Color.button )
-		if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
-		surface.DrawRect( 0, 0, w, 20 )
+		local tab = tabs[ i ].Tab
+		
+		tab.Paint = function( self, w, h )
+			
+			surface.SetDrawColor( gm.HUD.Color.button )
+			if self:IsActive() then surface.SetDrawColor( gm.HUD.Color.buttonactive ) end
+			surface.DrawRect( 0, 0, w, 20 )
+			
+		end
+		
+		tabids[ tab ] = i
 		
 	end
 	
+	if tabs[ lasttab ] ~= nil then charsheet:SetActiveTab( tabs[ lasttab ].Tab ) end
+	
+	function charsheet:OnActiveTabChanged( old, new )
+		
+		local id = tabids[ new ]
+		if id ~= nil then lasttab = id end
+		
+	end
 	
 	function charsheet:Think()
 		
