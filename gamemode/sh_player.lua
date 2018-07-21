@@ -209,9 +209,22 @@ end
 
 
 
+local function doaddmult( gm, mult, ply, perk )
+	
+	if isstring( perk ) == true then perk = gm:GetPerk( perk ) end
+	if gm:PlayerHasPerk( ply, perk ) ~= true then return mult end
+	
+	return mult * ( 1 + gm:GetPerkTotal( ply, perk ) )
+	
+end
+
 function GM:GetPlayerCritChance( ply )
 	
-	return self:GetConfig( "BaseCritChance" )
+	local chance = self:GetConfig( "BaseCritChance" )
+	
+	if ply:GetVelocity():LengthSqr() == 0 then chance = doaddmult( self, chance, ply, "perk_criticalspecial_immobile" ) end
+	
+	return chance
 	
 end
 

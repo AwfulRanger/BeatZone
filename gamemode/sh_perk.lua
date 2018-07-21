@@ -349,6 +349,15 @@ GM:AddPerk( "perk_damage_critical", {
 	
 } )
 
+GM:AddPerk( "perk_damagespecial_criticalcrouch", {
+	
+	Name = "Crouch Critical Damage",
+	Description = "%s critical damage bonus while crouching",
+	Type = "addmult",
+	BaseAdd = 0.05,
+	
+} )
+
 --damage resistances
 GM:AddPerk( "perk_resist_all", {
 	
@@ -480,6 +489,15 @@ GM:AddPerk( "perk_attackspeed", {
 	Name = "Attack Speed",
 	Description = "%s faster attack speed",
 	Type = "addmult",
+	
+} )
+
+GM:AddPerk( "perk_criticalspecial_immobile", {
+	
+	Name = "Immobile Critical Chance",
+	Description = "%s critical chance while not moving",
+	Type = "addmult",
+	BaseAdd = 0.25,
 	
 } )
 

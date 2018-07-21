@@ -17,8 +17,8 @@ function PLAYER:InitializePerks()
 	
 	self:AddPerk( "perk_damage_bullet" )
 	self:AddPerk( "perk_damage_critical" )
-	self:AddPerk( "perk_resistspecial_crouch" )
-	self:AddPerk( "perk_resistspecial_immobile" )
+	self:AddPerk( "perk_damagespecial_criticalcrouch" )
+	self:AddPerk( "perk_criticalspecial_immobile" )
 	self:AddPerk( "perk_maxammo" )
 	self:AddPerk( "perk_enemybleed" )
 	

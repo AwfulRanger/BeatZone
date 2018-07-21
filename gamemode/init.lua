@@ -439,6 +439,7 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 			dmg:ScaleDamage( 2 )
 			dodmg( self, dmg, attacker, "perk_damage_critical" )
+			if attacker:Crouching() == true then dodmg( self, dmg, attacker, "perk_damagespecial_criticalcrouch" ) end
 			
 		end
 		
