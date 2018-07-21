@@ -12,6 +12,8 @@ CreateConVar( "bz_friendlyfire", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Enable
 
 
 DMGCUSTOM_CRIT = 1
+DMGCUSTOM_IGNITE = 2
+DMGCUSTOM_BLEED = 4
 
 
 

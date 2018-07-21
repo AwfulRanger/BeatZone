@@ -83,6 +83,7 @@ function GM:HandleEntityIgnite()
 					dmg:SetDamageType( DMG_BURN )
 					dmg:SetAttacker( attacker )
 					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
+					dmg:SetDamageCustom( DMGCUSTOM_IGNITE )
 					
 					ent:TakeDamageInfo( dmg )
 					
@@ -111,6 +112,7 @@ function GM:HandleEntityIgnite()
 					dmg:SetDamageType( DMG_BURN )
 					dmg:SetAttacker( attacker )
 					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
+					dmg:SetDamageCustom( DMGCUSTOM_IGNITE )
 					
 					ent:TakeDamageInfo( dmg )
 					
@@ -163,6 +165,7 @@ function GM:HandleEntityBleed()
 					dmg:SetDamageType( DMG_SLASH )
 					dmg:SetAttacker( attacker )
 					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
+					dmg:SetDamageCustom( DMGCUSTOM_BLEED )
 					
 					ent:TakeDamageInfo( dmg )
 					
@@ -191,6 +194,7 @@ function GM:HandleEntityBleed()
 					dmg:SetDamageType( DMG_SLASH )
 					dmg:SetAttacker( attacker )
 					dmg:SetDamagePosition( ent:GetPos() + ent:OBBCenter() )
+					dmg:SetDamageCustom( DMGCUSTOM_BLEED )
 					
 					ent:TakeDamageInfo( dmg )
 					
@@ -445,9 +449,9 @@ function GM:EntityTakeDamage( ent, dmg )
 		
 		if ent.IsBZEnemy == true then
 			
-			local dmgtype = dmg:GetDamageType()
+			local custom = dmg:GetDamageCustom()
 			
-			if dmgtype ~= DMG_BURN then
+			if bit.band( custom, DMGCUSTOM_IGNITE ) ~= DMGCUSTOM_IGNITE then
 				
 				local ignitetime = 0
 				ignitetime = doadd( self, ignitetime, attacker, "perk_enemyignite" )
@@ -455,7 +459,7 @@ function GM:EntityTakeDamage( ent, dmg )
 				
 			end
 			
-			if dmgtype ~= DMG_SLASH then
+			if bit.band( custom, DMGCUSTOM_BLEED ) ~= DMGCUSTOM_BLEED then
 				
 				local bleedtime = 0
 				bleedtime = doadd( self, bleedtime, attacker, "perk_enemybleed" )
