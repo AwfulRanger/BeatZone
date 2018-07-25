@@ -6,6 +6,7 @@ AddCSLuaFile( "player_class/player_blaster.lua" )
 AddCSLuaFile( "player_class/player_ripper.lua" )
 AddCSLuaFile( "player_class/player_burner.lua" )
 AddCSLuaFile( "player_class/player_producer.lua" )
+AddCSLuaFile( "player_class/player_remixer.lua" )
 
 include( "player_class/player_bz.lua" )
 include( "player_class/player_tuner.lua" )
@@ -13,6 +14,7 @@ include( "player_class/player_blaster.lua" )
 include( "player_class/player_ripper.lua" )
 include( "player_class/player_burner.lua" )
 include( "player_class/player_producer.lua" )
+include( "player_class/player_remixer.lua" )
 
 
 
@@ -95,3 +97,4 @@ GM:AddClass( "player_blaster" )
 GM:AddClass( "player_ripper" )
 GM:AddClass( "player_burner" )
 GM:AddClass( "player_producer" )
+GM:AddClass( "player_remixer" )

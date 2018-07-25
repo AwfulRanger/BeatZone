@@ -259,6 +259,19 @@ function GM:Move( ply, mv )
 		
 	end
 	
+	local plys = self:GetPlayers()
+	for i = 1, #plys do
+		
+		local p = plys[ i ]
+		if p.BZ_AbilityHarmonyTime ~= nil and CurTime() < p.BZ_AbilityHarmonyTime and p:GetPos():Distance( ply:GetPos() ) < 512 then
+			
+			mv:SetMaxClientSpeed( mv:GetMaxClientSpeed() * 1.1 )
+			mv:SetMaxSpeed( mv:GetMaxSpeed() * 1.1 )
+			
+		end
+		
+	end
+	
 end
 
 
