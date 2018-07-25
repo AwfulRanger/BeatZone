@@ -31,6 +31,7 @@ include( "sv_vote.lua" )
 util.AddNetworkString( "BZ_UISound" )
 util.AddNetworkString( "BZ_EntityDamaged" )
 util.AddNetworkString( "BZ_ItemPickup" )
+util.AddNetworkString( "BZ_Ignite" )
 
 
 
@@ -232,6 +233,13 @@ function meta:StartIgnite( len, dmg, attacker )
 		
 	end
 	
+	net.Start( "BZ_Ignite" )
+		
+		net.WriteEntity( self )
+		net.WriteBool( true )
+		
+	net.Broadcast()
+	
 end
 function meta:StopIgnite()
 	
@@ -249,6 +257,13 @@ function meta:StopIgnite()
 		tblremove( gm.IgnitedEntitySeq, gm.IgnitedEntity, id )
 		
 	end
+	
+	net.Start( "BZ_Ignite" )
+		
+		net.WriteEntity( self )
+		net.WriteBool( false )
+		
+	net.Broadcast()
 	
 end
 

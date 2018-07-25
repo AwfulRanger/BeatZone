@@ -25,6 +25,24 @@ net.Receive( "BZ_SetBoss", function()
 	
 end )
 
+net.Receive( "BZ_Ignite", function()
+	
+	local ent = net.ReadEntity()
+	
+	if IsValid( ent ) ~= true then return end
+	
+	if net.ReadBool() == true then
+		
+		ParticleEffectAttach( "burningplayer_red", PATTACH_ABSORIGIN_FOLLOW, ent, -1 )
+		
+	else
+		
+		ent:StopParticlesNamed( "burningplayer_red" )
+		
+	end
+	
+end )
+
 
 
 GM.Skeletons = GM.Skeletons or {}

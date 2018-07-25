@@ -7,6 +7,9 @@ include( "sh_mapcustom.lua" )
 
 
 
+game.AddParticles( "particles/burningplayer.pcf" )
+PrecacheParticleSystem( "burningplayer_red" )
+
 CreateConVar( "bz_friendlyfire", 1, { FCVAR_ARCHIVE, FCVAR_REPLICATED }, "Enable friendly fire (0 = disabled, 1 = shields only, 2 = all)" )
 
 
