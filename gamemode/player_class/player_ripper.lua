@@ -65,7 +65,7 @@ function PLAYER:InitializeAbilities()
 				
 			end
 			
-			ply:EmitSound( equalizesound, 140 )
+			ply:EmitSound( equalizesound )
 			
 		end,
 		
@@ -94,7 +94,7 @@ function PLAYER:InitializeAbilities()
 				
 			end
 			
-			ply:EmitSound( bloodbathsound, 140 )
+			ply:EmitSound( bloodbathsound )
 			
 		end,
 		

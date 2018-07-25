@@ -95,7 +95,7 @@ function PLAYER:InitializeAbilities()
 			effect:SetScale( 16384 )
 			util.Effect( "bz_snipetracer", effect )
 			
-			ply:EmitSound( snipesound, 140 )
+			ply:EmitSound( snipesound )
 			
 		end,
 		
@@ -141,7 +141,7 @@ function PLAYER:InitializeAbilities()
 			effect:SetScale( 16384 )
 			util.Effect( "bz_grapplehook", effect )
 			
-			ply:EmitSound( grapplesound, 140 )
+			ply:EmitSound( grapplesound )
 			
 		end,
 		

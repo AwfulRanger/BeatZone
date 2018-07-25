@@ -58,7 +58,7 @@ if SERVER then
 			
 			if IsValid( ent ) == true then ent:StartIgnite( self:GetDuration(), self:GetDamage(), self ) end
 			
-			self:EmitSound( self.HitSounds[ math.random( #self.HitSounds ) ], 140 )
+			self:EmitSound( self.HitSounds[ math.random( #self.HitSounds ) ] )
 			ParticleEffect( self.HitParticle, self:GetPos(), self:GetAngles() )
 			
 		end

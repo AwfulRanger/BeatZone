@@ -113,7 +113,7 @@ if SERVER then
 		self:SetShootTime( CurTime() )
 		
 		self:RestartGesture( self.Activity.Attack or ACT_MP_ATTACK_STAND_SECONDARY )
-		self:EmitSound( self.ShootSounds[ math.random( #self.ShootSounds ) ], 140, nil, nil, CHAN_WEAPON )
+		self:EmitSound( self.ShootSounds[ math.random( #self.ShootSounds ) ], nil, nil, nil, CHAN_WEAPON )
 		
 	end
 	
@@ -147,7 +147,7 @@ if SERVER then
 		self:SetShootTime( CurTime() )
 		
 		self:RestartGesture( self.Activity.Attack or ACT_MP_ATTACK_STAND_SECONDARY )
-		self:EmitSound( self.ShootSounds[ math.random( #self.ShootSounds ) ], 140, nil, nil, CHAN_WEAPON )
+		self:EmitSound( self.ShootSounds[ math.random( #self.ShootSounds ) ], nil, nil, nil, CHAN_WEAPON )
 		
 	end
 	

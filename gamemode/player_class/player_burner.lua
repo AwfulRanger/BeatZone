@@ -51,7 +51,7 @@ function PLAYER:InitializeAbilities()
 				
 			end
 			
-			ply:EmitSound( eruptsound, 140 )
+			ply:EmitSound( eruptsound )
 			
 		end,
 		

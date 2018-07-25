@@ -74,7 +74,7 @@ if SERVER then
 			if IsValid( self:GetOwner() ) == true then attacker = self:GetOwner() end
 			util.BlastDamage( self, attacker, self:GetPos(), self:GetRadius(), self:GetDamage() )
 			
-			self:EmitSound( self.ExplodeSounds[ math.random( #self.ExplodeSounds ) ], 140 )
+			self:EmitSound( self.ExplodeSounds[ math.random( #self.ExplodeSounds ) ] )
 			ParticleEffect( self.ExplodeParticle, self:GetPos(), self:GetAngles() )
 			
 		end

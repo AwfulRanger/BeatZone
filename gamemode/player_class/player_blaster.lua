@@ -66,7 +66,7 @@ function PLAYER:InitializeAbilities()
 			
 			util.BlastDamage( ply, ply, ply:GetPos(), 150, 25 )
 			
-			ply:EmitSound( explodesounds[ math.random( #explodesounds ) ], 140 )
+			ply:EmitSound( explodesounds[ math.random( #explodesounds ) ] )
 			ParticleEffect( explodeparticle, ply:GetPos(), ply:GetAngles() )
 			
 		end,
