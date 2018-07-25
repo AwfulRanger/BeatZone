@@ -47,7 +47,7 @@ function GM:HUDDrawTargetID()
 		
 		local health = ent:Health()
 		local maxhealth = ent:GetMaxHealth()
-		local healthsize = math.Round( w * math.Clamp( health / maxhealth, 0, 1 ) ) - ( spacing * 2 )
+		local healthsize = math.ceil( ( w - ( spacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 ) )
 		surface.SetDrawColor( self.HUD.Color.health )
 		surface.DrawRect( x + spacing, y + th + ( spacing * 2 ), healthsize, hh )
 		
@@ -58,7 +58,7 @@ function GM:HUDDrawTargetID()
 		
 		if isshield == true then
 			
-			local shieldsize = math.Round( w * math.Clamp( shield / maxshield, 0, 1 ) ) - ( spacing * 2 )
+			local shieldsize = math.ceil( ( w - ( spacing * 2 ) ) * math.Clamp( shield / maxshield, 0, 1 ) )
 			surface.SetDrawColor( self.HUD.Color.shield )
 			surface.DrawRect( x + spacing, y + h - hh - spacing, shieldsize, hh )
 			
@@ -120,7 +120,7 @@ function GM:HUDDrawTargetID()
 					
 					local health = ply:Health()
 					local maxhealth = ply:GetMaxHealth()
-					local healthsize = math.Round( w * math.Clamp( health / maxhealth, 0, 1 ) ) - ( spacing * 2 )
+					local healthsize = math.ceil( ( w - ( spacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 ) )
 					surface.SetDrawColor( self.HUD.Color.health )
 					surface.DrawRect( spacing, th + ( spacing * 2 ), healthsize, hh )
 					
@@ -131,7 +131,7 @@ function GM:HUDDrawTargetID()
 					
 					local shield = ply:GetShield()
 					local maxshield = ply:GetMaxShield()
-					local shieldsize = math.Round( w * math.Clamp( shield / maxshield, 0, 1 ) ) - ( spacing * 2 )
+					local shieldsize = math.ceil( ( w - ( spacing * 2 ) ) * math.Clamp( shield / maxshield, 0, 1 ) )
 					surface.SetDrawColor( self.HUD.Color.shield )
 					surface.DrawRect( spacing, h - hh - spacing, shieldsize, hh )
 					
@@ -187,7 +187,7 @@ function GM:HUDDrawTargetID()
 					
 					local health = skel:Health()
 					local maxhealth = skel:GetMaxHealth()
-					local healthsize = math.Round( w * math.Clamp( health / maxhealth, 0, 1 ) ) - ( spacing * 2 )
+					local healthsize = math.ceil( ( w - ( spacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 ) )
 					surface.SetDrawColor( self.HUD.Color.health )
 					surface.DrawRect( spacing, spacing, healthsize, hh )
 					

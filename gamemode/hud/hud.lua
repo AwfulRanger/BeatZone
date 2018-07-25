@@ -128,7 +128,7 @@ function GM:HUDPaint()
 		
 		local health = boss:Health()
 		local maxhealth = boss:GetMaxHealth()
-		local healthsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 )
+		local healthsize = math.ceil( ( hw - ( hudspacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 ) )
 		surface.SetDrawColor( self.HUD.Color.health )
 		surface.DrawRect( hx + hudspacing, hy + hudspacing, healthsize, hbarh )
 		
@@ -161,7 +161,7 @@ function GM:HUDPaint()
 			
 			local health = ply:Health()
 			local maxhealth = ply:GetMaxHealth()
-			local healthsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 )
+			local healthsize = math.ceil( ( hw - ( hudspacing * 2 ) ) * math.Clamp( health / maxhealth, 0, 1 ) )
 			surface.SetDrawColor( self.HUD.Color.health )
 			surface.DrawRect( hx + hudspacing, hy + hudspacing, healthsize, hbarh )
 			
@@ -171,7 +171,7 @@ function GM:HUDPaint()
 			
 			local shield = ply:GetShield()
 			local maxshield = ply:GetMaxShield()
-			local shieldsize = math.Round( hw - ( hudspacing * 2 ) ) * math.Clamp( shield / maxshield, 0, 1 )
+			local shieldsize = math.ceil( ( hw - ( hudspacing * 2 ) ) * math.Clamp( shield / maxshield, 0, 1 ) )
 			surface.SetDrawColor( self.HUD.Color.shield )
 			surface.DrawRect( hx + hudspacing, hy + hbarh + ( hudspacing * 2 ), shieldsize, hbarh )
 			
@@ -238,7 +238,7 @@ function GM:HUDPaint()
 						if maxcount ~= -1 then
 							
 							surface.SetDrawColor( self.HUD.Color.clip )
-							local csize = math.Round( ach * math.Clamp( count / maxcount, 0, 1 ) )
+							local csize = math.ceil( ach * math.Clamp( count / maxcount, 0, 1 ) )
 							surface.DrawRect( acx, acy + ( ach - csize ), acw, csize )
 							
 							local ctw, cth = surface.GetTextSize( count )
@@ -253,7 +253,7 @@ function GM:HUDPaint()
 						
 						--clip
 						surface.SetDrawColor( self.HUD.Color.clip )
-						local clipsize = math.Round( ach * math.Clamp( clip / maxclip, 0, 1 ) )
+						local clipsize = math.ceil( ach * math.Clamp( clip / maxclip, 0, 1 ) )
 						surface.DrawRect( acx, acy + ( ach - clipsize ), cw - cspacing, clipsize )
 						
 						local ctw, cth = surface.GetTextSize( clip )
@@ -261,7 +261,7 @@ function GM:HUDPaint()
 						
 						--ammo
 						surface.SetDrawColor( self.HUD.Color.ammo )
-						local ammosize = math.Round( ach * math.Clamp( ammo / maxammo, 0, 1 ) )
+						local ammosize = math.ceil( ach * math.Clamp( ammo / maxammo, 0, 1 ) )
 						surface.DrawRect( acx + cw + cspacing, acy + ( ach - ammosize ), cw, ammosize )
 						
 						local atw, ath = surface.GetTextSize( ammo )
@@ -298,7 +298,7 @@ function GM:HUDPaint()
 						if maxcount ~= -1 then
 							
 							surface.SetDrawColor( self.HUD.Color.clip )
-							local csize = math.Round( ach * math.Clamp( count / maxcount, 0, 1 ) )
+							local csize = math.ceil( ach * math.Clamp( count / maxcount, 0, 1 ) )
 							surface.DrawRect( acx, acy + ( ach - csize ), acw, csize )
 							
 							local ctw, cth = surface.GetTextSize( count )
@@ -313,7 +313,7 @@ function GM:HUDPaint()
 						
 						--clip
 						surface.SetDrawColor( self.HUD.Color.clip )
-						local clipsize = math.Round( ach * math.Clamp( clip / maxclip, 0, 1 ) )
+						local clipsize = math.ceil( ach * math.Clamp( clip / maxclip, 0, 1 ) )
 						surface.DrawRect( acx, acy + ( ach - clipsize ), cw - cspacing, clipsize )
 						
 						local ctw, cth = surface.GetTextSize( clip )
@@ -321,7 +321,7 @@ function GM:HUDPaint()
 						
 						--ammo
 						surface.SetDrawColor( self.HUD.Color.ammo )
-						local ammosize = math.Round( ach * math.Clamp( ammo / maxammo, 0, 1 ) )
+						local ammosize = math.ceil( ach * math.Clamp( ammo / maxammo, 0, 1 ) )
 						surface.DrawRect( acx + cw + cspacing, acy + ( ach - ammosize ), cw, ammosize )
 						
 						local atw, ath = surface.GetTextSize( ammo )
@@ -367,7 +367,7 @@ function GM:HUDPaint()
 					local atime = atimetbl[ ability.Index ]
 					if atime ~= nil then delta = math.Clamp( ( CurTime() - atime.Last ) / ability.Cooldown, 0, 1 ) end
 					
-					local ads = math.Round( as * delta )
+					local ads = math.ceil( as * delta )
 					
 					surface.SetDrawColor( self.HUD.Color.abilityunready )
 					surface.DrawRect( ax, ay + ( as - ads ), as, ads )
