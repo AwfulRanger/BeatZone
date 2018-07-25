@@ -447,6 +447,8 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 		end
 		
+		if ent:IsOnFire() == true or ent:IsIgnited() == true then dodmg( self, dmg, attacker, "perk_damagespecial_onfire" ) end
+		
 		if ent.IsBZEnemy == true then
 			
 			local custom = dmg:GetDamageCustom()

@@ -252,6 +252,13 @@ function GM:Move( ply, mv )
 	dospeed( self, mv, ply, "perk_movespeed" )
 	if CurTime() < ply:GetDamagedTime() + 1 then dospeed( self, mv, ply, "perk_movespeedspecial_damagetaken" ) end
 	
+	if ply.BZ_AbilityBlazeTime ~= nil and CurTime() < ply.BZ_AbilityBlazeTime then
+		
+		mv:SetMaxClientSpeed( mv:GetMaxClientSpeed() * 1.25 )
+		mv:SetMaxSpeed( mv:GetMaxSpeed() * 1.25 )
+		
+	end
+	
 end
 
 

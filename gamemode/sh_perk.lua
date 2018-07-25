@@ -357,6 +357,14 @@ GM:AddPerk( "perk_damagespecial_criticalcrouch", {
 	BaseAdd = 0.05,
 	
 } )
+GM:AddPerk( "perk_damagespecial_onfire", {
+	
+	Name = "Ignited Damage",
+	Description = "%s damage against ignited units",
+	Type = "addmult",
+	BaseAdd = 0.05,
+	
+} )
 
 --damage resistances
 GM:AddPerk( "perk_resist_all", {
