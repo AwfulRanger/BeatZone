@@ -93,13 +93,12 @@ if SERVER then
 		local pos = self:GetShootPos()
 		
 		local dir = self:EyeAngles():Forward()
-		if IsValid( target ) == true then dir = ( ( target:BodyTarget( pos ) - Vector( 0, 0, 16 ) ) - pos ):Angle():Forward() end
+		if IsValid( target ) == true then dir = ( ( target:BodyTarget( pos ) - Vector( 0, 0, 16 ) ) - pos ):GetNormalized() end
 		
 		self:FireBullets( {
 			
 			Attacker = self,
 			Damage = self:GetBuffed( self.ShootDamage ),
-			Distance = self.MaxRange,
 			Src = pos,
 			Dir = dir,
 			IgnoreEntity = self,
