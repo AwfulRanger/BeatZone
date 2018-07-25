@@ -4,6 +4,7 @@ DEFINE_BASECLASS( "gamemode_base" )
 
 include( "sh_config.lua" )
 include( "sh_mapcustom.lua" )
+include( "sh_precache.lua" )
 
 
 
@@ -47,6 +48,8 @@ end
 
 
 function GM:InitPostEntity()
+	
+	self:PrecacheContent()
 	
 	if CLIENT then
 		
