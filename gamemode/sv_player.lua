@@ -521,7 +521,7 @@ end
 
 function GM:PlayerShouldTakeDamage( ply, attacker )
 	
-	if attacker:IsPlayer() == true and GetConVar( "bz_friendlyfire" ):GetInt() < 2 then return false end
+	if ply ~= attacker and attacker:IsPlayer() == true and GetConVar( "bz_friendlyfire" ):GetInt() < 2 then return false end
 	
 	return BaseClass.PlayerShouldTakeDamage( ply, attack )
 	

@@ -518,7 +518,7 @@ function GM:EntityTakeDamage( ent, dmg )
 	end
 	
 	--shield damage
-	if ent:IsPlayer() == true and ( attacker:IsPlayer() ~= true or GetConVar( "bz_friendlyfire" ):GetInt() > 0 ) then
+	if ent:IsPlayer() == true and ( attacker:IsPlayer() ~= true or GetConVar( "bz_friendlyfire" ):GetInt() > 0 or ent == attacker ) then
 		
 		ent:SetDamagedTime( CurTime() )
 		
@@ -532,7 +532,7 @@ function GM:EntityTakeDamage( ent, dmg )
 			
 		end
 		
-		if attacker:IsPlayer() ~= true or GetConVar( "bz_friendlyfire" ):GetInt() > 1 then
+		if attacker:IsPlayer() ~= true or GetConVar( "bz_friendlyfire" ):GetInt() > 1 or ent == attacker then
 			
 			--mess with damage so force isn't so high
 			local olddamage = math.Round( dmg:GetDamage() * 0.01 )
