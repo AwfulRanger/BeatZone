@@ -74,11 +74,12 @@ function PLAYER:InitializeAbilities()
 			local ang = Angle( 0, ply:EyeAngles().y, 0 )
 			
 			local pos = ply:GetPos()
-			pos = util.TraceLine( { start = pos, endpos = pos + Vector( 0, 0, -32768 ), filter = ply, mask = MASK_PLAYERSOLID } ).HitPos
+			local tr = util.TraceLine( { start = pos, endpos = pos + Vector( 0, 0, -32768 ), filter = ply, mask = MASK_PLAYERSOLID } )
+			pos = tr.HitPos
 			
 			local jumppad = ents.Create( "bz_jumppad" )
 			jumppad:SetPos( pos )
-			jumppad:SetAngles( ang )
+			jumppad:SetAngles( tr.HitNormal:Angle() + Angle( 90, 0, 0 ) )
 			jumppad:SetOwner( ply )
 			jumppad:Spawn()
 			jumppad.DieTime = CurTime() + 10

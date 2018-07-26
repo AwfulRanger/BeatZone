@@ -11,7 +11,7 @@ ENT.PrintName = "#bz_jumppad"
 ENT.Model = Model( "models/props_doomsday/cap_point_small.mdl" )
 ENT.Skin = 2
 ENT.JumpSound = Sound( "weapons/bumper_car_jump.wav" )
-ENT.JumpVelocity = 384
+ENT.JumpVelocity = 512
 
 function ENT:Initialize()
 	
@@ -19,7 +19,7 @@ function ENT:Initialize()
 	self:SetSkin( self.Skin )
 	
 	if SERVER then self:SetTrigger( true ) end
-	self:UseTriggerBounds( true, 16 )
+	self:UseTriggerBounds( true, 20 )
 	
 end
 
@@ -35,7 +35,8 @@ if SERVER then
 		
 		if ent:IsPlayer() == true then
 			
-			ent:SetVelocity( Vector( 0, 0, -ent:GetVelocity().z + self.JumpVelocity ) )
+			local dir = self:GetAngles():Up()
+			ent:SetVelocity( -( ent:GetVelocity() * dir ) + ( dir * self.JumpVelocity ) )
 			self:EmitSound( self.JumpSound )
 			
 		end
