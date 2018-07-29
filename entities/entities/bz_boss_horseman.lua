@@ -16,6 +16,7 @@ ENT.Description = [[Chops people with their large axe.]]
 ENT.Model = Model( "models/bots/headless_hatman.mdl" )
 ENT.Skin = 0
 ENT.StartHealth = 3000
+ENT.ScaleRandom = false
 
 ENT.SpawnSounds = { Sound( "vo/halloween_boss/knight_spawn.mp3" ) }
 ENT.SwingSounds = {

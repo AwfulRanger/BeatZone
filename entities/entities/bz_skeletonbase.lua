@@ -10,6 +10,7 @@ ENT.Model = Model( "models/bots/skeleton_sniper/skeleton_sniper.mdl" )
 ENT.Skin = 0 --0 = red, 1 = blue, 2 = green, 3 = yellow
 ENT.IsBZEnemy = true
 ENT.StartHealth = 30
+ENT.ScaleRandom = true
 
 function ENT:GetBuffed( val, mult )
 	
@@ -48,6 +49,18 @@ function ENT:Initialize()
 		self.loco:SetDeceleration( 1000 )
 		
 		self:SetLagCompensated( true )
+		
+		if self.ScaleRandom == true then
+			
+			local scale = math.Rand( -0.2, 0.2 )
+			self:SetMaxHealth( self:GetMaxHealth() * ( 1 + scale ) )
+			self:SetHealth( self:Health() * ( 1 + scale ) )
+			
+			self:SetModelScale( 1 + scale )
+			
+			self.MoveSpeed = self.MoveSpeed * ( 1 - scale )
+			
+		end
 		
 	end
 	
