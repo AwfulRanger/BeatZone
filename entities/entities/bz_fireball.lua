@@ -56,7 +56,13 @@ if SERVER then
 		
 		if skybox ~= true then
 			
-			if IsValid( ent ) == true then ent:StartIgnite( self:GetDuration(), self:GetDamage(), self ) end
+			if IsValid( ent ) == true then
+				
+				local attacker = self:GetOwner()
+				if IsValid( attacker ) ~= true then attacker = self end
+				ent:StartIgnite( self:GetDuration(), self:GetDamage(), attacker )
+				
+			end
 			
 			self:EmitSound( self.HitSounds[ math.random( #self.HitSounds ) ] )
 			ParticleEffect( self.HitParticle, self:GetPos(), self:GetAngles() )
