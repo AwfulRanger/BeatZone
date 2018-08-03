@@ -194,7 +194,6 @@ if SERVER then
 		
 	end
 	
-	ENT.LastSeenTarget = 0
 	ENT.TargetRefreshTime = 3
 	ENT.LastTargetRefresh = 0
 	function ENT:HandleAI()
@@ -332,6 +331,16 @@ if SERVER then
 		if pos ~= self.LastPos then self.LastMove = CurTime() end
 		self.LastPos = pos
 		
+		if self.LastRespawn == nil then self.LastRespawn = CurTime() end
+		if CurTime() > self.LastRespawn + 10 and self.LastSeenTarget ~= nil and CurTime() > self.LastSeenTarget + 10 then
+			
+			self.LastRespawn = CurTime()
+			
+			local pos = gmod.GetGamemode():EnemySpawnPos()
+			if pos ~= nil then self:SetPos( pos ) end
+			
+		end
+		
 	end
 	
 	function ENT:HandleStuck()
@@ -341,7 +350,9 @@ if SERVER then
 		self.LastStuck = CurTime()
 		self.StuckEntity = util.TraceEntity( { start = pos, endpos = pos, filter = self, ignoreworld = true }, self ).Entity
 		
-		if ( self.LastMove == nil or CurTime() > self.LastMove + 10 ) and self.loco:IsAttemptingToMove() == true then
+		local seen = self.LastSeenTarget
+		local move = self.LastMove
+		if ( move == nil or CurTime() > move + 10 ) and ( seen == nil or CurTime() > seen + 3 ) and self.loco:IsAttemptingToMove() == true then
 			
 			local pos = gmod.GetGamemode():EnemySpawnPos()
 			if pos ~= nil then self:SetPos( pos ) end
