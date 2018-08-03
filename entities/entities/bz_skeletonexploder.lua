@@ -38,7 +38,7 @@ if SERVER then
 	ENT.MaxRange = 1024 --don't attack past this range
 	function ENT:ShouldChase( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		if IsValid( target ) ~= true then return false end
 		
 		if target:Visible( self ) ~= true then return true end
@@ -58,7 +58,7 @@ if SERVER then
 	ENT.GrenadeRange = 512 --don't shoot grenades past this range
 	function ENT:HandleShoot( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		if IsValid( target ) ~= true then return end
 		
 		local dist = self:GetPos():Distance( target:GetPos() )
@@ -92,7 +92,7 @@ if SERVER then
 	ENT.RocketRadius = 100
 	function ENT:ShootRocket( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		
 		local pos = self:GetShootPos()
 		
@@ -122,7 +122,7 @@ if SERVER then
 	ENT.GrenadeRadius = 100
 	function ENT:ShootGrenade( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		
 		local pos = self:GetShootPos()
 		
@@ -157,7 +157,7 @@ if SERVER then
 		
 		self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
 		
-		local target = self:GetTarget()
+		local target = self:GetTargetEntity()
 		if IsValid( target ) == true then
 			
 			if self:ShouldChase( target ) == true then

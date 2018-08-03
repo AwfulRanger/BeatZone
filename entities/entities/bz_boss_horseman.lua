@@ -89,7 +89,7 @@ if SERVER then
 		
 		self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
 		
-		local target = self:GetTarget()
+		local target = self:GetTargetEntity()
 		if IsValid( target ) == true then
 			
 			self:StartActivity( self.Activity.Run or ACT_MP_RUN_MELEE )

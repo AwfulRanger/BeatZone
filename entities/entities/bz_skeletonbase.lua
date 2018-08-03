@@ -87,6 +87,14 @@ ENT.Activity = {
 
 if SERVER then
 	
+	function ENT:GetTargetEntity()
+		
+		if self.LastStuck ~= nil and CurTime() < self.LastStuck + 1 and IsValid( self.StuckEntity ) == true then return self.StuckEntity end
+		
+		return self:GetTarget()
+		
+	end
+	
 	function ENT:FollowEntity( ent, options )
 		
 		options = options or {}
@@ -175,7 +183,7 @@ if SERVER then
 			
 		end
 		
-		local target = self:GetTarget()
+		local target = self:GetTargetEntity()
 		if IsValid( target ) == true and target:Visible( self ) == true then self.LastSeenTarget = CurTime() end
 		
 	end
@@ -264,7 +272,7 @@ if SERVER then
 		local yaw = 0
 		
 		local ang = self:EyeAngles()
-		local target = self:GetTarget()
+		local target = self:GetTargetEntity()
 		if IsValid( target ) == true then
 			
 			local pos = self:GetShootPos()
@@ -305,6 +313,7 @@ if SERVER then
 	function ENT:OnInjured( dmg )
 		
 		local attacker = dmg:GetAttacker()
+		if IsValid( attacker ) == true and attacker.IsBZEnemy ~= true then attacker = attacker:GetOwner() end
 		if IsValid( attacker ) == true and attacker.IsBZEnemy == true then dmg:ScaleDamage( 0.1 ) end
 		
 	end
@@ -313,15 +322,20 @@ if SERVER then
 		
 		BaseClass.Think( self )
 		
-		if self.loco:GetVelocity():LengthSqr() ~= 0 then self.LastMove = CurTime() end
+		local pos = self:GetPos()
+		if pos ~= self.LastPos then self.LastMove = CurTime() end
+		self.LastPos = pos
 		
 	end
 	
 	function ENT:HandleStuck()
 		
-		if self.loco:GetVelocity():LengthSqr() ~= 0 then self.LastMove = CurTime() end
+		local pos = self:GetPos()
 		
-		if ( self.LastMove == nil or CurTime() > self.LastMove + 3 ) and self.loco:IsAttemptingToMove() == true then
+		self.LastStuck = CurTime()
+		self.StuckEntity = util.TraceEntity( { start = pos, endpos = pos, filter = self, ignoreworld = true }, self ).Entity
+		
+		if ( self.LastMove == nil or CurTime() > self.LastMove + 10 ) and self.loco:IsAttemptingToMove() == true then
 			
 			local pos = gmod.GetGamemode():EnemySpawnPos()
 			if pos ~= nil then self:SetPos( pos ) end
@@ -332,7 +346,7 @@ if SERVER then
 	
 	function ENT:OnOtherKilled( ent, dmg )
 		
-		if ent == self:GetTarget() then
+		if ent == self:GetTargetEntity() then
 			
 			self.LastTargetRefresh = CurTime()
 			self:RefreshTarget()

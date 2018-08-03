@@ -39,7 +39,7 @@ if SERVER then
 	ENT.MaxRange = 512 --don't attack past this range
 	function ENT:ShouldChase( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		if IsValid( target ) ~= true then return false end
 		
 		if target:Visible( self ) ~= true then return true end
@@ -51,7 +51,7 @@ if SERVER then
 	
 	function ENT:ShouldRunAway( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		if IsValid( target ) ~= true then return false end
 		
 		if target:Visible( self ) ~= true then return false end
@@ -70,7 +70,7 @@ if SERVER then
 	
 	function ENT:HandleShoot( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		if IsValid( target ) ~= true then return end
 		
 		if self:GetPos():Distance( target:GetPos() ) < self.MaxRange and CurTime() < self.LastSeenTarget + 1 then
@@ -88,7 +88,7 @@ if SERVER then
 	ENT.ShootDamage = 15
 	function ENT:Shoot( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		
 		local pos = self:GetShootPos()
 		
@@ -118,7 +118,7 @@ if SERVER then
 		
 		self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
 		
-		local target = self:GetTarget()
+		local target = self:GetTargetEntity()
 		if IsValid( target ) == true then
 			
 			if self:ShouldChase( target ) == true and self:CanShoot() == true then

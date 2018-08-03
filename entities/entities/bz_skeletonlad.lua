@@ -44,7 +44,7 @@ if SERVER then
 	ENT.SwingLength = 48
 	function ENT:SwingTrace( target )
 		
-		if target == nil then target = self:GetTarget() end
+		if target == nil then target = self:GetTargetEntity() end
 		if IsValid( target ) ~= true then return end
 		
 		local pos = self:GetShootPos()
@@ -70,7 +70,7 @@ if SERVER then
 		
 		self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
 		
-		local target = self:GetTarget()
+		local target = self:GetTargetEntity()
 		if IsValid( target ) == true then
 			
 			self:StartActivity( self.Activity.Run or ACT_MP_RUN_MELEE )
