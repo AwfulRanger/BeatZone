@@ -42,22 +42,9 @@ if SERVER then
 		if target == nil then target = self:GetTargetEntity() end
 		if IsValid( target ) ~= true then return false end
 		
-		if target:Visible( self ) ~= true then return true end
-		if self:GetPos():Distance( target:GetPos() ) > self.MaxRange then return true end
+		if self:GetPos():Distance( target:GetPos() ) < self.MinRange then return false end
 		
-		return false
-		
-	end
-	
-	function ENT:ShouldRunAway( target )
-		
-		if target == nil then target = self:GetTargetEntity() end
-		if IsValid( target ) ~= true then return false end
-		
-		if target:Visible( self ) ~= true then return false end
-		if self:GetPos():Distance( target:GetPos() ) < self.MinRange - 32 then return true end
-		
-		return false
+		return true
 		
 	end
 	
@@ -125,7 +112,8 @@ if SERVER then
 				
 				self:StartActivity( self.Activity.Run or ACT_MP_RUN_PRIMARY )
 				
-				self:FollowEntity( target, { maxage = 0.1, think = function()
+				local hidepos
+				self:FollowEntity( target, { maxage = 0.1, tolerance = 64, think = function()
 					
 					self.loco:SetDesiredSpeed( self:GetMoveSpeed() )
 					
@@ -133,27 +121,17 @@ if SERVER then
 					
 					self:HandleShoot( target )
 					
+					if hidepos ~= nil and hidepos:Distance( self:GetPos() ) < 64 then return "timeout" end
+					
+				end, getpos = function( ent )
+					
+					local pos = ent:GetPos()
+					
+					hidepos = self:FindSpot( "far", { type = "hiding", pos = pos, radius = self.MaxRange - 64, stepup = 18, stepdown = 128 } )
+					
+					return hidepos or pos
+					
 				end } )
-				
-			elseif self:ShouldRunAway( target ) == true then
-				
-				local pos = self:GetShootPos()
-				local dir = -( target:GetPos() - self:GetPos() ):Angle():Forward()
-				local tr = util.TraceLine( { start = pos, endpos = pos + ( dir * ( self.MaxRange - self.MinRange ) ), filter = self } )
-				
-				if pos:Distance( tr.HitPos ) < 64 then
-					
-					self:StartActivity( self.Activity.Crouch or ACT_MP_CROUCH_PRIMARY )
-					
-					self:HandleShoot( target )
-					
-				else
-					
-					self:StartActivity( self.Activity.Run or ACT_MP_RUN_PRIMARY )
-					
-					self:MoveToPos( tr.HitPos, { tolerance = 64 } )
-					
-				end
 				
 			else
 				

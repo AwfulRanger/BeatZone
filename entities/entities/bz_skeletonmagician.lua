@@ -45,10 +45,7 @@ if SERVER then
 		if target == nil then target = self:GetTargetEntity() end
 		if IsValid( target ) ~= true then return false end
 		
-		if target:Visible( self ) ~= true then return true end
-		if self:GetPos():Distance( target:GetPos() ) > self.MinRange then return true end
-		
-		return false
+		return true
 		
 	end
 	
@@ -130,6 +127,13 @@ if SERVER then
 					if self:ShouldChase( target ) ~= true then return "ok" end
 					
 					self:HandleShoot( target )
+					
+				end, getpos = function( ent )
+					
+					local pos = ent:GetPos()
+					local dir = -Angle( 0, ent:EyeAngles().y, 0 ):Forward()
+					
+					return util.TraceLine( { start = pos, endpos = pos + ( dir * self.MinRange ), filter = { self, ent } } ).HitPos
 					
 				end } )
 				

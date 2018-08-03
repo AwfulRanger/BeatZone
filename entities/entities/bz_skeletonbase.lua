@@ -99,12 +99,15 @@ if SERVER then
 		
 		options = options or {}
 		
+		local pos = ent:GetPos()
+		if isfunction( options.getpos ) == true then pos = options.getpos( ent ) or pos end
+		
 		local pathtime = CurTime()
 		
 		local path = Path( "Follow" )
 		path:SetMinLookAheadDistance( options.lookahead or 300 )
 		path:SetGoalTolerance( options.tolerance or 20 )
-		path:Compute( self, ent:GetPos() )
+		path:Compute( self, pos )
 		
 		if IsValid( path ) ~= true then return "failed" end
 		
@@ -121,7 +124,10 @@ if SERVER then
 			
 			if IsValid( ent ) == true then
 				
-				if path:GetAge() > ( options.repath or 0.1 ) then path:Compute( self, ent:GetPos() ) end
+				local pos = ent:GetPos()
+				if isfunction( options.getpos ) == true then pos = options.getpos( ent ) or pos end
+				
+				if path:GetAge() > ( options.repath or 0.1 ) then path:Compute( self, pos ) end
 				--path:Chase( self, ent )
 				path:Update( self )
 				
