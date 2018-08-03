@@ -236,7 +236,7 @@ function meta:StartIgnite( len, dmg, attacker )
 	
 	net.Start( "BZ_Ignite" )
 		
-		net.WriteEntity( self )
+		net.WriteUInt( self:EntIndex(), 32 )
 		net.WriteBool( true )
 		
 	net.Broadcast()
@@ -261,7 +261,7 @@ function meta:StopIgnite()
 	
 	net.Start( "BZ_Ignite" )
 		
-		net.WriteEntity( self )
+		net.WriteUInt( self:EntIndex(), 32 )
 		net.WriteBool( false )
 		
 	net.Broadcast()
