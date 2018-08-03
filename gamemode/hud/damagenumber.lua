@@ -156,7 +156,12 @@ function GM:DrawDamageNumbers()
 			
 			local key = remove[ i ]
 			table.remove( self.DamageNumbers, key )
-			for _, v in pairs( self.DamageNumbersBatch ) do if v.key > key then v.key = v.key - 1 end end
+			for _, v in pairs( self.DamageNumbersBatch ) do
+				
+				if v.key > key then v.key = v.key - 1 end
+				if v.key == key then self.DamageNumbersBatch[ _ ] = nil end
+				
+			end
 			
 		end
 		
