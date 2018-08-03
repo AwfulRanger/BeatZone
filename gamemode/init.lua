@@ -220,7 +220,7 @@ function meta:StartIgnite( len, dmg, attacker )
 	
 	self:SetNW2Float( "BZ_IgniteTime", CurTime() + ( len or 0 ) )
 	self:SetNW2Int( "BZ_IgniteDamage", math.floor( dmg or 0 ) )
-	self:SetNW2Entity( "BZ_BleedAttacker", attacker )
+	self:SetNW2Entity( "BZ_IgniteAttacker", attacker )
 	self.BZ_CurIgniteDamage = 0
 	self.BZ_MaxIgniteDamage = math.floor( len * dmg )
 	
